@@ -3,7 +3,7 @@
 -- https://www.phpmyadmin.net/
 --
 -- Servidor: 127.0.0.1
--- Tiempo de generación: 26-08-2026 a las 18:50:20
+-- Tiempo de generación: 28-08-2026 a las 19:18:53
 -- Versión del servidor: 10.4.32-MariaDB
 -- Versión de PHP: 8.2.12
 
@@ -104,10 +104,18 @@ CREATE TABLE `residentes` (
   `Apellidos` varchar(255) DEFAULT NULL,
   `Telefono` varchar(255) DEFAULT NULL,
   `Email` varchar(255) DEFAULT NULL,
-  `Id_Unidad_FK` int(11) DEFAULT NULL,
   `Fecha_Registro` datetime DEFAULT NULL,
-  `Estado` tinyint(1) DEFAULT NULL
+  `Estado` tinyint(1) DEFAULT NULL,
+  `Id_Unidad_FK` int(11) DEFAULT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+
+--
+-- Volcado de datos para la tabla `residentes`
+--
+
+INSERT INTO `residentes` (`Id_Residente`, `Tipo_Documento`, `Num_Documento`, `Nombres`, `Apellidos`, `Telefono`, `Email`, `Fecha_Registro`, `Estado`, `Id_Unidad_FK`) VALUES
+(1, 'CC', '123456', 'Juan', 'Pérez', '3001234567', 'juan@mail.com', '2026-08-28 12:02:30', 1, 1),
+(2, 'CC', '123456', 'Juan', 'Pérez', '3001234567', 'juan@mail.com', '2026-08-28 12:03:12', 1, NULL);
 
 -- --------------------------------------------------------
 
@@ -120,6 +128,16 @@ CREATE TABLE `roles` (
   `Nombre` varchar(100) DEFAULT NULL,
   `Descripcion` varchar(255) DEFAULT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+
+--
+-- Volcado de datos para la tabla `roles`
+--
+
+INSERT INTO `roles` (`Id_Rol`, `Nombre`, `Descripcion`) VALUES
+(1, 'Residente', 'Usuario con acceso de residente'),
+(2, 'Residente', 'Usuario con acceso de residente'),
+(3, 'Administrador', 'Usuario con acceso administrativo total'),
+(4, 'Seguridad', 'Usuario del personal de seguridad/portería');
 
 -- --------------------------------------------------------
 
@@ -137,6 +155,14 @@ CREATE TABLE `unidades` (
   `Estado` tinyint(1) DEFAULT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
+--
+-- Volcado de datos para la tabla `unidades`
+--
+
+INSERT INTO `unidades` (`Id_Unidad`, `Torre`, `Apto`, `Piso`, `Area`, `Id_Residente_FK`, `Estado`) VALUES
+(1, 'A', '101', 1, 65.50, 1, 1),
+(2, 'A', '101', 1, 65.50, 1, 1);
+
 -- --------------------------------------------------------
 
 --
@@ -149,10 +175,18 @@ CREATE TABLE `usuario` (
   `Email` varchar(100) DEFAULT NULL,
   `Contraseña` varchar(255) DEFAULT NULL,
   `Id_Rol_FK` int(11) DEFAULT NULL,
+  `Id_Residente_FK` int(11) DEFAULT NULL,
   `Estado` tinyint(1) DEFAULT NULL,
-  `Fecha_creacion` datetime DEFAULT NULL,
-  `Id_Residente_FK` int(11) DEFAULT NULL
+  `Fecha_creacion` datetime DEFAULT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+
+--
+-- Volcado de datos para la tabla `usuario`
+--
+
+INSERT INTO `usuario` (`Id_Usuario`, `Nombre`, `Email`, `Contraseña`, `Id_Rol_FK`, `Id_Residente_FK`, `Estado`, `Fecha_creacion`) VALUES
+(2, 'Juan Pérez', 'juan@mail.com', 'hash123', 1, 1, 1, '2026-08-28 12:03:03'),
+(3, 'Juan Pérez', 'juan@mail.com', 'hash123', 1, 1, 1, '2026-08-28 12:03:12');
 
 -- --------------------------------------------------------
 
@@ -176,255 +210,3 @@ CREATE TABLE `vehiculos` (
 --
 -- Estructura de tabla para la tabla `visitantes`
 --
-
-CREATE TABLE `visitantes` (
-  `Id_Visitante` int(11) NOT NULL,
-  `Nombre` varchar(100) DEFAULT NULL,
-  `Apellidos` varchar(100) DEFAULT NULL,
-  `Tipo_Documento` varchar(20) DEFAULT NULL,
-  `Num_Documento` varchar(50) DEFAULT NULL,
-  `Telefono` varchar(20) DEFAULT NULL,
-  `Motivo` varchar(255) DEFAULT NULL,
-  `Id_Residente_FK` int(11) DEFAULT NULL,
-  `Fecha_Ingreso` datetime DEFAULT NULL,
-  `Fecha_Salida` datetime DEFAULT NULL,
-  `Autorizado_Por` int(11) DEFAULT NULL,
-  `Estado` varchar(20) DEFAULT NULL
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
-
--- --------------------------------------------------------
-
---
--- Estructura de tabla para la tabla `zonas_comunes`
---
-
-CREATE TABLE `zonas_comunes` (
-  `Id_Zona` int(11) NOT NULL,
-  `Nombre` varchar(100) DEFAULT NULL,
-  `Descripcion` varchar(250) DEFAULT NULL,
-  `Capacidad` int(11) DEFAULT NULL,
-  `Reglas` text DEFAULT NULL,
-  `Estado` tinyint(1) DEFAULT NULL
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
-
---
--- Índices para tablas volcadas
---
-
---
--- Indices de la tabla `adjuntos_reporte`
---
-ALTER TABLE `adjuntos_reporte`
-  ADD PRIMARY KEY (`Id_Adjunto`),
-  ADD KEY `fk_adjuntos_reporte` (`Id_Reporte_FK`);
-
---
--- Indices de la tabla `pagos`
---
-ALTER TABLE `pagos`
-  ADD PRIMARY KEY (`Id_Pago`),
-  ADD KEY `fk_pagos_residente` (`Id_Residente_FK`),
-  ADD KEY `fk_pagos_reserva` (`Id_Reserva_FK`);
-
---
--- Indices de la tabla `reportes`
---
-ALTER TABLE `reportes`
-  ADD PRIMARY KEY (`Id_Reportes`),
-  ADD KEY `fk_reportes_residente` (`Id_Residente_FK`),
-  ADD KEY `fk_reportes_asignado` (`Asignado_a_FK`);
-
---
--- Indices de la tabla `reservas`
---
-ALTER TABLE `reservas`
-  ADD PRIMARY KEY (`Id_Reservas`),
-  ADD KEY `fk_reservas_zona` (`Id_Zona_FK`),
-  ADD KEY `fk_reservas_unidad` (`Id_Unidad_FK`);
-
---
--- Indices de la tabla `residentes`
---
-ALTER TABLE `residentes`
-  ADD PRIMARY KEY (`Id_Residente`),
-  ADD KEY `fk_residentes_unidad` (`Id_Unidad_FK`);
-
---
--- Indices de la tabla `roles`
---
-ALTER TABLE `roles`
-  ADD PRIMARY KEY (`Id_Rol`);
-
---
--- Indices de la tabla `unidades`
---
-ALTER TABLE `unidades`
-  ADD PRIMARY KEY (`Id_Unidad`),
-  ADD KEY `fk_unidades_residente` (`Id_Residente_FK`);
-
---
--- Indices de la tabla `usuario`
---
-ALTER TABLE `usuario`
-  ADD PRIMARY KEY (`Id_Usuario`),
-  ADD KEY `fk_usuario_rol` (`Id_Rol_FK`),
-  ADD KEY `fk_usuario_residente` (`Id_Residente_FK`);
-
---
--- Indices de la tabla `vehiculos`
---
-ALTER TABLE `vehiculos`
-  ADD PRIMARY KEY (`Id_Vehiculo`),
-  ADD KEY `fk_vehiculos_residente` (`Id_Residente_FK`);
-
---
--- Indices de la tabla `visitantes`
---
-ALTER TABLE `visitantes`
-  ADD PRIMARY KEY (`Id_Visitante`),
-  ADD KEY `fk_visitantes_residente` (`Id_Residente_FK`),
-  ADD KEY `fk_visitantes_autorizador` (`Autorizado_Por`);
-
---
--- Indices de la tabla `zonas_comunes`
---
-ALTER TABLE `zonas_comunes`
-  ADD PRIMARY KEY (`Id_Zona`);
-
---
--- AUTO_INCREMENT de las tablas volcadas
---
-
---
--- AUTO_INCREMENT de la tabla `adjuntos_reporte`
---
-ALTER TABLE `adjuntos_reporte`
-  MODIFY `Id_Adjunto` int(11) NOT NULL AUTO_INCREMENT;
-
---
--- AUTO_INCREMENT de la tabla `pagos`
---
-ALTER TABLE `pagos`
-  MODIFY `Id_Pago` int(11) NOT NULL AUTO_INCREMENT;
-
---
--- AUTO_INCREMENT de la tabla `reportes`
---
-ALTER TABLE `reportes`
-  MODIFY `Id_Reportes` int(11) NOT NULL AUTO_INCREMENT;
-
---
--- AUTO_INCREMENT de la tabla `reservas`
---
-ALTER TABLE `reservas`
-  MODIFY `Id_Reservas` int(11) NOT NULL AUTO_INCREMENT;
-
---
--- AUTO_INCREMENT de la tabla `residentes`
---
-ALTER TABLE `residentes`
-  MODIFY `Id_Residente` int(11) NOT NULL AUTO_INCREMENT;
-
---
--- AUTO_INCREMENT de la tabla `roles`
---
-ALTER TABLE `roles`
-  MODIFY `Id_Rol` int(11) NOT NULL AUTO_INCREMENT;
-
---
--- AUTO_INCREMENT de la tabla `unidades`
---
-ALTER TABLE `unidades`
-  MODIFY `Id_Unidad` int(11) NOT NULL AUTO_INCREMENT;
-
---
--- AUTO_INCREMENT de la tabla `usuario`
---
-ALTER TABLE `usuario`
-  MODIFY `Id_Usuario` int(11) NOT NULL AUTO_INCREMENT;
-
---
--- AUTO_INCREMENT de la tabla `vehiculos`
---
-ALTER TABLE `vehiculos`
-  MODIFY `Id_Vehiculo` int(11) NOT NULL AUTO_INCREMENT;
-
---
--- AUTO_INCREMENT de la tabla `visitantes`
---
-ALTER TABLE `visitantes`
-  MODIFY `Id_Visitante` int(11) NOT NULL AUTO_INCREMENT;
-
---
--- AUTO_INCREMENT de la tabla `zonas_comunes`
---
-ALTER TABLE `zonas_comunes`
-  MODIFY `Id_Zona` int(11) NOT NULL AUTO_INCREMENT;
-
---
--- Restricciones para tablas volcadas
---
-
---
--- Filtros para la tabla `adjuntos_reporte`
---
-ALTER TABLE `adjuntos_reporte`
-  ADD CONSTRAINT `fk_adjuntos_reporte` FOREIGN KEY (`Id_Reporte_FK`) REFERENCES `reportes` (`Id_Reportes`);
-
---
--- Filtros para la tabla `pagos`
---
-ALTER TABLE `pagos`
-  ADD CONSTRAINT `fk_pagos_reserva` FOREIGN KEY (`Id_Reserva_FK`) REFERENCES `reservas` (`Id_Reservas`),
-  ADD CONSTRAINT `fk_pagos_residente` FOREIGN KEY (`Id_Residente_FK`) REFERENCES `residentes` (`Id_Residente`);
-
---
--- Filtros para la tabla `reportes`
---
-ALTER TABLE `reportes`
-  ADD CONSTRAINT `fk_reportes_asignado` FOREIGN KEY (`Asignado_a_FK`) REFERENCES `usuario` (`Id_Usuario`),
-  ADD CONSTRAINT `fk_reportes_residente` FOREIGN KEY (`Id_Residente_FK`) REFERENCES `residentes` (`Id_Residente`);
-
---
--- Filtros para la tabla `reservas`
---
-ALTER TABLE `reservas`
-  ADD CONSTRAINT `fk_reservas_unidad` FOREIGN KEY (`Id_Unidad_FK`) REFERENCES `unidades` (`Id_Unidad`),
-  ADD CONSTRAINT `fk_reservas_zona` FOREIGN KEY (`Id_Zona_FK`) REFERENCES `zonas_comunes` (`Id_Zona`);
-
---
--- Filtros para la tabla `residentes`
---
-ALTER TABLE `residentes`
-  ADD CONSTRAINT `fk_residentes_unidad` FOREIGN KEY (`Id_Unidad_FK`) REFERENCES `unidades` (`Id_Unidad`);
-
---
--- Filtros para la tabla `unidades`
---
-ALTER TABLE `unidades`
-  ADD CONSTRAINT `fk_unidades_residente` FOREIGN KEY (`Id_Residente_FK`) REFERENCES `residentes` (`Id_Residente`);
-
---
--- Filtros para la tabla `usuario`
---
-ALTER TABLE `usuario`
-  ADD CONSTRAINT `fk_usuario_residente` FOREIGN KEY (`Id_Residente_FK`) REFERENCES `residentes` (`Id_Residente`),
-  ADD CONSTRAINT `fk_usuario_rol` FOREIGN KEY (`Id_Rol_FK`) REFERENCES `roles` (`Id_Rol`);
-
---
--- Filtros para la tabla `vehiculos`
---
-ALTER TABLE `vehiculos`
-  ADD CONSTRAINT `fk_vehiculos_residente` FOREIGN KEY (`Id_Residente_FK`) REFERENCES `residentes` (`Id_Residente`);
-
---
--- Filtros para la tabla `visitantes`
---
-ALTER TABLE `visitantes`
-  ADD CONSTRAINT `fk_visitantes_autorizador` FOREIGN KEY (`Autorizado_Por`) REFERENCES `usuario` (`Id_Usuario`),
-  ADD CONSTRAINT `fk_visitantes_residente` FOREIGN KEY (`Id_Residente_FK`) REFERENCES `residentes` (`Id_Residente`);
-COMMIT;
-
-/*!40101 SET CHARACTER_SET_CLIENT=@OLD_CHARACTER_SET_CLIENT */;
-/*!40101 SET CHARACTER_SET_RESULTS=@OLD_CHARACTER_SET_RESULTS */;
-/*!40101 SET COLLATION_CONNECTION=@OLD_COLLATION_CONNECTION */;
