@@ -1,0 +1,19 @@
+<!DOCTYPE html>
+<html>
+<head><title>Visitantes</title></head>
+<body>
+    <h2>Visitantes</h2>
+    <form method="get">
+        <input type="text" name="buscar" placeholder="Buscar por nombre">
+        <button type="submit">Buscar</button>
+    </form>
+    <a href="{% url 'crear_visitante' %}">+ Nuevo visitante</a>
+    <ul>
+    {% for v in visitantes %}
+        <li>{{ v.nombre }} {{ v.apellidos }} - Visita a: {{ v.id_residente_fk }} - Entrada: {{ v.fecha_ingreso }}
+            <a href="{% url 'editar_visitante' v.id_visitante %}">Editar</a>
+        </li>
+    {% endfor %}
+    </ul>
+</body>
+</html>

@@ -1,0 +1,19 @@
+<!DOCTYPE html>
+<html>
+<head><title>Residentes</title></head>
+<body>
+    <h2>Residentes</h2>
+    <form method="get">
+        <input type="text" name="buscar" placeholder="Buscar por nombre">
+        <button type="submit">Buscar</button>
+    </form>
+    <a href="{% url 'crear_residente' %}">+ Nuevo residente</a>
+    <ul>
+    {% for r in residentes %}
+        <li>{{ r.nombres }} {{ r.apellidos }} - {{ r.telefono }}
+            <a href="{% url 'editar_residente' r.id_residente %}">Editar</a>
+        </li>
+    {% endfor %}
+    </ul>
+</body>
+</html>

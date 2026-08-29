@@ -1,0 +1,19 @@
+<!DOCTYPE html>
+<html>
+<head><title>Vehículos</title></head>
+<body>
+    <h2>Vehículos</h2>
+    <form method="get">
+        <input type="text" name="buscar" placeholder="Buscar por placa">
+        <button type="submit">Buscar</button>
+    </form>
+    <a href="{% url 'crear_vehiculo' %}">+ Nuevo vehículo</a>
+    <ul>
+    {% for v in vehiculos %}
+        <li>{{ v.placa }} - {{ v.marca }} {{ v.modelo }} ({{ v.color }})
+            <a href="{% url 'editar_vehiculo' v.id_vehiculo %}">Editar</a>
+        </li>
+    {% endfor %}
+    </ul>
+</body>
+</html>

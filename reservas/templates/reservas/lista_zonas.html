@@ -1,0 +1,13 @@
+<!DOCTYPE html>
+<html>
+<head><title>Zonas Comunes</title></head>
+<body>
+    <h2>Zonas Comunes</h2>
+    <ul>
+    {% for z in zonas %}
+        <li><strong>{{ z.nombre }}</strong> - Capacidad: {{ z.capacidad }} - {{ z.descripcion }}</li>
+    {% endfor %}
+    </ul>
+    <a href="{% url 'lista_reservas' %}">Ver reservas</a>
+</body>
+</html>

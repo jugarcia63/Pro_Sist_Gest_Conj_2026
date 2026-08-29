@@ -1,0 +1,16 @@
+<!DOCTYPE html>
+<html>
+<head><title>Reservas</title></head>
+<body>
+    <h2>Reservas</h2>
+    <a href="{% url 'crear_reserva' %}">+ Nueva reserva</a>
+    <a href="{% url 'lista_zonas' %}">Ver zonas comunes</a>
+    <ul>
+    {% for r in reservas %}
+        <li>{{ r.id_zona_fk }} - {{ r.fecha_inicio }} a {{ r.fecha_fin }} - Estado: {{ r.estado }}
+            <a href="{% url 'editar_reserva' r.id_reservas %}">Editar</a>
+        </li>
+    {% endfor %}
+    </ul>
+</body>
+</html>

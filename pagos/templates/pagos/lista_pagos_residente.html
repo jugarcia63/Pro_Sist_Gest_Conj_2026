@@ -1,0 +1,27 @@
+<!DOCTYPE html>
+<html>
+<head><title>Mis Pagos</title></head>
+<body>
+    <h2>Mis Pagos</h2>
+    {% if messages %}
+        <ul>
+        {% for message in messages %}<li>{{ message }}</li>{% endfor %}
+        </ul>
+    {% endif %}
+    <ul>
+    {% for p in pagos %}
+        <li>
+            {{ p.mes_ano|date:"F Y" }} - {{ p.tipo_pago }} - ${{ p.valor }} - Estado: {{ p.estado }}
+            {% if p.estado != 'Pagado' %}
+                <form method="post" action="{% url 'marcar_pagado' p.pk %}" style="display:inline;">
+                    {% csrf_token %}
+                    <button type="submit">Marcar como pagado</button>
+                </form>
+            {% else %}
+                (Pagado el {{ p.fecha_pago }})
+            {% endif %}
+        </li>
+    {% endfor %}
+    </ul>
+</body>
+</html>

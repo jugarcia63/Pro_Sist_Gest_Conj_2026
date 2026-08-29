@@ -1,0 +1,31 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Panel del Residente</title>
+    <style>
+        body { font-family: Arial, sans-serif; margin: 40px; }
+        h2 { border-bottom: 2px solid #333; padding-bottom: 8px; }
+        .menu { display: grid; grid-template-columns: repeat(2, 1fr); gap: 15px; max-width: 600px; margin-top: 20px; }
+        .menu a {
+            display: block; padding: 15px; background: #f2f2f2; border-radius: 6px;
+            text-decoration: none; color: #333; text-align: center; border: 1px solid #ccc;
+        }
+        .menu a:hover { background: #e0e0e0; }
+        .logout { margin-top: 30px; display: inline-block; }
+    </style>
+</head>
+<body>
+    <h2>Bienvenido, {{ usuario.username }}</h2>
+    <p>Panel de Residente</p>
+
+    <div class="menu">
+        <a href="{% url 'lista_vehiculos' %}">Mis Vehículos</a>
+        <a href="{% url 'lista_reservas' %}">Reservar Zona Común</a>
+        <a href="{% url 'lista_pagos_residente' %}">Mis Pagos</a>
+        <a href="{% url 'mis_reportes' %}">Mis Reportes</a>
+        <a href="{% url 'crear_reporte' %}">Reportar un Daño</a>
+    </div>
+
+    <a class="logout" href="{% url 'logout' %}">Cerrar sesión</a>
+</body>
+</html>

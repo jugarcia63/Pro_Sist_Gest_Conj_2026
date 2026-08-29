@@ -1,0 +1,19 @@
+<!DOCTYPE html>
+<html>
+<head><title>Mis Reportes</title></head>
+<body>
+    <h2>Mis Reportes</h2>
+    <a href="{% url 'crear_reporte' %}">+ Nuevo Reporte</a>
+    <ul>
+    {% for r in reportes %}
+        <li>
+            {{ r.categoria }} - Torre {{ r.torre }} Piso {{ r.piso }} - {{ r.descripcion }}
+            - Estado: <strong>{{ r.estado }}</strong>
+            ({{ r.fecha_reporte }})
+        </li>
+    {% empty %}
+        <li>No tienes reportes registrados.</li>
+    {% endfor %}
+    </ul>
+</body>
+</html>
