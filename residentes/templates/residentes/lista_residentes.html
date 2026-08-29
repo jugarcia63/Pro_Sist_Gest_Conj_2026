@@ -3,6 +3,15 @@
 <head><title>Residentes</title></head>
 <body>
     <h2>Residentes</h2>
+
+    {% if messages %}
+        <ul>
+        {% for message in messages %}
+            <li><strong>{{ message }}</strong></li>
+        {% endfor %}
+        </ul>
+    {% endif %}
+
     <form method="get">
         <input type="text" name="buscar" placeholder="Buscar por nombre">
         <button type="submit">Buscar</button>
@@ -10,8 +19,23 @@
     <a href="{% url 'crear_residente' %}">+ Nuevo residente</a>
     <ul>
     {% for r in residentes %}
-        <li>{{ r.nombres }} {{ r.apellidos }} - {{ r.telefono }}
+        <li>
+            {{ r.nombres }} {{ r.apellidos }} - {{ r.telefono }}
             <a href="{% url 'editar_residente' r.id_residente %}">Editar</a>
+
+            <form method="post" action="{% url 'resetear_password' r.id_residente %}" style="display:inline;">
+                {% csrf_token %}
+                <button type="submit" onclick="return confirm('¿Generar una nueva contraseña temporal para {{ r.nombres }}?');">
+                    Resetear contraseña
+                </button>
+            </form>
+
+            <form method="post" action="{% url 'eliminar_residente' r.id_residente %}" style="display:inline;">
+                {% csrf_token %}
+                <button type="submit" onclick="return confirm('¿Seguro que quieres eliminar a {{ r.nombres }} {{ r.apellidos }}? Esto también borra su cuenta de acceso.');">
+                    Eliminar
+                </button>
+            </form>
         </li>
     {% endfor %}
     </ul>
