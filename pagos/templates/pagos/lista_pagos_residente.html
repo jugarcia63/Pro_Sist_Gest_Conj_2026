@@ -1,26 +1,28 @@
-<!DOCTYPE html>
-<html>
-<head><title>Mis Pagos</title></head>
-<body>
+{% extends "base.html" %}
+{% block title %}Mis Pagos{% endblock %}
+{% block content %}
+<div class="contenedor">
     <h2>Mis Pagos</h2>
     {% if messages %}
-        <ul>{% for message in messages %}<li>{{ message }}</li>{% endfor %}</ul>
+        <ul class="messages">
+            {% for message in messages %}<li class="{{ message.tags }}">{{ message }}</li>{% endfor %}
+        </ul>
     {% endif %}
-    <ul>
     {% for p in pagos %}
-        <li>
-            {{ p.mes_ano|date:"F Y" }} - {{ p.tipo_pago }} - ${{ p.valor }} - Estado: {{ p.estado }}
+        <div class="card">
+            {{ p.mes_ano|date:"F Y" }} - {{ p.tipo_pago }} - ${{ p.valor }}
             {% if p.estado != 'Pagado' %}
-                <a href="{% url 'pasarela_pago' p.pk %}">
-                    <button type="button">Pagar</button>
-                </a>
+                <span class="badge badge-aviso">{{ p.estado }}</span>
+                <a href="{% url 'pasarela_pago' p.pk %}" class="btn btn-primario">Pagar</a>
             {% else %}
-                (Pagado el {{ p.fecha_pago }} - {{ p.metodo_pago }})
+                <span class="badge badge-exito">Pagado</span>
+                <span style="color: var(--color-texto-suave); font-size: 0.9rem;">
+                    (el {{ p.fecha_pago }} - {{ p.metodo_pago }})
+                </span>
             {% endif %}
-        </li>
+        </div>
     {% empty %}
-        <li>No tienes pagos registrados.</li>
+        <p>No tienes pagos registrados.</p>
     {% endfor %}
-    </ul>
-</body>
-</html>
+</div>
+{% endblock %}

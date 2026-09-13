@@ -1,10 +1,10 @@
-<!DOCTYPE html>
-<html>
-<head><title>Estado de Pagos</title></head>
-<body>
+{% extends "base.html" %}
+{% block title %}Estado de Pagos{% endblock %}
+{% block content %}
+<div class="contenedor">
     <h2>Estado de Pagos de Todos los Residentes</h2>
-    <a href="{% url 'crear_pago' %}">+ Nuevo pago</a>
-    <table border="1">
+    <p><a href="{% url 'crear_pago' %}" class="btn btn-primario">+ Nuevo pago</a></p>
+    <table>
         <tr><th>Residente</th><th>Tipo</th><th>Mes/Año</th><th>Valor</th><th>Vencimiento</th><th>Estado</th></tr>
         {% for p in pagos %}
         <tr>
@@ -13,9 +13,15 @@
             <td>{{ p.mes_ano|date:"F Y" }}</td>
             <td>${{ p.valor }}</td>
             <td>{{ p.fecha_vencimiento }}</td>
-            <td>{{ p.estado }}</td>
+            <td>
+                {% if p.estado == 'Pagado' %}
+                    <span class="badge badge-exito">{{ p.estado }}</span>
+                {% else %}
+                    <span class="badge badge-aviso">{{ p.estado }}</span>
+                {% endif %}
+            </td>
         </tr>
         {% endfor %}
     </table>
-</body>
-</html>
+</div>
+{% endblock %}

@@ -1,7 +1,6 @@
-<!DOCTYPE html>
-<html>
-<head>
-    <title>Panel de Seguridad</title>
+{% extends "base.html" %}
+{% block title %}panel de seguridad{% endblock %}
+{% block content %}
     <style>
         body { font-family: Arial, sans-serif; margin: 40px; }
         h2 { border-bottom: 2px solid #333; padding-bottom: 8px; }
@@ -25,5 +24,4 @@
     </div>
 
     <a class="logout" href="{% url 'logout' %}">Cerrar sesión</a>
-</body>
-</html>
+{% endblock %}

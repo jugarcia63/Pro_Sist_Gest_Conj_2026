@@ -1,19 +1,25 @@
-<!DOCTYPE html>
-<html>
-<head><title>Mis Reportes</title></head>
-<body>
-    <h2>Mis Reportes</h2>
-    <a href="{% url 'crear_reporte' %}">+ Nuevo Reporte</a>
-    <ul>
+{% extends "base.html" %}
+{% block title %}Mis reportes{% endblock %}
+{% block content %}
+<div class="contenedor">
+    <h1>Mis reportes</h1>
+
+    <a href="{% url 'crear_reporte' %}" class="btn btn-primario" style="margin-bottom:1.5rem; display:inline-flex;">+ Nuevo reporte</a>
+
     {% for r in reportes %}
-        <li>
-            {{ r.categoria }} - Torre {{ r.torre }} Piso {{ r.piso }} - {{ r.descripcion }}
-            - Estado: <strong>{{ r.estado }}</strong>
-            ({{ r.fecha_reporte }})
-        </li>
+        <div class="card">
+            <strong>{{ r.categoria }}</strong> — Torre {{ r.torre }}, Piso {{ r.piso }}
+            <p style="margin:0.4rem 0;">{{ r.descripcion }}</p>
+            <span class="badge
+                {% if r.estado == 'Abierto' %}badge-error
+                {% elif r.estado == 'En proceso' %}badge-aviso
+                {% else %}badge-exito{% endif %}">
+                {{ r.estado }}
+            </span>
+            <span style="color:var(--color-texto-suave); font-size:0.85rem; margin-left:0.5rem;">{{ r.fecha_reporte }}</span>
+        </div>
     {% empty %}
-        <li>No tienes reportes registrados.</li>
+        <p>No tienes reportes registrados.</p>
     {% endfor %}
-    </ul>
-</body>
-</html>
+</div>
+{% endblock %}

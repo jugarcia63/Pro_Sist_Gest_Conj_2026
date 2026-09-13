@@ -1,0 +1,153 @@
+/* Botones */
+.btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.4rem;
+  padding: 0.6rem 1.3rem;
+  border-radius: var(--radio-sm);
+  border: 1px solid transparent;
+  font-family: var(--fuente);
+  font-size: 0.9rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.15s ease;
+}
+
+.btn-primario { background: var(--color-primario); color: #fff; }
+.btn-primario:hover { background: var(--color-primario-oscuro); color: #fff; }
+
+.btn-secundario { background: var(--color-superficie); color: var(--color-texto); border-color: var(--color-borde); }
+.btn-secundario:hover { border-color: var(--color-texto-suave); background: var(--color-fondo); }
+
+.btn-peligro { background: var(--color-error); color: #fff; }
+.btn-peligro:hover { background: #8f2b26; }
+
+.btn:disabled { opacity: 0.5; cursor: not-allowed; }
+
+/* Formularios */
+form p { margin-bottom: 1.1rem; }
+
+label {
+  display: block;
+  font-weight: 600;
+  font-size: 0.85rem;
+  margin-bottom: 0.35rem;
+  color: var(--color-texto);
+}
+
+input, select, textarea {
+  width: 100%;
+  padding: 0.6rem 0.85rem;
+  border: 1px solid var(--color-borde);
+  border-radius: var(--radio-sm);
+  font-family: var(--fuente);
+  font-size: 0.92rem;
+  background: var(--color-superficie);
+  color: var(--color-texto);
+  transition: border-color 0.15s ease, box-shadow 0.15s ease;
+}
+
+input:focus, select:focus, textarea:focus {
+  outline: none;
+  border-color: var(--color-primario);
+  box-shadow: 0 0 0 3px var(--color-primario-suave);
+}
+
+input::placeholder { color: #a8a4bd; }
+
+/* Tablas */
+table {
+  width: 100%;
+  border-collapse: collapse;
+  background: var(--color-superficie);
+  border: 1px solid var(--color-borde);
+  border-radius: var(--radio);
+  overflow: hidden;
+  box-shadow: var(--sombra-sm);
+}
+
+thead { background: var(--color-fondo); }
+
+th {
+  padding: 0.8rem 1.1rem;
+  text-align: left;
+  font-size: 0.78rem;
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+  color: var(--color-texto-suave);
+  font-weight: 600;
+  border-bottom: 1px solid var(--color-borde);
+}
+
+td {
+  padding: 0.85rem 1.1rem;
+  border-bottom: 1px solid var(--color-borde);
+  font-size: 0.92rem;
+}
+
+tbody tr { transition: background 0.15s ease; }
+tbody tr:hover { background: var(--color-fondo); }
+tbody tr:last-child td { border-bottom: none; }
+
+/* Tarjetas */
+.card {
+  background: var(--color-superficie);
+  border: 1px solid var(--color-borde);
+  border-radius: var(--radio);
+  box-shadow: var(--sombra-sm);
+  padding: 1.4rem 1.6rem;
+  margin-bottom: 0.9rem;
+  transition: box-shadow 0.15s ease;
+}
+.card:hover { box-shadow: var(--sombra-hover); }
+.card h3 { font-size: 1rem; margin-bottom: 1rem; }
+
+/* Grid de resumen (tarjetas de métricas en el panel) */
+.resumen {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 1rem;
+  margin-bottom: 2rem;
+}
+.resumen .card { margin-bottom: 0; }
+.resumen .card .num {
+  font-family: var(--fuente-display);
+  font-size: 1.7rem;
+  font-weight: 600;
+  color: var(--color-primario-oscuro);
+}
+.resumen .card:nth-child(2) .num { color: var(--color-acento); }
+.resumen .card .etq { font-size: 0.82rem; color: var(--color-texto-suave); margin-top: 0.2rem; }
+
+@media (max-width: 768px) {
+  .resumen { grid-template-columns: 1fr; }
+}
+
+/* Badges */
+.badge {
+  display: inline-block;
+  padding: 0.25rem 0.75rem;
+  border-radius: 50px;
+  font-size: 0.76rem;
+  font-weight: 600;
+}
+
+.badge-exito { background: var(--color-exito-fondo); color: var(--color-exito); }
+.badge-error { background: var(--color-error-fondo); color: var(--color-error); }
+.badge-aviso { background: var(--color-aviso-fondo); color: var(--color-aviso); }
+
+/* Mensajes de Django */
+.messages { margin-bottom: 1.25rem; }
+
+.messages li {
+  padding: 0.75rem 1rem;
+  border-radius: var(--radio-sm);
+  margin-bottom: 0.5rem;
+  font-size: 0.88rem;
+  border: 1px solid transparent;
+}
+
+.messages .success { background: var(--color-exito-fondo); color: var(--color-exito); border-color: #c7e5d9; }
+.messages .error { background: var(--color-error-fondo); color: var(--color-error); border-color: #f0cdcb; }
+.messages .warning { background: var(--color-aviso-fondo); color: var(--color-aviso); border-color: #eeddb6; }

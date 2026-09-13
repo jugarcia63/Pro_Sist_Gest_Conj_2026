@@ -1,16 +1,17 @@
-<!DOCTYPE html>
-<html>
-<head><title>Reservas</title></head>
-<body>
+{% extends "base.html" %}
+{% block title %}Lista de Reservas{% endblock %}
+{% block content %}
+<div class="contenedor">
     <h2>Reservas</h2>
-    <a href="{% url 'crear_reserva' %}">+ Nueva reserva</a>
-    <a href="{% url 'lista_zonas' %}">Ver zonas comunes</a>
-    <ul>
+    <p>
+        <a href="{% url 'crear_reserva' %}" class="btn btn-primario">+ Nueva reserva</a>
+        <a href="{% url 'lista_zonas' %}" class="btn btn-secundario">Ver zonas comunes</a>
+    </p>
     {% for r in reservas %}
-        <li>{{ r.id_zona_fk }} - {{ r.fecha_inicio }} a {{ r.fecha_fin }} - Estado: {{ r.estado }}
-            <a href="{% url 'editar_reserva' r.id_reservas %}">Editar</a>
-        </li>
+        <div class="card">
+            {{ r.id_zona_fk }} - {{ r.fecha_inicio }} a {{ r.fecha_fin }} - Estado: {{ r.estado }}
+            <a href="{% url 'editar_reserva' r.id_reservas %}" class="btn btn-secundario">Editar</a>
+        </div>
     {% endfor %}
-    </ul>
-</body>
-</html>
+</div>
+{% endblock %}

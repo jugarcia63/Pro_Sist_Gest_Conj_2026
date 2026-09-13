@@ -1,19 +1,35 @@
-<!DOCTYPE html>
-<html>
-<head><title>Visitantes</title></head>
-<body>
-    <h2>Visitantes</h2>
-    <form method="get">
+{% extends "base.html" %}
+{% block title %}Visitantes{% endblock %}
+{% block content %}
+<div class="contenedor">
+    <h1>Visitantes</h1>
+
+    <form method="get" style="display:flex; gap:0.6rem; margin-bottom:1.25rem; max-width:400px;">
         <input type="text" name="buscar" placeholder="Buscar por nombre">
-        <button type="submit">Buscar</button>
+        <button type="submit" class="btn btn-secundario">Buscar</button>
     </form>
-    <a href="{% url 'crear_visitante' %}">+ Nuevo visitante</a>
-    <ul>
-    {% for v in visitantes %}
-        <li>{{ v.nombre }} {{ v.apellidos }} - Visita a: {{ v.id_residente_fk }} - Entrada: {{ v.fecha_ingreso }}
-            <a href="{% url 'editar_visitante' v.id_visitante %}">Editar</a>
-        </li>
-    {% endfor %}
-    </ul>
-</body>
-</html>
+
+    <a href="{% url 'crear_visitante' %}" class="btn btn-primario" style="margin-bottom:1.5rem; display:inline-flex;">+ Nuevo visitante</a>
+
+    <table>
+        <thead>
+            <tr>
+                <th>Nombre</th>
+                <th>Visita a</th>
+                <th>Entrada</th>
+                <th>Acciones</th>
+            </tr>
+        </thead>
+        <tbody>
+        {% for v in visitantes %}
+            <tr>
+                <td>{{ v.nombre }} {{ v.apellidos }}</td>
+                <td>{{ v.id_residente_fk }}</td>
+                <td>{{ v.fecha_ingreso }}</td>
+                <td><a href="{% url 'editar_visitante' v.id_visitante %}">Editar</a></td>
+            </tr>
+        {% endfor %}
+        </tbody>
+    </table>
+</div>
+{% endblock %}

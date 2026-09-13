@@ -1,37 +1,54 @@
-<!DOCTYPE html>
-<html>
-<head><title>Gestión de Reportes</title></head>
-<body>
-    <h2>Reportes de Daños</h2>
+{% extends "base.html" %}
+{% block title %}Reportes de daños{% endblock %}
+{% block content %}
+<div class="contenedor">
+    <h1>Reportes de daños</h1>
+
     {% if messages %}
-        <ul>{% for message in messages %}<li>{{ message }}</li>{% endfor %}</ul>
+        <ul class="messages">
+            {% for message in messages %}
+                <li class="{{ message.tags }}">{{ message }}</li>
+            {% endfor %}
+        </ul>
     {% endif %}
-    <table border="1">
-        <tr>
-            <th>Residente</th><th>Categoría</th><th>Ubicación</th><th>Descripción</th>
-            <th>Fecha</th><th>Estado</th><th>Cambiar Estado</th>
-        </tr>
+
+    <table>
+        <thead>
+            <tr>
+                <th>Residente</th><th>Categoría</th><th>Ubicación</th><th>Descripción</th>
+                <th>Fecha</th><th>Estado</th><th>Cambiar estado</th>
+            </tr>
+        </thead>
+        <tbody>
         {% for r in reportes %}
-        <tr>
-            <td>{{ r.id_residente_fk }}</td>
-            <td>{{ r.categoria }}</td>
-            <td>Torre {{ r.torre }} - Piso {{ r.piso }}</td>
-            <td>{{ r.descripcion }}</td>
-            <td>{{ r.fecha_reporte }}</td>
-            <td>{{ r.estado }}</td>
-            <td>
-                <form method="post" action="{% url 'cambiar_estado_reporte' r.pk %}">
-                    {% csrf_token %}
-                    <select name="estado">
-                        <option value="Abierto" {% if r.estado == "Abierto" %}selected{% endif %}>Abierto</option>
-                        <option value="En proceso" {% if r.estado == "En proceso" %}selected{% endif %}>En proceso</option>
-                        <option value="Cerrado" {% if r.estado == "Cerrado" %}selected{% endif %}>Cerrado</option>
-                    </select>
-                    <button type="submit">Actualizar</button>
-                </form>
-            </td>
-        </tr>
+            <tr>
+                <td>{{ r.id_residente_fk }}</td>
+                <td>{{ r.categoria }}</td>
+                <td>Torre {{ r.torre }} - Piso {{ r.piso }}</td>
+                <td>{{ r.descripcion }}</td>
+                <td>{{ r.fecha_reporte }}</td>
+                <td>
+                    <span class="badge
+                        {% if r.estado == 'Abierto' %}badge-error
+                        {% elif r.estado == 'En proceso' %}badge-aviso
+                        {% else %}badge-exito{% endif %}">
+                        {{ r.estado }}
+                    </span>
+                </td>
+                <td>
+                    <form method="post" action="{% url 'cambiar_estado_reporte' r.pk %}" style="display:flex; gap:0.5rem;">
+                        {% csrf_token %}
+                        <select name="estado">
+                            <option value="Abierto" {% if r.estado == "Abierto" %}selected{% endif %}>Abierto</option>
+                            <option value="En proceso" {% if r.estado == "En proceso" %}selected{% endif %}>En proceso</option>
+                            <option value="Cerrado" {% if r.estado == "Cerrado" %}selected{% endif %}>Cerrado</option>
+                        </select>
+                        <button type="submit" class="btn btn-secundario">Actualizar</button>
+                    </form>
+                </td>
+            </tr>
         {% endfor %}
+        </tbody>
     </table>
-</body>
-</html>
+</div>
+{% endblock %}

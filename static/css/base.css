@@ -1,0 +1,90 @@
+@import url('https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,500;9..144,600&family=Inter:wght@400;500;600;700&display=swap');
+
+:root {
+  /* Paleta principal — vívida, alejada de amarillo/verde */
+  --color-primario: #6D28D9;
+  --color-primario-oscuro: #4C1D95;
+  --color-primario-suave: #F1EAFE;
+
+  /* Complemento frío */
+  --color-acento: #0EA5E9;
+  --color-acento-suave: #E3F4FD;
+
+  /* Neutros */
+  --color-fondo: #F5F4FA;
+  --color-superficie: #ffffff;
+  --color-texto: #201B33;
+  --color-texto-suave: #6C6885;
+  --color-borde: #E5E2F0;
+
+  /* Estados */
+  --color-exito: #0F9D77;
+  --color-exito-fondo: #E4F6F0;
+  --color-error: #C4362F;
+  --color-error-fondo: #FBEAE9;
+  --color-aviso: #B7791F;
+  --color-aviso-fondo: #FBF3E3;
+
+  /* Métricas */
+  --radio-sm: 6px;
+  --radio: 14px;
+  --radio-lg: 20px;
+  --espaciado: 1rem;
+  --sombra-sm: 0 1px 3px rgba(32, 27, 51, 0.06);
+  --sombra: 0 12px 32px rgba(32, 27, 51, 0.10);
+  --sombra-hover: 0 6px 20px rgba(32, 27, 51, 0.12);
+  --fuente: 'Inter', 'Segoe UI', system-ui, -apple-system, sans-serif;
+  --fuente-display: 'Fraunces', serif;
+}
+
+* {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+}
+
+html { scroll-behavior: smooth; }
+
+body {
+  font-family: var(--fuente);
+  color: var(--color-texto);
+  background: var(--color-fondo);
+  line-height: 1.6;
+  min-height: 100vh;
+  font-size: 15px;
+  -webkit-font-smoothing: antialiased;
+}
+
+h1, h2, h3, h4 {
+  color: var(--color-texto);
+  font-weight: 600;
+  letter-spacing: -0.01em;
+  margin-bottom: 0.75rem;
+}
+
+h1 {
+  font-family: var(--fuente-display);
+  font-weight: 500;
+  font-size: 1.7rem;
+}
+h2 { font-size: 1.35rem; }
+h3 { font-size: 1.1rem; }
+
+p { margin-bottom: 0.75rem; color: var(--color-texto-suave); }
+
+a {
+  color: var(--color-primario);
+  text-decoration: none;
+  transition: color 0.15s ease;
+}
+a:hover { color: var(--color-primario-oscuro); }
+
+ul, ol { list-style: none; }
+img { max-width: 100%; display: block; }
+
+::selection { background: var(--color-primario-suave); color: var(--color-primario-oscuro); }
+
+::-webkit-scrollbar { width: 10px; }
+::-webkit-scrollbar-track { background: transparent; }
+::-webkit-scrollbar-thumb { background: var(--color-borde); border-radius: 10px; }
+::-webkit-scrollbar-thumb:hover { background: var(--color-texto-suave); }
