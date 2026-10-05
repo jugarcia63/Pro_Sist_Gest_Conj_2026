@@ -8,6 +8,10 @@ class Usuario(AbstractUser):
         ('seguridad', 'Seguridad'),
     ]
     rol = models.CharField(max_length=20, choices=ROL_CHOICES, default='residente')
+    debe_cambiar_password = models.BooleanField(
+        default=False,
+        help_text='Se activa al crear la cuenta o resetear la contraseña; obliga a cambiarla en el próximo login.',
+    )
 
     groups = models.ManyToManyField(
         'auth.Group',

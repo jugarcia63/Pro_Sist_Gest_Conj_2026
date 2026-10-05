@@ -6,3 +6,6 @@ db.sqlite3
 *.log
 .vscode/
 *.sqlite3
+# Exportación local de datos (contiene hashes de contraseñas)
+datos_mysql.json
+staticfiles/

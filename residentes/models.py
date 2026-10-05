@@ -1,3 +1,4 @@
+from django.conf import settings
 from django.db import models
 
 
@@ -29,6 +30,14 @@ class Residentes(models.Model):
     id_unidad_fk = models.ForeignKey(Unidades, models.DO_NOTHING, db_column='Id_Unidad_FK', blank=True, null=True)
     fecha_registro = models.DateTimeField(db_column='Fecha_Registro', blank=True, null=True)
     estado = models.IntegerField(db_column='Estado', blank=True, null=True)
+    usuario = models.OneToOneField(
+        settings.AUTH_USER_MODEL,
+        on_delete=models.SET_NULL,
+        db_column='Id_Usuario_FK',
+        blank=True,
+        null=True,
+        related_name='residente',
+    )
 
     class Meta:
         managed = True

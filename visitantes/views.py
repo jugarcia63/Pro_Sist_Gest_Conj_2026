@@ -1,10 +1,12 @@
 from django.views.generic import ListView, CreateView, UpdateView
 from django.urls import reverse_lazy
+from usuarios.permisos import RolRequeridoMixin
 from .models import Visitantes
 from .forms import VisitanteForm
 
 
-class ListaVisitantes(ListView):
+class ListaVisitantes(RolRequeridoMixin, ListView):
+    roles_permitidos = ('admin', 'seguridad')
     model = Visitantes
     template_name = 'visitantes/lista_visitantes.html'
     context_object_name = 'visitantes'
@@ -17,14 +19,16 @@ class ListaVisitantes(ListView):
         return queryset
 
 
-class CrearVisitante(CreateView):
+class CrearVisitante(RolRequeridoMixin, CreateView):
+    roles_permitidos = ('admin', 'seguridad')
     model = Visitantes
     form_class = VisitanteForm
     template_name = 'visitantes/form_visitante.html'
     success_url = reverse_lazy('lista_visitantes')
 
 
-class EditarVisitante(UpdateView):
+class EditarVisitante(RolRequeridoMixin, UpdateView):
+    roles_permitidos = ('admin', 'seguridad')
     model = Visitantes
     form_class = VisitanteForm
     template_name = 'visitantes/form_visitante.html'
