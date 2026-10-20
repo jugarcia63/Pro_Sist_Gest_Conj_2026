@@ -1,5 +1,6 @@
 from django.conf import settings
 from django.db import models
+from django.utils.translation import gettext
 
 
 class Unidades(models.Model):
@@ -16,7 +17,7 @@ class Unidades(models.Model):
         db_table = 'unidades'
 
     def __str__(self):
-        return f"Torre {self.torre} - Apto {self.apto}"
+        return gettext('Torre %(torre)s - Apto %(apto)s') % {'torre': self.torre, 'apto': self.apto}
 
 
 class Residentes(models.Model):
@@ -44,4 +45,4 @@ class Residentes(models.Model):
         db_table = 'residentes'
 
     def __str__(self):
-        return f"{self.nombres} {self.apellidos}"
+        return f"{self.nombres or ''} {self.apellidos or ''}".strip() or gettext('Residente sin nombre')

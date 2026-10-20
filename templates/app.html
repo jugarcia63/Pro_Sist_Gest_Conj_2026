@@ -1,0 +1,85 @@
+{% extends "base.html" %}
+{% load i18n ui %}
+{% block body %}
+<div class="app">
+    <aside class="sidebar" id="menu-lateral" aria-label="{% translate 'Menú principal' %}">
+        <a class="sidebar__marca" href="{% url 'dashboard' %}">
+            <span class="sidebar__logo">{% icono "edificio" %}</span>
+            <span class="sidebar__nombre">{% translate "Gestión de Conjuntos" %}<small>{% translate "Administración residencial" %}</small></span>
+        </a>
+
+        <nav class="sidebar__nav">
+            {% for titulo, items in menu %}
+                <div class="sidebar__seccion">
+                    <div class="sidebar__titulo">{{ titulo }}</div>
+                    {% for item in items %}
+                        <a href="{{ item.url }}" class="sidebar__link{% if item.activo %} activo{% endif %}"{% if item.activo %} aria-current="page"{% endif %}>
+                            {% icono item.icono %}
+                            <span>{{ item.texto }}</span>
+                            {% if item.contador %}<span class="sidebar__contador" title="{% translate 'Pendientes' %}">{{ item.contador }}</span>{% endif %}
+                        </a>
+                    {% endfor %}
+                </div>
+            {% endfor %}
+        </nav>
+
+        <div class="sidebar__pie">
+            <span class="avatar">{{ iniciales }}</span>
+            <div class="sidebar__usuario">
+                <strong title="{{ nombre_visible }}">{{ nombre_visible }}</strong>
+                <span>{{ user.get_rol_display|traducir }} · @{{ user.username }}</span>
+            </div>
+            <form method="post" action="{% url 'logout' %}">
+                {% csrf_token %}
+                <button type="submit" class="sidebar__salir" title="{% translate 'Cerrar sesión' %}" aria-label="{% translate 'Cerrar sesión' %}">{% icono "salir" %}</button>
+            </form>
+        </div>
+    </aside>
+    <div class="velo" data-menu-toggle></div>
+
+    <div class="principal">
+        <header class="topbar">
+            <button type="button" class="topbar__menu" data-menu-toggle aria-label="{% translate 'Abrir menú' %}" aria-controls="menu-lateral">{% icono "menu" %}</button>
+            <div class="topbar__historial">
+                <button type="button" data-historial="atras" title="{% translate 'Atrás' %}" aria-label="{% translate 'Atrás' %}">{% icono "volver" %}</button>
+                <button type="button" data-historial="adelante" title="{% translate 'Adelante' %}" aria-label="{% translate 'Adelante' %}">{% icono "adelante" %}</button>
+            </div>
+            <nav class="topbar__ruta" aria-label="{% translate 'Ubicación' %}">
+                <a href="{% url 'dashboard' %}">{% translate "Inicio" %}</a>
+                {% block miga %}{% endblock %}
+            </nav>
+            <div class="topbar__lado">
+                {% include "partials/idioma.html" %}
+                <div class="topbar__fecha">{% icono "calendario" %}<span>{% now "DATE_FORMAT" %}</span></div>
+            </div>
+        </header>
+
+        <main class="contenido">
+            {% if messages %}
+                <div class="alertas" role="status">
+                    {% for message in messages %}
+                        <div class="alerta alerta--{{ message.tags|default:'info' }}">
+                            {% if message.tags == 'success' %}{% icono "check" %}{% elif message.tags == 'error' or message.tags == 'warning' %}{% icono "alerta" %}{% else %}{% icono "info" %}{% endif %}
+                            <div class="alerta__texto">{{ message }}</div>
+                            <button type="button" class="alerta__cerrar" aria-label="{% translate 'Cerrar mensaje' %}">{% icono "x" %}</button>
+                        </div>
+                    {% endfor %}
+                </div>
+            {% endif %}
+
+            {% block encabezado %}
+                <div class="encabezado">
+                    <div class="encabezado__texto">
+                        {% block eyebrow %}{% endblock %}
+                        <h1>{% block titulo_pagina %}{% endblock %}</h1>
+                        {% block subtitulo %}{% endblock %}
+                    </div>
+                    <div class="encabezado__acciones">{% block acciones %}{% endblock %}</div>
+                </div>
+            {% endblock %}
+
+            {% block contenido %}{% endblock %}
+        </main>
+    </div>
+</div>
+{% endblock %}

@@ -1,28 +1,54 @@
-{% extends "base.html" %}
-{% block title %}Mis Pagos{% endblock %}
-{% block content %}
-<div class="contenedor">
-    <h2>Mis Pagos</h2>
-    {% if messages %}
-        <ul class="messages">
-            {% for message in messages %}<li class="{{ message.tags }}">{{ message }}</li>{% endfor %}
-        </ul>
-    {% endif %}
-    {% for p in pagos %}
-        <div class="card">
-            {{ p.mes_ano|date:"F Y" }} - {{ p.tipo_pago }} - ${{ p.valor }}
-            {% if p.estado != 'Pagado' %}
-                <span class="badge badge-aviso">{{ p.estado }}</span>
-                <a href="{% url 'pasarela_pago' p.pk %}" class="btn btn-primario">Pagar</a>
-            {% else %}
-                <span class="badge badge-exito">Pagado</span>
-                <span style="color: var(--color-texto-suave); font-size: 0.9rem;">
-                    (el {{ p.fecha_pago }} - {{ p.metodo_pago }})
-                </span>
-            {% endif %}
-        </div>
-    {% empty %}
-        <p>No tienes pagos registrados.</p>
-    {% endfor %}
+{% extends "app.html" %}
+{% load i18n ui %}
+{% block title %}{% translate "Mis pagos" %}{% endblock %}
+{% block miga %}{% icono "derecha" %}<strong>{% translate "Mis pagos" %}</strong>{% endblock %}
+{% block eyebrow %}<span class="encabezado__eyebrow">{% icono "billetera" %} {% translate "Mis cuentas" %}</span>{% endblock %}
+{% block titulo_pagina %}{% translate "Mis pagos" %}{% endblock %}
+{% block subtitulo %}<p>{% translate "Paga tus facturas en línea y consulta lo que ya pagaste." %}</p>{% endblock %}
+{% block acciones %}<a href="{% url 'dashboard' %}" class="btn btn-secundario">{% icono "volver" %} {% translate "Volver" %}</a>{% endblock %}
+{% block contenido %}
+<div class="grid-stats">
+    <div class="stat stat--ambar{% if num_vencidos %} stat--alerta{% endif %}">
+        <span class="stat__icono">{% icono "billetera" %}</span>
+        <span class="stat__etiqueta">{% translate "Total por pagar" %}</span>
+        <span class="stat__valor">{{ total_pendiente|pesos }}</span>
+        <span class="stat__nota">{% if num_vencidos %}{% blocktranslate count n=num_vencidos %}{{ n }} factura vencida{% plural %}{{ n }} facturas vencidas{% endblocktranslate %}{% elif num_pendientes %}{% blocktranslate count n=num_pendientes %}{{ n }} factura pendiente{% plural %}{{ n }} facturas pendientes{% endblocktranslate %}{% else %}{% translate "No debes nada" %}{% endif %}</span>
+    </div>
+    <div class="stat stat--menta">
+        <span class="stat__icono">{% icono "check" %}</span>
+        <span class="stat__etiqueta">{% translate "Pagado históricamente" %}</span>
+        <span class="stat__valor">{{ total_pagado|pesos }}</span>
+    </div>
 </div>
+
+<section class="panel">
+    <div class="panel__cabecera"><h2>{% icono "factura" %} {% translate "Facturas" %}</h2></div>
+    {% if pagos %}
+        {% for p in pagos %}
+            <div class="factura{% if p.estado == 'Pagado' %} factura--pagada{% elif p.fecha_vencimiento < hoy %} factura--vencida{% endif %}">
+                <span class="factura__icono">{% if p.estado == 'Pagado' %}{% icono "check" %}{% else %}{% icono "factura" %}{% endif %}</span>
+                <div class="factura__cuerpo">
+                    <strong>{{ p.tipo_pago|traducir }} · {{ p.mes_ano|date:"F Y"|capfirst }}</strong>
+                    <small>
+                        {% if p.estado == 'Pagado' %}{% blocktranslate with fecha=p.fecha_pago|date:"MONTH_DAY_FORMAT" %}Pagado el {{ fecha }}{% endblocktranslate %}{% if p.metodo_pago %} · {{ p.metodo_pago }}{% endif %}
+                        {% elif p.fecha_vencimiento < hoy %}{% blocktranslate with fecha=p.fecha_vencimiento|date:"MONTH_DAY_FORMAT" %}Venció el {{ fecha }}{% endblocktranslate %}
+                        {% else %}{% blocktranslate with fecha=p.fecha_vencimiento|date:"MONTH_DAY_FORMAT" %}Paga antes del {{ fecha }}{% endblocktranslate %}{% endif %}
+                    </small>
+                </div>
+                <span class="factura__valor">{{ p.valor|pesos }}</span>
+                {% if p.estado == 'Pagado' %}
+                    <span class="badge badge-exito">{% translate "Pagado" %}</span>
+                {% else %}
+                    <a href="{% url 'pasarela_pago' p.pk %}" class="btn btn-primario btn-sm">{% icono "tarjeta" %} {% translate "Pagar" %}</a>
+                {% endif %}
+            </div>
+        {% endfor %}
+    {% else %}
+        <div class="vacio">
+            <div class="vacio__icono">{% icono "factura" %}</div>
+            <h3>{% translate "No tienes facturas" %}</h3>
+            <p>{% translate "Cuando la administración genere tu cuota aparecerá aquí para que la pagues." %}</p>
+        </div>
+    {% endif %}
+</section>
 {% endblock %}

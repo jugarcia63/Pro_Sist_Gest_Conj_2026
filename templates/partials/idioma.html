@@ -1,0 +1,8 @@
+{% load i18n %}
+{% get_current_language as idioma_actual %}
+<form action="{% url 'set_language' %}" method="post" class="idioma" aria-label="{% translate 'Idioma' %}">
+    {% csrf_token %}
+    <input type="hidden" name="next" value="{{ request.get_full_path }}">
+    <button type="submit" name="language" value="es" class="{% if idioma_actual == 'es' %}activo{% endif %}" lang="es" title="Español"{% if idioma_actual == 'es' %} aria-pressed="true"{% endif %}>ES</button>
+    <button type="submit" name="language" value="en" class="{% if idioma_actual == 'en' %}activo{% endif %}" lang="en" title="English"{% if idioma_actual == 'en' %} aria-pressed="true"{% endif %}>EN</button>
+</form>

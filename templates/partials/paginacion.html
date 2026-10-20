@@ -1,0 +1,15 @@
+{% load i18n ui %}
+{% if is_paginated %}
+  <div class="paginacion">
+    <span>{% blocktranslate with inicio=page_obj.start_index fin=page_obj.end_index total=paginator.count %}Mostrando {{ inicio }}–{{ fin }} de {{ total }}{% endblocktranslate %}</span>
+    <div class="paginacion__botones">
+      {% if page_obj.has_previous %}
+        <a class="btn btn-secundario btn-sm" href="{% querystring page=page_obj.previous_page_number %}">{% icono "volver" %} {% translate "Anterior" %}</a>
+      {% endif %}
+      <span class="btn btn-fantasma btn-sm num">{% blocktranslate with actual=page_obj.number total=paginator.num_pages %}Página {{ actual }} de {{ total }}{% endblocktranslate %}</span>
+      {% if page_obj.has_next %}
+        <a class="btn btn-secundario btn-sm" href="{% querystring page=page_obj.next_page_number %}">{% translate "Siguiente" %} {% icono "derecha" %}</a>
+      {% endif %}
+    </div>
+  </div>
+{% endif %}

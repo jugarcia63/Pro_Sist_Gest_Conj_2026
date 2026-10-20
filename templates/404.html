@@ -1,0 +1,16 @@
+{% extends "base.html" %}
+{% load i18n ui %}
+{% block title %}{% translate "Página no encontrada" %}{% endblock %}
+{% block body %}
+<div class="error-pagina">
+    <div class="error-pagina__caja">
+        <div class="error-pagina__codigo">404</div>
+        <h1>{% translate "No encontramos esta página" %}</h1>
+        <p>{% translate "Puede que el registro se haya eliminado o que el enlace esté mal escrito." %}</p>
+        <div class="acciones" style="justify-content:center">
+            <button type="button" class="btn btn-secundario" data-historial="atras">{% icono "volver" %} {% translate "Atrás" %}</button>
+            <a href="{% url 'inicio' %}" class="btn btn-primario">{% icono "inicio" %} {% translate "Volver al inicio" %}</a>
+        </div>
+    </div>
+</div>
+{% endblock %}

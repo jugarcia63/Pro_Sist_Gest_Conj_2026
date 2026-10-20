@@ -1,12 +1,14 @@
-from django.views.generic import ListView, CreateView, UpdateView
-from django.urls import reverse_lazy
-from django.shortcuts import get_object_or_404, redirect
 from django.contrib import messages
-from django.utils.crypto import get_random_string
-from usuarios.models import Usuario
-from usuarios.permisos import rol_requerido, RolRequeridoMixin
-from .models import Residentes
-from .forms import ResidenteForm
+from django.db.models import Count, Q
+from django.shortcuts import get_object_or_404, redirect
+from django.urls import reverse_lazy
+from django.utils import timezone
+from django.utils.translation import gettext as _
+from django.views.generic import CreateView, ListView, UpdateView
+
+from usuarios.permisos import RolRequeridoMixin, rol_requerido
+from .forms import ResidenteForm, UnidadForm
+from .models import Residentes, Unidades
 
 
 class ListaResidentes(RolRequeridoMixin, ListView):
@@ -14,50 +16,32 @@ class ListaResidentes(RolRequeridoMixin, ListView):
     model = Residentes
     template_name = 'residentes/lista_residentes.html'
     context_object_name = 'residentes'
+    paginate_by = 15
 
     def get_queryset(self):
-        queryset = super().get_queryset()
-        buscar = self.request.GET.get('buscar')
+        queryset = Residentes.objects.select_related('id_unidad_fk', 'usuario').order_by('nombres', 'apellidos')
+        buscar = self.request.GET.get('buscar', '').strip()
         if buscar:
-            queryset = queryset.filter(nombres__icontains=buscar)
+            queryset = queryset.filter(
+                Q(nombres__icontains=buscar) | Q(apellidos__icontains=buscar)
+                | Q(num_documento__icontains=buscar) | Q(email__icontains=buscar)
+            )
         return queryset
 
+    def get_context_data(self, **kwargs):
+        contexto = super().get_context_data(**kwargs)
+        contexto['buscar'] = self.request.GET.get('buscar', '')
+        contexto['total'] = Residentes.objects.count()
+        contexto['con_cuenta'] = Residentes.objects.filter(usuario__isnull=False).count()
+        contexto['sin_unidad'] = Residentes.objects.filter(id_unidad_fk__isnull=True).count()
+        return contexto
 
-def _crear_usuario_login(residente, request):
-    """Crea la cuenta de login del residente (o la vincula si ya existía) y muestra la contraseña temporal."""
-    if not residente.email:
-        messages.warning(request, 'Residente guardado, pero sin email no se pudo generar su cuenta de acceso.')
-        return
 
-    if residente.usuario_id:
-        return  # ya tiene una cuenta vinculada, no se toca
-
-    usuario_existente = Usuario.objects.filter(email__iexact=residente.email).first()
-    if usuario_existente:
-        residente.usuario = usuario_existente
-        residente.save(update_fields=['usuario'])
-        return
-
-    username_base = residente.email.split('@')[0]
-    username = username_base
-    contador = 1
-    while Usuario.objects.filter(username__iexact=username).exists():
-        username = f"{username_base}{contador}"
-        contador += 1
-
-    password_temporal = get_random_string(8)
-    usuario = Usuario.objects.create_user(username=username, email=residente.email, password=password_temporal)
-    usuario.rol = 'residente'
-    usuario.debe_cambiar_password = True
-    usuario.save()
-
-    residente.usuario = usuario
-    residente.save(update_fields=['usuario'])
-
-    messages.success(
-        request,
-        f'Residente creado. Credenciales — Usuario: "{username}" / Contraseña temporal: "{password_temporal}" (compártela con el residente).'
-    )
+def _sincronizar_correo(residente):
+    """Si el residente ya tiene cuenta, su correo se mantiene igual al del registro."""
+    if residente.usuario_id and residente.email and residente.usuario.email != residente.email:
+        residente.usuario.email = residente.email
+        residente.usuario.save(update_fields=['email'])
 
 
 class CrearResidente(RolRequeridoMixin, CreateView):
@@ -68,8 +52,11 @@ class CrearResidente(RolRequeridoMixin, CreateView):
     success_url = reverse_lazy('lista_residentes')
 
     def form_valid(self, form):
+        form.instance.fecha_registro = timezone.now()
+        form.instance.estado = 1
         response = super().form_valid(form)
-        _crear_usuario_login(self.object, self.request)
+        messages.success(self.request, _('Residente "%(nombre)s" registrado. Ya puede crear su cuenta en '
+                                         '"Registrarse" con su número de documento.') % {'nombre': self.object})
         return response
 
 
@@ -80,6 +67,12 @@ class EditarResidente(RolRequeridoMixin, UpdateView):
     template_name = 'residentes/form_residente.html'
     success_url = reverse_lazy('lista_residentes')
     pk_url_kwarg = 'id_residente'
+
+    def form_valid(self, form):
+        response = super().form_valid(form)
+        _sincronizar_correo(self.object)
+        messages.success(self.request, _('Datos de "%(nombre)s" actualizados.') % {'nombre': self.object})
+        return response
 
 
 @rol_requerido('admin')
@@ -100,31 +93,75 @@ def eliminar_residente(request, id_residente):
         Vehiculos.objects.filter(id_residente_fk=residente).delete()
         Visitantes.objects.filter(id_residente_fk=residente).delete()
 
-        if residente.usuario_id:
-            residente.usuario.delete()
+        usuario = residente.usuario
         residente.delete()
-        messages.success(request, f'Residente "{nombre}" y sus registros asociados fueron eliminados.')
+        # Solo se borra la cuenta si es de residente (nunca una cuenta de admin o seguridad)
+        if usuario and usuario.rol == 'residente':
+            usuario.delete()
+        messages.success(request, _('Residente "%(nombre)s" y sus registros asociados fueron eliminados.')
+                         % {'nombre': nombre})
 
     return redirect('lista_residentes')
+
+
+# ---------- Unidades (torres y apartamentos) ----------
+
+class ListaUnidades(RolRequeridoMixin, ListView):
+    roles_permitidos = ('admin',)
+    model = Unidades
+    template_name = 'residentes/lista_unidades.html'
+    context_object_name = 'unidades'
+    paginate_by = 20
+
+    def get_queryset(self):
+        queryset = Unidades.objects.annotate(num_residentes=Count('residentes')).order_by('torre', 'piso', 'apto')
+        torre = self.request.GET.get('torre', '').strip()
+        if torre:
+            queryset = queryset.filter(torre__iexact=torre)
+        return queryset
+
+    def get_context_data(self, **kwargs):
+        contexto = super().get_context_data(**kwargs)
+        contexto['torres'] = (Unidades.objects.exclude(torre__isnull=True).exclude(torre='')
+                              .order_by('torre').values_list('torre', flat=True).distinct())
+        contexto['torre_actual'] = self.request.GET.get('torre', '')
+        return contexto
+
+
+class CrearUnidad(RolRequeridoMixin, CreateView):
+    roles_permitidos = ('admin',)
+    model = Unidades
+    form_class = UnidadForm
+    template_name = 'residentes/form_unidad.html'
+    success_url = reverse_lazy('lista_unidades')
+
+    def form_valid(self, form):
+        messages.success(self.request, _('Unidad creada.'))
+        return super().form_valid(form)
+
+
+class EditarUnidad(RolRequeridoMixin, UpdateView):
+    roles_permitidos = ('admin',)
+    model = Unidades
+    form_class = UnidadForm
+    template_name = 'residentes/form_unidad.html'
+    success_url = reverse_lazy('lista_unidades')
+    pk_url_kwarg = 'id_unidad'
+
+    def form_valid(self, form):
+        messages.success(self.request, _('Unidad actualizada.'))
+        return super().form_valid(form)
 
 
 @rol_requerido('admin')
-def resetear_password(request, id_residente):
-    residente = get_object_or_404(Residentes, pk=id_residente)
-    usuario = residente.usuario
-
-    if not usuario:
-        messages.error(request, 'Este residente no tiene una cuenta de acceso asociada.')
-        return redirect('lista_residentes')
-
+def eliminar_unidad(request, id_unidad):
+    unidad = get_object_or_404(Unidades, pk=id_unidad)
     if request.method == 'POST':
-        nueva_password = get_random_string(8)
-        usuario.set_password(nueva_password)
-        usuario.debe_cambiar_password = True
-        usuario.save()
-        messages.success(
-            request,
-            f'Contraseña reseteada para {usuario.username}. Nueva contraseña temporal: "{nueva_password}" (compártela con el residente).'
-        )
-
-    return redirect('lista_residentes')
+        from reservas.models import Reservas
+        if Residentes.objects.filter(id_unidad_fk=unidad).exists() or Reservas.objects.filter(id_unidad_fk=unidad).exists():
+            messages.error(request, _('No se puede eliminar %(unidad)s: tiene residentes o reservas asociadas.')
+                           % {'unidad': unidad})
+        else:
+            unidad.delete()
+            messages.success(request, _('%(unidad)s eliminada.') % {'unidad': unidad})
+    return redirect('lista_unidades')

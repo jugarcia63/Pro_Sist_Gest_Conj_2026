@@ -1,38 +1,39 @@
-{% extends "base.html" %}
-{% block title %}Pasarela de Pago{% endblock %}
-{% block content %}
-<div class="contenedor--angosto">
-    <div class="card-pagina">
-        <h2>Pago Seguro (Simulado)</h2>
-        <p class="card" style="background: var(--color-primario-suave);">
-            <strong>{{ pago.tipo_pago }}</strong> - {{ pago.mes_ano|date:"F Y" }}<br>
-            Valor a pagar: <strong>${{ pago.valor }}</strong>
-        </p>
+{% extends "app.html" %}
+{% load i18n ui %}
+{% block title %}{% translate "Pagar factura" %}{% endblock %}
+{% block miga %}{% icono "derecha" %}<a href="{% url 'lista_pagos_residente' %}">{% translate "Mis pagos" %}</a>{% icono "derecha" %}<strong>{% translate "Pagar" %}</strong>{% endblock %}
+{% block eyebrow %}<span class="encabezado__eyebrow">{% icono "candado" %} {% translate "Pago seguro (simulado)" %}</span>{% endblock %}
+{% block titulo_pagina %}{% blocktranslate %}Pagar: {{ concepto }}{% endblocktranslate %}{% endblock %}
+{% block subtitulo %}<p>{% translate "Es una simulación: no se cobra dinero ni se guardan los datos de la tarjeta." %}</p>{% endblock %}
+{% block acciones %}<a href="{% url 'lista_pagos_residente' %}" class="btn btn-secundario">{% icono "volver" %} {% translate "Volver" %}</a>{% endblock %}
+{% block contenido %}
+<div class="grid-3-1">
+    <section class="panel">
+        <div class="panel__cuerpo panel__cuerpo--form">
+            <form method="post" novalidate>
+                {% csrf_token %}
+                {% with anchos="nombre_titular numero_tarjeta" %}{% include "partials/form_campos.html" %}{% endwith %}
+                <div class="form-acciones">
+                    <a href="{% url 'lista_pagos_residente' %}" class="btn btn-fantasma">{% translate "Cancelar" %}</a>
+                    <button type="submit" class="btn btn-primario">{% icono "candado" %} {% blocktranslate with valor=pago.valor|pesos %}Pagar {{ valor }}{% endblocktranslate %}</button>
+                </div>
+            </form>
+        </div>
+    </section>
 
-        {% if form.non_field_errors %}
-            <div style="color: var(--color-error);">
-                {% for error in form.non_field_errors %}<p>{{ error }}</p>{% endfor %}
-            </div>
-        {% endif %}
-
-        <form method="post">
-            {% csrf_token %}
-            {% for field in form %}
-                <p>
-                    {{ field.label_tag }}
-                    {{ field }}
-                    {% if field.errors %}
-                        <div style="color: var(--color-error);">
-                            {% for error in field.errors %}<p>{{ error }}</p>{% endfor %}
-                        </div>
-                    {% endif %}
-                </p>
-            {% endfor %}
-            <button type="submit" class="btn btn-primario">Confirmar Pago de ${{ pago.valor }}</button>
-        </form>
-
-        <p style="font-size: 0.8rem; color: var(--color-texto-suave); text-align: center; margin-top: 1rem;">
-        </p>
+    <div class="columna">
+        <div class="tarjeta-visual" aria-hidden="true">
+            <div class="tarjeta-visual__chip"></div>
+            <div class="tarjeta-visual__numero" data-tarjeta-numero>•••• •••• •••• ••••</div>
+            <div class="tarjeta-visual__pie"><span data-tarjeta-titular>{% translate "Nombre del titular" %}</span><span data-tarjeta-expira>MM/AA</span></div>
+        </div>
+        <div class="resumen-pago">
+            <div class="resumen-pago__fila"><span>{% translate "Concepto" %}</span><strong>{{ pago.tipo_pago|traducir }}</strong></div>
+            <div class="resumen-pago__fila"><span>{% translate "Mes" %}</span><strong>{{ pago.mes_ano|date:"F Y"|capfirst }}</strong></div>
+            <div class="resumen-pago__fila"><span>{% translate "Fecha límite" %}</span><strong>{{ pago.fecha_vencimiento|date:"j M Y" }}{% if vencido %} <span class="badge badge-error">{% translate "Vencido" %}</span>{% endif %}</strong></div>
+            <div class="resumen-pago__total"><span>{% translate "Total a pagar" %}</span><strong>{{ pago.valor|pesos }}</strong></div>
+        </div>
+        <p class="auth__pie">{% icono "info" %} {% translate "Para probar usa la tarjeta 4111 1111 1111 1111 con cualquier fecha futura." %}</p>
     </div>
 </div>
 {% endblock %}

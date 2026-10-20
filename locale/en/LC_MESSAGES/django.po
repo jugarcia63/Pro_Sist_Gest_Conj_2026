@@ -1,0 +1,2498 @@
+# Traducción al inglés de Gestión de Conjuntos.
+# Generado con: python manage.py traducciones extraer
+msgid ""
+msgstr ""
+"Content-Type: text/plain; charset=UTF-8\n"
+"Language: en\n"
+"Plural-Forms: nplurals=2; plural=(n != 1);\n"
+
+#: pagos/forms.py
+msgid "CVV"
+msgstr "CVV"
+
+#: pagos/forms.py
+msgid "Como aparece en la tarjeta"
+msgstr "As shown on the card"
+
+#: pagos/forms.py
+msgid "Concepto"
+msgstr "Concept"
+
+#: pagos/forms.py
+msgid "Cuota de administración"
+msgstr "Maintenance fee"
+
+#: pagos/forms.py
+msgid "El CVV debe tener 3 o 4 dígitos."
+msgstr "The CVV must have 3 or 4 digits."
+
+#: pagos/forms.py
+msgid "El mes debe estar entre 01 y 12."
+msgstr "The month must be between 01 and 12."
+
+#: pagos/forms.py
+msgid "El número de tarjeta no es válido. Revisa los dígitos."
+msgstr "The card number is not valid. Check the digits."
+
+#: pagos/forms.py
+msgid "El valor de la factura debe ser mayor a cero."
+msgstr "The invoice amount must be greater than zero."
+
+#: pagos/forms.py
+msgid "Fecha límite de pago"
+msgstr "Payment due date"
+
+#: pagos/forms.py
+msgid "Formato inválido. Usa MM/AA, ej: 12/28."
+msgstr "Invalid format. Use MM/YY, e.g. 12/28."
+
+#: pagos/forms.py
+msgid "Ingresa un número de tarjeta válido (15 o 16 dígitos)."
+msgstr "Enter a valid card number (15 or 16 digits)."
+
+#: pagos/forms.py
+msgid "La fecha límite no puede estar en el pasado."
+msgstr "The due date cannot be in the past."
+
+#: pagos/forms.py
+msgid "La tarjeta está vencida."
+msgstr "The card has expired."
+
+#: pagos/forms.py
+msgid "Mes que se cobra"
+msgstr "Billing month"
+
+#: pagos/forms.py
+msgid "Multa"
+msgstr "Fine"
+
+#: pagos/forms.py
+msgid "Ninguna"
+msgstr "None"
+
+#: pagos/forms.py
+msgid "Nombre del titular"
+msgstr "Cardholder name"
+
+#: pagos/forms.py
+msgid "Número de tarjeta"
+msgstr "Card number"
+
+#: pagos/forms.py
+msgid "Otro"
+msgstr "Other"
+
+#: pagos/forms.py
+msgid "Parqueadero"
+msgstr "Parking"
+
+#: pagos/forms.py
+msgid "Reserva asociada (opcional)"
+msgstr "Related booking (optional)"
+
+#: pagos/forms.py
+msgid "Reserva de zona común"
+msgstr "Common area booking"
+
+#: pagos/forms.py
+msgid "Residente"
+msgstr "Resident"
+
+#: pagos/forms.py
+msgid "Selecciona la reserva que se está cobrando."
+msgstr "Select the booking being charged."
+
+#: pagos/forms.py
+msgid "Valor (COP)"
+msgstr "Amount (COP)"
+
+#: pagos/forms.py
+msgid "Vencimiento (MM/AA)"
+msgstr "Expiry (MM/YY)"
+
+#: pagos/templates/pagos/form_pago.html
+msgid "El valor va en pesos colombianos, sin puntos. Ej: 320000."
+msgstr "Enter the amount in Colombian pesos, without dots. E.g. 320000."
+
+#: pagos/templates/pagos/form_pago.html
+msgid "Generar factura"
+msgstr "Create invoice"
+
+#: pagos/templates/pagos/form_pago.html
+msgid "La factura queda pendiente hasta que el residente la pague en línea."
+msgstr "The invoice stays pending until the resident pays it online."
+
+#: pagos/templates/pagos/form_pago.html
+msgid "Nueva factura"
+msgstr "New invoice"
+
+#: pagos/templates/pagos/form_pago.html
+msgid "Puedes anular la factura mientras esté pendiente."
+msgstr "You can void the invoice while it is pending."
+
+#: pagos/templates/pagos/form_pago.html
+msgid "Recuerda"
+msgstr "Remember"
+
+#: pagos/templates/pagos/form_pago.html
+msgid "Si el concepto es Reserva, elige la reserva que se está cobrando."
+msgstr "If the concept is Booking, select the booking being charged."
+
+#: pagos/templates/pagos/lista_pagos_admin.html
+#, python-format
+msgid "%(n)s factura con la fecha límite vencida"
+msgid_plural "%(n)s facturas con la fecha límite vencida"
+msgstr[0] "%(n)s invoice past its due date"
+msgstr[1] "%(n)s invoices past their due date"
+
+#: pagos/templates/pagos/lista_pagos_admin.html
+msgid "Anular"
+msgstr "Void"
+
+#: pagos/templates/pagos/lista_pagos_admin.html
+msgid "Anular factura"
+msgstr "Void invoice"
+
+#: pagos/templates/pagos/lista_pagos_admin.html
+msgid "Buscar"
+msgstr "Search"
+
+#: pagos/templates/pagos/lista_pagos_admin.html
+msgid "Cartera"
+msgstr "Receivables"
+
+#: pagos/templates/pagos/lista_pagos_admin.html
+msgid "Estado de pagos"
+msgstr "Payment status"
+
+#: pagos/templates/pagos/lista_pagos_admin.html
+msgid "Facturas generadas a los residentes. El estado cambia a «Pagado» cuando el residente paga en línea."
+msgstr "Invoices issued to residents. The status changes to “Paid” when the resident pays online."
+
+#: pagos/templates/pagos/lista_pagos_admin.html
+msgid "Fecha límite"
+msgstr "Due date"
+
+#: pagos/templates/pagos/lista_pagos_admin.html
+msgid "Filtrar por estado"
+msgstr "Filter by status"
+
+#: pagos/templates/pagos/lista_pagos_admin.html
+msgid "Genera la cuota de administración u otros cobros para los residentes."
+msgstr "Create the maintenance fee or other charges for residents."
+
+#: pagos/templates/pagos/lista_pagos_admin.html
+msgid "Mes"
+msgstr "Month"
+
+#: pagos/templates/pagos/lista_pagos_admin.html
+msgid "No hay facturas"
+msgstr "There are no invoices"
+
+#: pagos/templates/pagos/lista_pagos_admin.html
+msgid "No hay facturas con este filtro"
+msgstr "No invoices match this filter"
+
+#: pagos/templates/pagos/lista_pagos_admin.html
+msgid "Pagados"
+msgstr "Paid"
+
+#: pagos/templates/pagos/lista_pagos_admin.html
+msgid "Pendiente (al día)"
+msgstr "Pending (not overdue)"
+
+#: pagos/templates/pagos/lista_pagos_admin.html
+msgid "Pendientes"
+msgstr "Pending"
+
+#: pagos/templates/pagos/lista_pagos_admin.html
+#, python-format
+msgid "Recaudado en %(mes)s"
+msgstr "Collected in %(mes)s"
+
+#: pagos/templates/pagos/lista_pagos_admin.html
+msgid "Residente o documento"
+msgstr "Resident or ID number"
+
+#: pagos/templates/pagos/lista_pagos_admin.html
+msgid "Sin residente"
+msgstr "No resident"
+
+#: pagos/templates/pagos/lista_pagos_admin.html
+msgid "Todos"
+msgstr "All"
+
+#: pagos/templates/pagos/lista_pagos_admin.html
+msgid "Valor"
+msgstr "Amount"
+
+#: pagos/templates/pagos/lista_pagos_admin.html
+msgid "Vencidos"
+msgstr "Overdue"
+
+#: pagos/templates/pagos/lista_pagos_admin.html
+msgid "Volver"
+msgstr "Back"
+
+#: pagos/templates/pagos/lista_pagos_admin.html
+#, python-format
+msgid "¿Anular la factura de %(valor)s a %(residente)s?"
+msgstr "Void the %(valor)s invoice for %(residente)s?"
+
+#: pagos/templates/pagos/lista_pagos_residente.html
+#, python-format
+msgid "%(n)s factura pendiente"
+msgid_plural "%(n)s facturas pendientes"
+msgstr[0] "%(n)s pending invoice"
+msgstr[1] "%(n)s pending invoices"
+
+#: pagos/templates/pagos/lista_pagos_residente.html
+#, python-format
+msgid "%(n)s factura vencida"
+msgid_plural "%(n)s facturas vencidas"
+msgstr[0] "%(n)s overdue invoice"
+msgstr[1] "%(n)s overdue invoices"
+
+#: pagos/templates/pagos/lista_pagos_residente.html
+msgid "Cuando la administración genere tu cuota aparecerá aquí para que la pagues."
+msgstr "When management issues your fee, it will appear here for you to pay."
+
+#: pagos/templates/pagos/lista_pagos_residente.html
+msgid "Facturas"
+msgstr "Invoices"
+
+#: pagos/templates/pagos/lista_pagos_residente.html
+msgid "Mis cuentas"
+msgstr "My bills"
+
+#: pagos/templates/pagos/lista_pagos_residente.html
+msgid "No debes nada"
+msgstr "You owe nothing"
+
+#: pagos/templates/pagos/lista_pagos_residente.html
+msgid "No tienes facturas"
+msgstr "You have no invoices"
+
+#: pagos/templates/pagos/lista_pagos_residente.html
+#, python-format
+msgid "Paga antes del %(fecha)s"
+msgstr "Pay before %(fecha)s"
+
+#: pagos/templates/pagos/lista_pagos_residente.html
+msgid "Paga tus facturas en línea y consulta lo que ya pagaste."
+msgstr "Pay your invoices online and review what you have already paid."
+
+#: pagos/templates/pagos/lista_pagos_residente.html
+#, python-format
+msgid "Pagado el %(fecha)s"
+msgstr "Paid on %(fecha)s"
+
+#: pagos/templates/pagos/lista_pagos_residente.html
+msgid "Pagado históricamente"
+msgstr "Total paid to date"
+
+#: pagos/templates/pagos/lista_pagos_residente.html
+msgid "Pagar"
+msgstr "Pay"
+
+#: pagos/templates/pagos/lista_pagos_residente.html
+msgid "Total por pagar"
+msgstr "Total due"
+
+#: pagos/templates/pagos/lista_pagos_residente.html
+#, python-format
+msgid "Venció el %(fecha)s"
+msgstr "Was due on %(fecha)s"
+
+#: pagos/templates/pagos/pasarela_pago.html
+msgid "Cancelar"
+msgstr "Cancel"
+
+#: pagos/templates/pagos/pasarela_pago.html
+msgid "Es una simulación: no se cobra dinero ni se guardan los datos de la tarjeta."
+msgstr "This is a simulation: no money is charged and card details are not stored."
+
+#: pagos/templates/pagos/pasarela_pago.html
+#, python-format
+msgid "Pagar %(valor)s"
+msgstr "Pay %(valor)s"
+
+#: pagos/templates/pagos/pasarela_pago.html
+msgid "Pagar factura"
+msgstr "Pay invoice"
+
+#: pagos/templates/pagos/pasarela_pago.html
+#, python-format
+msgid "Pagar: %(concepto)s"
+msgstr "Pay: %(concepto)s"
+
+#: pagos/templates/pagos/pasarela_pago.html
+msgid "Pago seguro (simulado)"
+msgstr "Secure payment (simulated)"
+
+#: pagos/templates/pagos/pasarela_pago.html
+msgid "Para probar usa la tarjeta 4111 1111 1111 1111 con cualquier fecha futura."
+msgstr "To test, use card 4111 1111 1111 1111 with any future date."
+
+#: pagos/templates/pagos/pasarela_pago.html
+msgid "Total a pagar"
+msgstr "Total to pay"
+
+#: pagos/views.py
+msgid "Este pago ya fue realizado."
+msgstr "This payment has already been made."
+
+#: pagos/views.py
+msgid "Factura anulada."
+msgstr "Invoice voided."
+
+#: pagos/views.py
+#, python-format
+msgid "Factura generada para %(residente)s."
+msgstr "Invoice created for %(residente)s."
+
+#: pagos/views.py
+msgid "No se puede anular un pago que ya fue realizado."
+msgstr "A payment that has already been made cannot be voided."
+
+#: pagos/views.py
+#, python-format
+msgid "Pago de %(concepto)s realizado con éxito."
+msgstr "%(concepto)s payment completed successfully."
+
+#: reportes/forms.py
+msgid "Ascensor"
+msgstr "Elevator"
+
+#: reportes/forms.py
+msgid "Categoría"
+msgstr "Category"
+
+#: reportes/forms.py
+msgid "Describe el daño"
+msgstr "Describe the damage"
+
+#: reportes/forms.py
+msgid "El piso no puede ser negativo."
+msgstr "The floor cannot be negative."
+
+#: reportes/forms.py
+msgid "Eléctrico (luces, tomas)"
+msgstr "Electrical (lights, outlets)"
+
+#: reportes/forms.py
+msgid "Estructural (paredes, techos, humedad)"
+msgstr "Structural (walls, ceilings, damp)"
+
+#: reportes/forms.py
+msgid "La descripción debe tener al menos 10 caracteres."
+msgstr "The description must be at least 10 characters long."
+
+#: reportes/forms.py
+msgid "La torre solo puede tener letras o números (ej: A, 2)."
+msgstr "The tower can only contain letters or numbers (e.g. A, 2)."
+
+#: reportes/forms.py
+msgid "Piso"
+msgstr "Floor"
+
+#: reportes/forms.py
+msgid "Plomería (fugas, tuberías)"
+msgstr "Plumbing (leaks, pipes)"
+
+#: reportes/forms.py
+msgid "Qué pasó, dónde exactamente y desde cuándo. Ej: gotera en el techo del baño desde ayer."
+msgstr "What happened, exactly where and since when. E.g. leak in the bathroom ceiling since yesterday."
+
+#: reportes/forms.py
+msgid "Seguridad (puertas, cámaras, citófonos)"
+msgstr "Security (doors, cameras, intercoms)"
+
+#: reportes/forms.py
+msgid "Torre"
+msgstr "Tower"
+
+#: reportes/forms.py
+msgid "Zonas comunes"
+msgstr "Common areas"
+
+#: reportes/templates/reportes/form_reporte.html
+msgid "Cuéntale a la administración qué se dañó y dónde. Te avisaremos el avance aquí mismo."
+msgstr "Tell management what broke and where. You will see the progress right here."
+
+#: reportes/templates/reportes/form_reporte.html
+msgid "Di el lugar exacto: «baño principal», «pasillo del piso 4», «puerta del parqueadero»."
+msgstr "Give the exact place: “main bathroom”, “4th floor hallway”, “parking gate”."
+
+#: reportes/templates/reportes/form_reporte.html
+msgid "El daño quedó solucionado."
+msgstr "The damage has been fixed."
+
+#: reportes/templates/reportes/form_reporte.html
+msgid "Enviar reporte"
+msgstr "Send report"
+
+#: reportes/templates/reportes/form_reporte.html
+msgid "Indica desde cuándo pasa y si empeora."
+msgstr "Say since when it has been happening and whether it is getting worse."
+
+#: reportes/templates/reportes/form_reporte.html
+msgid "La administración recibe tu reporte."
+msgstr "Management receives your report."
+
+#: reportes/templates/reportes/form_reporte.html
+msgid "Mantenimiento"
+msgstr "Maintenance"
+
+#: reportes/templates/reportes/form_reporte.html
+msgid "Nuevo"
+msgstr "New"
+
+#: reportes/templates/reportes/form_reporte.html
+msgid "Qué pasa después"
+msgstr "What happens next"
+
+#: reportes/templates/reportes/form_reporte.html
+msgid "Reportar un daño"
+msgstr "Report damage"
+
+#: reportes/templates/reportes/form_reporte.html
+msgid "Se asigna el arreglo."
+msgstr "The repair is assigned."
+
+#: reportes/templates/reportes/form_reporte.html
+msgid "Si es urgente (fuga grande, corto eléctrico), avisa también en portería."
+msgstr "If it is urgent (major leak, short circuit), also tell the front desk."
+
+#: reportes/templates/reportes/form_reporte.html
+msgid "Un buen reporte"
+msgstr "A good report"
+
+#: reportes/templates/reportes/lista_reportes_admin.html
+msgid "Abiertos"
+msgstr "Open"
+
+#: reportes/templates/reportes/lista_reportes_admin.html
+msgid "Buscar en descripción o residente"
+msgstr "Search description or resident"
+
+#: reportes/templates/reportes/lista_reportes_admin.html
+msgid "Cambia el estado a medida que avanza cada arreglo; el residente lo ve en su panel."
+msgstr "Update the status as each repair progresses; the resident sees it on their dashboard."
+
+#: reportes/templates/reportes/lista_reportes_admin.html
+#, python-format
+msgid "Cerrado el %(fecha)s"
+msgstr "Closed on %(fecha)s"
+
+#: reportes/templates/reportes/lista_reportes_admin.html
+msgid "Cerrados"
+msgstr "Closed"
+
+#: reportes/templates/reportes/lista_reportes_admin.html
+msgid "Cerrar"
+msgstr "Close"
+
+#: reportes/templates/reportes/lista_reportes_admin.html
+msgid "Filtrar"
+msgstr "Filter"
+
+#: reportes/templates/reportes/lista_reportes_admin.html
+msgid "Limpiar"
+msgstr "Clear"
+
+#: reportes/templates/reportes/lista_reportes_admin.html
+msgid "Los daños que reporten los residentes aparecerán aquí."
+msgstr "Damage reported by residents will appear here."
+
+#: reportes/templates/reportes/lista_reportes_admin.html
+msgid "Marcar en proceso"
+msgstr "Mark in progress"
+
+#: reportes/templates/reportes/lista_reportes_admin.html
+msgid "No hay reportes"
+msgstr "There are no reports"
+
+#: reportes/templates/reportes/lista_reportes_admin.html
+msgid "No hay reportes con ese filtro"
+msgstr "No reports match that filter"
+
+#: reportes/templates/reportes/lista_reportes_admin.html
+msgid "Reabrir"
+msgstr "Reopen"
+
+#: reportes/templates/reportes/lista_reportes_admin.html
+msgid "Reportes de daños"
+msgstr "Damage reports"
+
+#: reportes/templates/reportes/lista_reportes_admin.html
+msgid "Todas las categorías"
+msgstr "All categories"
+
+#: reportes/templates/reportes/lista_reportes_admin.html
+msgid "Todos los estados"
+msgstr "All statuses"
+
+#: reportes/templates/reportes/lista_reportes_admin.html
+#, python-format
+msgid "hace %(tiempo)s"
+msgstr "%(tiempo)s ago"
+
+#: reportes/templates/reportes/lista_reportes_admin.html
+msgid "piso"
+msgstr "floor"
+
+#: reportes/templates/reportes/mis_reportes.html
+msgid "Mis reportes de daños"
+msgstr "My damage reports"
+
+#: reportes/templates/reportes/mis_reportes.html
+msgid "No has reportado daños"
+msgstr "You have not reported any damage"
+
+#: reportes/templates/reportes/mis_reportes.html
+msgid "Reportar daño"
+msgstr "Report damage"
+
+#: reportes/templates/reportes/mis_reportes.html
+#, python-format
+msgid "Resuelto el %(fecha)s"
+msgstr "Resolved on %(fecha)s"
+
+#: reportes/templates/reportes/mis_reportes.html
+msgid "Si algo se daña en tu unidad o en las zonas comunes, cuéntanos."
+msgstr "If something breaks in your unit or in the common areas, let us know."
+
+#: reportes/templates/reportes/mis_reportes.html
+msgid "Sigue el estado de cada daño que has reportado."
+msgstr "Track the status of each damage you have reported."
+
+#: reportes/views.py
+msgid "Estado no válido."
+msgstr "Invalid status."
+
+#: reportes/views.py
+#, python-format
+msgid "Reporte #%(numero)s actualizado a \"%(estado)s\"."
+msgstr "Report #%(numero)s updated to \"%(estado)s\"."
+
+#: reportes/views.py
+msgid "Reporte enviado. La administración lo revisará pronto."
+msgstr "Report sent. Management will review it soon."
+
+#: reportes/views.py
+msgid "Tu usuario no está vinculado a un residente. Pide al administrador que lo vincule."
+msgstr "Your user is not linked to a resident. Ask the administrator to link it."
+
+#: reservas/forms.py
+#, python-format
+msgid "%(zona)s ya está reservada de %(inicio)s a %(fin)s. Elige otro horario."
+msgstr "%(zona)s is already booked from %(inicio)s to %(fin)s. Choose another time."
+
+#: reservas/forms.py
+msgid "Aprobada"
+msgstr "Approved"
+
+#: reservas/forms.py
+msgid "Cancelada"
+msgstr "Cancelled"
+
+#: reservas/forms.py
+msgid "Capacidad (personas)"
+msgstr "Capacity (people)"
+
+#: reservas/forms.py
+msgid "Descripción"
+msgstr "Description"
+
+#: reservas/forms.py
+msgid "Disponible"
+msgstr "Available"
+
+#: reservas/forms.py
+msgid "Ej: Salón con cocina y 10 mesas"
+msgstr "E.g. Hall with kitchen and 10 tables"
+
+#: reservas/forms.py
+msgid "Ej: cumpleaños, 20 invitados"
+msgstr "E.g. birthday, 20 guests"
+
+#: reservas/forms.py
+msgid "El fin debe ser posterior al inicio."
+msgstr "The end must be after the start."
+
+#: reservas/forms.py
+msgid "Empieza"
+msgstr "Starts"
+
+#: reservas/forms.py
+msgid "Estado"
+msgstr "Status"
+
+#: reservas/forms.py
+msgid "Horarios, aforo, uso de música, aseo…"
+msgstr "Hours, capacity, music, cleaning…"
+
+#: reservas/forms.py
+msgid "La capacidad debe ser mayor a cero."
+msgstr "Capacity must be greater than zero."
+
+#: reservas/forms.py
+msgid "La fecha de inicio no puede estar en el pasado."
+msgstr "The start date cannot be in the past."
+
+#: reservas/forms.py
+msgid "No disponible"
+msgstr "Unavailable"
+
+#: reservas/forms.py
+msgid "Nombre"
+msgstr "Name"
+
+#: reservas/forms.py
+msgid "Observaciones"
+msgstr "Notes"
+
+#: reservas/forms.py
+msgid "Pendiente"
+msgstr "Pending"
+
+#: reservas/forms.py
+msgid "Rechazada"
+msgstr "Rejected"
+
+#: reservas/forms.py
+msgid "Reglas"
+msgstr "Rules"
+
+#: reservas/forms.py
+msgid "Selecciona la unidad"
+msgstr "Select the unit"
+
+#: reservas/forms.py
+msgid "Selecciona una zona"
+msgstr "Select an area"
+
+#: reservas/forms.py
+msgid "Termina"
+msgstr "Ends"
+
+#: reservas/forms.py
+msgid "Una reserva no puede durar más de 12 horas."
+msgstr "A booking cannot last more than 12 hours."
+
+#: reservas/forms.py
+msgid "Unidad que reserva"
+msgstr "Booking unit"
+
+#: reservas/forms.py
+msgid "Zona común"
+msgstr "Common area"
+
+#: reservas/templates/reservas/form_reserva.html
+msgid "Capacidad sin definir"
+msgstr "Capacity not set"
+
+#: reservas/templates/reservas/form_reserva.html
+msgid "Crea una zona"
+msgstr "Create an area"
+
+#: reservas/templates/reservas/form_reserva.html
+msgid "Crear reserva"
+msgstr "Create booking"
+
+#: reservas/templates/reservas/form_reserva.html
+msgid "Editar"
+msgstr "Edit"
+
+#: reservas/templates/reservas/form_reserva.html
+msgid "Editar reserva"
+msgstr "Edit booking"
+
+#: reservas/templates/reservas/form_reserva.html
+msgid "Enviar solicitud"
+msgstr "Send request"
+
+#: reservas/templates/reservas/form_reserva.html
+msgid "Guardar cambios"
+msgstr "Save changes"
+
+#: reservas/templates/reservas/form_reserva.html
+#, python-format
+msgid "Hasta %(n)s personas"
+msgstr "Up to %(n)s people"
+
+#: reservas/templates/reservas/form_reserva.html
+msgid "La administración aún no ha habilitado zonas para reservar."
+msgstr "Management has not enabled any areas for booking yet."
+
+#: reservas/templates/reservas/form_reserva.html
+msgid "No hay zonas comunes disponibles."
+msgstr "There are no common areas available."
+
+#: reservas/templates/reservas/form_reserva.html
+msgid "Nueva"
+msgstr "New"
+
+#: reservas/templates/reservas/form_reserva.html
+msgid "Nueva reserva"
+msgstr "New booking"
+
+#: reservas/templates/reservas/form_reserva.html
+msgid "Puedes crear la reserva ya aprobada para cualquier unidad."
+msgstr "You can create the booking already approved for any unit."
+
+#: reservas/templates/reservas/form_reserva.html
+msgid "Reservar una zona común"
+msgstr "Book a common area"
+
+#: reservas/templates/reservas/form_reserva.html
+msgid "Si la zona ya está ocupada en ese horario, el sistema te avisará para que elijas otro."
+msgstr "If the area is already taken at that time, the system will tell you so you can choose another."
+
+#: reservas/templates/reservas/form_reserva.html
+msgid "Sin zonas habilitadas."
+msgstr "No areas enabled."
+
+#: reservas/templates/reservas/form_reserva.html
+msgid "Tu solicitud quedará pendiente hasta que la administración la apruebe."
+msgstr "Your request will stay pending until management approves it."
+
+#: reservas/templates/reservas/form_reserva.html
+msgid "Una reserva puede durar máximo 12 horas."
+msgstr "A booking can last up to 12 hours."
+
+#: reservas/templates/reservas/form_reserva.html
+msgid "Zonas disponibles"
+msgstr "Available areas"
+
+#: reservas/templates/reservas/form_reserva.html
+msgid "antes de registrar reservas."
+msgstr "before recording bookings."
+
+#: reservas/templates/reservas/form_zona.html
+msgid "Crear zona"
+msgstr "Create area"
+
+#: reservas/templates/reservas/form_zona.html
+#, python-format
+msgid "Editar %(zona)s"
+msgstr "Edit %(zona)s"
+
+#: reservas/templates/reservas/form_zona.html
+msgid "Editar zona"
+msgstr "Edit area"
+
+#: reservas/templates/reservas/form_zona.html
+msgid "En reglas escribe horarios, aforo y lo que no está permitido: los residentes las ven antes de reservar."
+msgstr "In rules, write hours, capacity and what is not allowed: residents see them before booking."
+
+#: reservas/templates/reservas/form_zona.html
+msgid "Ideas de zonas"
+msgstr "Area ideas"
+
+#: reservas/templates/reservas/form_zona.html
+msgid "Las zonas marcadas como disponibles aparecen para reservar."
+msgstr "Areas marked as available can be booked."
+
+#: reservas/templates/reservas/form_zona.html
+msgid "Nueva zona"
+msgstr "New area"
+
+#: reservas/templates/reservas/form_zona.html
+msgid "Nueva zona común"
+msgstr "New common area"
+
+#: reservas/templates/reservas/form_zona.html
+msgid "Salón social, zona BBQ, piscina, gimnasio, cancha múltiple, sala de juegos."
+msgstr "Party hall, BBQ area, pool, gym, sports court, game room."
+
+#: reservas/templates/reservas/lista_reservas.html
+msgid "Aprobadas"
+msgstr "Approved"
+
+#: reservas/templates/reservas/lista_reservas.html
+msgid "Aprobar"
+msgstr "Approve"
+
+#: reservas/templates/reservas/lista_reservas.html
+msgid "Aprueba o rechaza las solicitudes de los residentes."
+msgstr "Approve or reject residents’ requests."
+
+#: reservas/templates/reservas/lista_reservas.html
+msgid "Cambiar"
+msgstr "Change"
+
+#: reservas/templates/reservas/lista_reservas.html
+msgid "Canceladas"
+msgstr "Cancelled"
+
+#: reservas/templates/reservas/lista_reservas.html
+msgid "Mira las zonas comunes disponibles y separa la que necesites."
+msgstr "Look at the available common areas and book the one you need."
+
+#: reservas/templates/reservas/lista_reservas.html
+msgid "Mis reservas"
+msgstr "My bookings"
+
+#: reservas/templates/reservas/lista_reservas.html
+msgid "No hay reservas pasadas"
+msgstr "There are no past bookings"
+
+#: reservas/templates/reservas/lista_reservas.html
+msgid "No hay reservas próximas"
+msgstr "There are no upcoming bookings"
+
+#: reservas/templates/reservas/lista_reservas.html
+msgid "No tienes una unidad asignada."
+msgstr "You do not have a unit assigned."
+
+#: reservas/templates/reservas/lista_reservas.html
+msgid "Para reservar zonas comunes, la administración debe asignarte tu apartamento."
+msgstr "To book common areas, management must assign you your apartment."
+
+#: reservas/templates/reservas/lista_reservas.html
+msgid "Pasadas"
+msgstr "Past"
+
+#: reservas/templates/reservas/lista_reservas.html
+msgid "Periodo"
+msgstr "Period"
+
+#: reservas/templates/reservas/lista_reservas.html
+msgid "Próximas"
+msgstr "Upcoming"
+
+#: reservas/templates/reservas/lista_reservas.html
+msgid "Rechazadas"
+msgstr "Rejected"
+
+#: reservas/templates/reservas/lista_reservas.html
+msgid "Rechazar"
+msgstr "Reject"
+
+#: reservas/templates/reservas/lista_reservas.html
+msgid "Reservas del conjunto"
+msgstr "Community bookings"
+
+#: reservas/templates/reservas/lista_reservas.html
+msgid "Todas"
+msgstr "All"
+
+#: reservas/templates/reservas/lista_reservas.html
+msgid "Tus solicitudes quedan pendientes hasta que la administración las apruebe."
+msgstr "Your requests stay pending until management approves them."
+
+#: reservas/templates/reservas/lista_reservas.html
+msgid "Ver zonas"
+msgstr "View areas"
+
+#: reservas/templates/reservas/lista_reservas.html
+msgid "Ver zonas comunes"
+msgstr "View common areas"
+
+#: reservas/templates/reservas/lista_reservas.html
+msgid "Zona sin nombre"
+msgstr "Unnamed area"
+
+#: reservas/templates/reservas/lista_reservas.html
+#, python-format
+msgid "¿Cancelar tu reserva de %(zona)s?"
+msgstr "Cancel your %(zona)s booking?"
+
+#: reservas/templates/reservas/lista_reservas.html
+msgid "¿Rechazar esta reserva?"
+msgstr "Reject this booking?"
+
+#: reservas/templates/reservas/lista_zonas.html
+#, python-format
+msgid "%(n)s personas"
+msgstr "%(n)s people"
+
+#: reservas/templates/reservas/lista_zonas.html
+msgid "Crea el salón social, la zona BBQ, la piscina o cualquier espacio que se pueda reservar."
+msgstr "Create the party hall, the BBQ area, the pool or any space that can be booked."
+
+#: reservas/templates/reservas/lista_zonas.html
+msgid "Elige un espacio y reserva el horario que necesites."
+msgstr "Choose a space and book the time you need."
+
+#: reservas/templates/reservas/lista_zonas.html
+msgid "Eliminar"
+msgstr "Delete"
+
+#: reservas/templates/reservas/lista_zonas.html
+msgid "Espacios que los residentes pueden reservar."
+msgstr "Spaces residents can book."
+
+#: reservas/templates/reservas/lista_zonas.html
+msgid "No hay zonas comunes registradas"
+msgstr "There are no common areas yet"
+
+#: reservas/templates/reservas/lista_zonas.html
+msgid "Reservar"
+msgstr "Book"
+
+#: reservas/templates/reservas/lista_zonas.html
+msgid "Sin descripción."
+msgstr "No description."
+
+#: reservas/templates/reservas/lista_zonas.html
+#, python-format
+msgid "¿Eliminar la zona %(zona)s? Si tiene reservas, solo se marcará como no disponible."
+msgstr "Delete the area %(zona)s? If it has bookings, it will only be marked as unavailable."
+
+#: reservas/views.py
+#, python-format
+msgid "\"%(zona)s\" tiene reservas, así que se marcó como no disponible en vez de borrarse."
+msgstr "\"%(zona)s\" has bookings, so it was marked as unavailable instead of being deleted."
+
+#: reservas/views.py
+msgid "No puedes poner la reserva en ese estado."
+msgstr "You cannot set the booking to that status."
+
+#: reservas/views.py
+msgid "Para reservar necesitas tener una unidad asignada. Habla con la administración."
+msgstr "You need an assigned unit to book. Talk to management."
+
+#: reservas/views.py
+msgid "Reserva actualizada."
+msgstr "Booking updated."
+
+#: reservas/views.py
+#, python-format
+msgid "Reserva de %(zona)s marcada como %(estado)s."
+msgstr "%(zona)s booking marked as %(estado)s."
+
+#: reservas/views.py
+msgid "Reserva registrada."
+msgstr "Booking recorded."
+
+#: reservas/views.py
+msgid "Reserva registrada. Queda pendiente de aprobación."
+msgstr "Booking recorded. It is pending approval."
+
+#: reservas/views.py
+msgid "Solo se pueden cancelar reservas que todavía no han empezado."
+msgstr "Only bookings that have not started yet can be cancelled."
+
+#: reservas/views.py
+msgid "Ya hay otra reserva aprobada para esa zona en ese horario."
+msgstr "There is already another approved booking for that area at that time."
+
+#: reservas/views.py
+#, python-format
+msgid "Zona \"%(nombre)s\" guardada."
+msgstr "Area \"%(nombre)s\" saved."
+
+#: reservas/views.py
+#, python-format
+msgid "Zona \"%(zona)s\" eliminada."
+msgstr "Area \"%(zona)s\" deleted."
+
+#: residentes/forms.py
+msgid "Apartamento"
+msgstr "Apartment"
+
+#: residentes/forms.py
+msgid "Apellidos"
+msgstr "Last names"
+
+#: residentes/forms.py
+msgid "Con su documento y este correo, el residente crea su propia cuenta en \"Registrarse\"."
+msgstr "With their ID number and this email, the resident creates their own account under \"Sign up\"."
+
+#: residentes/forms.py
+msgid "Correo electrónico"
+msgstr "Email"
+
+#: residentes/forms.py
+msgid "Cédula de ciudadanía"
+msgstr "National ID card"
+
+#: residentes/forms.py
+msgid "Cédula de extranjería"
+msgstr "Foreigner ID card"
+
+#: residentes/forms.py
+msgid "Desocupada"
+msgstr "Vacant"
+
+#: residentes/forms.py
+msgid "El área debe ser mayor a cero."
+msgstr "The area must be greater than zero."
+
+#: residentes/forms.py
+#, python-format
+msgid "La unidad Torre %(torre)s - Apto %(apto)s ya existe."
+msgstr "The unit Tower %(torre)s - Apt %(apto)s already exists."
+
+#: residentes/forms.py
+msgid "Nombres"
+msgstr "First names"
+
+#: residentes/forms.py
+msgid "Número de documento"
+msgstr "ID number"
+
+#: residentes/forms.py
+msgid "Ocupada / activa"
+msgstr "Occupied / active"
+
+#: residentes/forms.py
+msgid "Pasaporte"
+msgstr "Passport"
+
+#: residentes/forms.py
+msgid "Selecciona un residente"
+msgstr "Select a resident"
+
+#: residentes/forms.py
+msgid "Sin unidad"
+msgstr "No unit"
+
+#: residentes/forms.py
+msgid "Sin unidad asignada"
+msgstr "No unit assigned"
+
+#: residentes/forms.py
+msgid "Tarjeta de identidad"
+msgstr "Minor ID card"
+
+#: residentes/forms.py
+msgid "Teléfono"
+msgstr "Phone"
+
+#: residentes/forms.py
+msgid "Tipo de documento"
+msgstr "ID type"
+
+#: residentes/forms.py
+msgid "Unidad (torre y apartamento)"
+msgstr "Unit (tower and apartment)"
+
+#: residentes/forms.py
+msgid "Ya existe un residente con este número de documento."
+msgstr "A resident with this ID number already exists."
+
+#: residentes/forms.py
+msgid "Ya hay otro residente con este correo."
+msgstr "Another resident already has this email."
+
+#: residentes/forms.py
+msgid "Área (m²)"
+msgstr "Area (m²)"
+
+#: residentes/models.py
+msgid "Residente sin nombre"
+msgstr "Unnamed resident"
+
+#: residentes/models.py
+#, python-format
+msgid "Torre %(torre)s - Apto %(apto)s"
+msgstr "Tower %(torre)s - Apt %(apto)s"
+
+#: residentes/templates/residentes/form_residente.html
+msgid "Asignar contraseña"
+msgstr "Set password"
+
+#: residentes/templates/residentes/form_residente.html
+msgid "Crear unidad"
+msgstr "Create unit"
+
+#: residentes/templates/residentes/form_residente.html
+msgid "Cuenta de acceso"
+msgstr "Login account"
+
+#: residentes/templates/residentes/form_residente.html
+#, python-format
+msgid "Editar a %(nombre)s"
+msgstr "Edit %(nombre)s"
+
+#: residentes/templates/residentes/form_residente.html
+msgid "Editar residente"
+msgstr "Edit resident"
+
+#: residentes/templates/residentes/form_residente.html
+msgid "El residente crea su propia cuenta: entra a «Registrarse», escribe su documento y su correo, y elige su usuario y su contraseña."
+msgstr "The resident creates their own account: they go to “Sign up”, enter their ID number and email, and choose their username and password."
+
+#: residentes/templates/residentes/form_residente.html
+#, python-format
+msgid "Este residente entra con el usuario <strong>@%(usuario)s</strong>."
+msgstr "This resident signs in with the username <strong>@%(usuario)s</strong>."
+
+#: residentes/templates/residentes/form_residente.html
+msgid "Los campos con * son obligatorios."
+msgstr "Fields marked with * are required."
+
+#: residentes/templates/residentes/form_residente.html
+msgid "Nuevo residente"
+msgstr "New resident"
+
+#: residentes/templates/residentes/form_residente.html
+msgid "Por eso es importante que el documento y el correo queden bien escritos."
+msgstr "That is why the ID number and email must be spelled correctly."
+
+#: residentes/templates/residentes/form_residente.html
+msgid "Primero crea la torre y el apartamento en Unidades, y luego vuelve aquí."
+msgstr "First create the tower and apartment in Units, then come back here."
+
+#: residentes/templates/residentes/form_residente.html
+msgid "Registrar residente"
+msgstr "Add resident"
+
+#: residentes/templates/residentes/form_residente.html
+msgid "Si cambias el correo aquí, también se actualiza en su cuenta."
+msgstr "If you change the email here, it is also updated in their account."
+
+#: residentes/templates/residentes/form_residente.html
+msgid "¿No aparece la unidad?"
+msgstr "Unit not listed?"
+
+#: residentes/templates/residentes/form_unidad.html
+msgid "Apartamento: número como aparece en la puerta, por ejemplo 302."
+msgstr "Apartment: number as shown on the door, for example 302."
+
+#: residentes/templates/residentes/form_unidad.html
+msgid "Cada unidad es un apartamento dentro de una torre."
+msgstr "Each unit is an apartment inside a tower."
+
+#: residentes/templates/residentes/form_unidad.html
+msgid "Cómo llenarlo"
+msgstr "How to fill it in"
+
+#: residentes/templates/residentes/form_unidad.html
+#, python-format
+msgid "Editar %(unidad)s"
+msgstr "Edit %(unidad)s"
+
+#: residentes/templates/residentes/form_unidad.html
+msgid "Editar unidad"
+msgstr "Edit unit"
+
+#: residentes/templates/residentes/form_unidad.html
+msgid "No se puede repetir la misma torre con el mismo apartamento."
+msgstr "The same tower and apartment cannot be repeated."
+
+#: residentes/templates/residentes/form_unidad.html
+msgid "Nueva unidad"
+msgstr "New unit"
+
+#: residentes/templates/residentes/form_unidad.html
+msgid "Torre: letra o número, por ejemplo A o 2."
+msgstr "Tower: letter or number, for example A or 2."
+
+#: residentes/templates/residentes/lista_residentes.html
+msgid "Acciones"
+msgstr "Actions"
+
+#: residentes/templates/residentes/lista_residentes.html
+msgid "Aún no se registra"
+msgstr "Not signed up yet"
+
+#: residentes/templates/residentes/lista_residentes.html
+msgid "Buscar por nombre, documento o correo"
+msgstr "Search by name, ID number or email"
+
+#: residentes/templates/residentes/lista_residentes.html
+msgid "Contacto"
+msgstr "Contact"
+
+#: residentes/templates/residentes/lista_residentes.html
+msgid "Desde"
+msgstr "Since"
+
+#: residentes/templates/residentes/lista_residentes.html
+msgid "Documento"
+msgstr "ID"
+
+#: residentes/templates/residentes/lista_residentes.html
+#, python-format
+msgid "Ningún residente coincide con \"%(buscar)s\""
+msgstr "No resident matches \"%(buscar)s\""
+
+#: residentes/templates/residentes/lista_residentes.html
+msgid "Personas que viven en el conjunto. Cada residente crea su propia cuenta en «Registrarse» con su documento."
+msgstr "People who live in the community. Each resident creates their own account under “Sign up” with their ID number."
+
+#: residentes/templates/residentes/lista_residentes.html
+msgid "Prueba con otro nombre o con el número de documento."
+msgstr "Try another name or the ID number."
+
+#: residentes/templates/residentes/lista_residentes.html
+msgid "Puede registrarse con su documento"
+msgstr "Can sign up with their ID number"
+
+#: residentes/templates/residentes/lista_residentes.html
+msgid "Registra el primero. Luego podrá crear su cuenta con su documento."
+msgstr "Add the first one. They can then create their account with their ID number."
+
+#: residentes/templates/residentes/lista_residentes.html
+msgid "Residentes registrados"
+msgstr "Registered residents"
+
+#: residentes/templates/residentes/lista_residentes.html
+msgid "Todavía no hay residentes"
+msgstr "There are no residents yet"
+
+#: residentes/templates/residentes/lista_residentes.html
+msgid "Unidad"
+msgstr "Unit"
+
+#: residentes/templates/residentes/lista_residentes.html
+msgid "Ya crearon su cuenta"
+msgstr "Have an account"
+
+#: residentes/templates/residentes/lista_residentes.html
+#, python-format
+msgid "¿Eliminar a %(nombre)s? También se borran su cuenta, pagos, vehículos, visitas y reportes."
+msgstr "Delete %(nombre)s? Their account, payments, vehicles, visits and reports will also be deleted."
+
+#: residentes/templates/residentes/lista_unidades.html
+msgid "Activa"
+msgstr "Active"
+
+#: residentes/templates/residentes/lista_unidades.html
+msgid "Apto"
+msgstr "Apt"
+
+#: residentes/templates/residentes/lista_unidades.html
+msgid "Crea las torres y apartamentos para poder asignarlos a los residentes y habilitar las reservas."
+msgstr "Create the towers and apartments so you can assign them to residents and enable bookings."
+
+#: residentes/templates/residentes/lista_unidades.html
+msgid "Filtrar por torre"
+msgstr "Filter by tower"
+
+#: residentes/templates/residentes/lista_unidades.html
+msgid "No hay unidades registradas"
+msgstr "There are no units yet"
+
+#: residentes/templates/residentes/lista_unidades.html
+msgid "No se puede eliminar: tiene residentes"
+msgstr "Cannot be deleted: it has residents"
+
+#: residentes/templates/residentes/lista_unidades.html
+msgid "Torres y apartamentos del conjunto."
+msgstr "Towers and apartments in the community."
+
+#: residentes/templates/residentes/lista_unidades.html
+#, python-format
+msgid "¿Eliminar la unidad %(unidad)s?"
+msgstr "Delete the unit %(unidad)s?"
+
+#: residentes/templates/residentes/lista_unidades.html
+msgid "Área"
+msgstr "Area"
+
+#: residentes/views.py
+#, python-format
+msgid "%(unidad)s eliminada."
+msgstr "%(unidad)s deleted."
+
+#: residentes/views.py
+#, python-format
+msgid "Datos de \"%(nombre)s\" actualizados."
+msgstr "\"%(nombre)s\" updated."
+
+#: residentes/views.py
+#, python-format
+msgid "No se puede eliminar %(unidad)s: tiene residentes o reservas asociadas."
+msgstr "%(unidad)s cannot be deleted: it has residents or bookings."
+
+#: residentes/views.py
+#, python-format
+msgid "Residente \"%(nombre)s\" registrado. Ya puede crear su cuenta en \"Registrarse\" con su número de documento."
+msgstr "Resident \"%(nombre)s\" added. They can now create their account under \"Sign up\" with their ID number."
+
+#: residentes/views.py
+#, python-format
+msgid "Residente \"%(nombre)s\" y sus registros asociados fueron eliminados."
+msgstr "Resident \"%(nombre)s\" and their related records were deleted."
+
+#: residentes/views.py
+msgid "Unidad actualizada."
+msgstr "Unit updated."
+
+#: residentes/views.py
+msgid "Unidad creada."
+msgstr "Unit created."
+
+#: templates/403.html
+msgid "Atrás"
+msgstr "Back"
+
+#: templates/403.html
+msgid "Esta sección es para otro tipo de usuario. Si crees que es un error, habla con la administración."
+msgstr "This section is for another type of user. If you think this is a mistake, talk to management."
+
+#: templates/403.html
+msgid "No tienes permiso para ver esta página"
+msgstr "You do not have permission to view this page"
+
+#: templates/403.html
+msgid "Sin permiso"
+msgstr "Access denied"
+
+#: templates/403.html
+msgid "Volver al inicio"
+msgstr "Back to home"
+
+#: templates/404.html
+msgid "No encontramos esta página"
+msgstr "We could not find this page"
+
+#: templates/404.html
+msgid "Puede que el registro se haya eliminado o que el enlace esté mal escrito."
+msgstr "The record may have been deleted or the link may be mistyped."
+
+#: templates/404.html
+msgid "Página no encontrada"
+msgstr "Page not found"
+
+#: templates/app.html
+msgid "Abrir menú"
+msgstr "Open menu"
+
+#: templates/app.html
+msgid "Adelante"
+msgstr "Forward"
+
+#: templates/app.html
+msgid "Administración residencial"
+msgstr "Residential management"
+
+#: templates/app.html
+msgid "Cerrar mensaje"
+msgstr "Close message"
+
+#: templates/app.html
+msgid "Cerrar sesión"
+msgstr "Sign out"
+
+#: templates/app.html
+msgid "Gestión de Conjuntos"
+msgstr "Community Manager"
+
+#: templates/app.html
+msgid "Menú principal"
+msgstr "Main menu"
+
+#: templates/app.html
+msgid "Ubicación"
+msgstr "Location"
+
+#: templates/form_pagina.html
+msgid "Guardar"
+msgstr "Save"
+
+#: templates/partials/idioma.html
+msgid "Idioma"
+msgstr "Language"
+
+#: templates/partials/paginacion.html
+msgid "Anterior"
+msgstr "Previous"
+
+#: templates/partials/paginacion.html
+#, python-format
+msgid "Mostrando %(inicio)s–%(fin)s de %(total)s"
+msgstr "Showing %(inicio)s–%(fin)s of %(total)s"
+
+#: templates/partials/paginacion.html
+#, python-format
+msgid "Página %(actual)s de %(total)s"
+msgstr "Page %(actual)s of %(total)s"
+
+#: templates/partials/paginacion.html
+msgid "Siguiente"
+msgstr "Next"
+
+#: usuarios/context_processors.py
+msgid "Cambiar contraseña"
+msgstr "Change password"
+
+#: usuarios/context_processors.py
+msgid "Comunidad"
+msgstr "Community"
+
+#: usuarios/context_processors.py
+msgid "Cuenta"
+msgstr "Account"
+
+#: usuarios/context_processors.py
+msgid "General"
+msgstr "General"
+
+#: usuarios/context_processors.py
+msgid "Inicio"
+msgstr "Home"
+
+#: usuarios/context_processors.py
+msgid "Mi conjunto"
+msgstr "My community"
+
+#: usuarios/context_processors.py
+msgid "Mis pagos"
+msgstr "My payments"
+
+#: usuarios/context_processors.py
+msgid "Mis reportes"
+msgstr "My reports"
+
+#: usuarios/context_processors.py
+msgid "Mis vehículos"
+msgstr "My vehicles"
+
+#: usuarios/context_processors.py
+msgid "Operación"
+msgstr "Operations"
+
+#: usuarios/context_processors.py
+msgid "Pagos"
+msgstr "Payments"
+
+#: usuarios/context_processors.py
+msgid "Portería"
+msgstr "Front desk"
+
+#: usuarios/context_processors.py
+msgid "Reportes"
+msgstr "Reports"
+
+#: usuarios/context_processors.py
+msgid "Reservas"
+msgstr "Bookings"
+
+#: usuarios/context_processors.py
+msgid "Residentes"
+msgstr "Residents"
+
+#: usuarios/context_processors.py
+msgid "Seguridad"
+msgstr "Security"
+
+#: usuarios/context_processors.py
+msgid "Unidades"
+msgstr "Units"
+
+#: usuarios/context_processors.py
+msgid "Vehículos"
+msgstr "Vehicles"
+
+#: usuarios/context_processors.py
+msgid "Visitantes"
+msgstr "Visitors"
+
+#: usuarios/forms.py
+msgid "Con este nombre entrarás al sistema. Usa letras, números y . _ - (sin espacios)."
+msgstr "You will sign in with this name. Use letters, numbers and . _ - (no spaces)."
+
+#: usuarios/forms.py
+msgid "Contraseña"
+msgstr "Password"
+
+#: usuarios/forms.py
+msgid "Cuenta activa (puede iniciar sesión)"
+msgstr "Active account (can sign in)"
+
+#: usuarios/forms.py
+msgid "El correo no coincide con el que registró la administración."
+msgstr "The email does not match the one management recorded."
+
+#: usuarios/forms.py
+msgid "El vigilante entrará con esta contraseña."
+msgstr "The guard will sign in with this password."
+
+#: usuarios/forms.py
+msgid "Ese nombre de usuario ya está en uso. Elige otro."
+msgstr "That username is already taken. Choose another one."
+
+#: usuarios/forms.py
+msgid "Este residente ya tiene una cuenta. Inicia sesión con tu usuario."
+msgstr "This resident already has an account. Sign in with your username."
+
+#: usuarios/forms.py
+msgid "Las dos contraseñas no coinciden."
+msgstr "The two passwords do not match."
+
+#: usuarios/forms.py
+msgid "No encontramos un residente con ese documento. La administración debe registrarte primero."
+msgstr "We could not find a resident with that ID number. Management must register you first."
+
+#: usuarios/forms.py
+msgid "Nombre de usuario"
+msgstr "Username"
+
+#: usuarios/forms.py
+msgid "Pedirle que la cambie la próxima vez que entre"
+msgstr "Ask them to change it the next time they sign in"
+
+#: usuarios/forms.py
+msgid "Repite la contraseña"
+msgstr "Repeat the password"
+
+#: usuarios/forms.py
+msgid "Si la administración registró tu correo, debe ser el mismo."
+msgstr "If management recorded your email, it must be the same one."
+
+#: usuarios/templates/usuarios/asignar_password.html
+msgid "Cuentas"
+msgstr "Accounts"
+
+#: usuarios/templates/usuarios/asignar_password.html
+msgid "Escribe la contraseña nueva y entrégasela a la persona. Si marcas la casilla, deberá cambiarla por una propia al entrar."
+msgstr "Type the new password and give it to the person. If you tick the box, they will have to change it to their own when they sign in."
+
+#: usuarios/templates/usuarios/asignar_password.html
+msgid "Guardar contraseña"
+msgstr "Save password"
+
+#: usuarios/templates/usuarios/asignar_password.html
+#, python-format
+msgid "Nueva contraseña para @%(usuario)s"
+msgstr "New password for @%(usuario)s"
+
+#: usuarios/templates/usuarios/cambiar_password.html
+msgid "Actualizar contraseña"
+msgstr "Update password"
+
+#: usuarios/templates/usuarios/cambiar_password.html
+msgid "Cámbiala por una que solo tú conozcas antes de seguir usando el sistema."
+msgstr "Change it to one only you know before you keep using the system."
+
+#: usuarios/templates/usuarios/cambiar_password.html
+msgid "La administración te asignó una contraseña nueva."
+msgstr "Management gave you a new password."
+
+#: usuarios/templates/usuarios/cambiar_password.html
+msgid "Mi cuenta"
+msgstr "My account"
+
+#: usuarios/templates/usuarios/cambiar_password.html
+msgid "Usa una contraseña que no uses en otros sitios."
+msgstr "Use a password you do not use on other sites."
+
+#: usuarios/templates/usuarios/dashboard_admin.html
+#, python-format
+msgid "%(n)s residente"
+msgid_plural "%(n)s residentes"
+msgstr[0] "%(n)s resident"
+msgstr[1] "%(n)s residents"
+
+#: usuarios/templates/usuarios/dashboard_admin.html
+#, python-format
+msgid "%(n)s unidad"
+msgid_plural "%(n)s unidades"
+msgstr[0] "%(n)s unit"
+msgstr[1] "%(n)s units"
+
+#: usuarios/templates/usuarios/dashboard_admin.html
+#, python-format
+msgid "%(n)s vigilante"
+msgid_plural "%(n)s vigilantes"
+msgstr[0] "%(n)s guard"
+msgstr[1] "%(n)s guards"
+
+#: usuarios/templates/usuarios/dashboard_admin.html
+#, python-format
+msgid "%(n)s visitante dentro"
+msgid_plural "%(n)s visitantes dentro"
+msgstr[0] "%(n)s visitor inside"
+msgstr[1] "%(n)s visitors inside"
+
+#: usuarios/templates/usuarios/dashboard_admin.html
+msgid "Accesos rápidos"
+msgstr "Shortcuts"
+
+#: usuarios/templates/usuarios/dashboard_admin.html
+msgid "Administración de Django"
+msgstr "Django administration"
+
+#: usuarios/templates/usuarios/dashboard_admin.html
+msgid "Agregar unidad"
+msgstr "Add unit"
+
+#: usuarios/templates/usuarios/dashboard_admin.html
+msgid "Carro o moto de un residente"
+msgstr "A resident’s car or motorcycle"
+
+#: usuarios/templates/usuarios/dashboard_admin.html
+msgid "Crear zona común"
+msgstr "Create common area"
+
+#: usuarios/templates/usuarios/dashboard_admin.html
+msgid "Cuando un residente reserve una zona común aparecerá aquí."
+msgstr "When a resident books a common area, it will appear here."
+
+#: usuarios/templates/usuarios/dashboard_admin.html
+msgid "Daños esperando revisión"
+msgstr "Damage awaiting review"
+
+#: usuarios/templates/usuarios/dashboard_admin.html
+msgid "Esto es lo que necesita tu atención hoy en el conjunto."
+msgstr "Here is what needs your attention in the community today."
+
+#: usuarios/templates/usuarios/dashboard_admin.html
+msgid "Gestionar"
+msgstr "Manage"
+
+#: usuarios/templates/usuarios/dashboard_admin.html
+msgid "Ningún residente ha reportado daños."
+msgstr "No resident has reported damage."
+
+#: usuarios/templates/usuarios/dashboard_admin.html
+msgid "No hay facturas vencidas."
+msgstr "There are no overdue invoices."
+
+#: usuarios/templates/usuarios/dashboard_admin.html
+msgid "Nuevo vigilante"
+msgstr "New guard"
+
+#: usuarios/templates/usuarios/dashboard_admin.html
+#, python-format
+msgid "Pagos recibidos en %(mes)s"
+msgstr "Payments received in %(mes)s"
+
+#: usuarios/templates/usuarios/dashboard_admin.html
+msgid "Pagos vencidos"
+msgstr "Overdue payments"
+
+#: usuarios/templates/usuarios/dashboard_admin.html
+msgid "Panel de administración"
+msgstr "Admin dashboard"
+
+#: usuarios/templates/usuarios/dashboard_admin.html
+msgid "Panel técnico"
+msgstr "Technical panel"
+
+#: usuarios/templates/usuarios/dashboard_admin.html
+msgid "Personal de seguridad"
+msgstr "Security staff"
+
+#: usuarios/templates/usuarios/dashboard_admin.html
+msgid "Por cobrar"
+msgstr "To collect"
+
+#: usuarios/templates/usuarios/dashboard_admin.html
+msgid "Próximas reservas"
+msgstr "Upcoming bookings"
+
+#: usuarios/templates/usuarios/dashboard_admin.html
+msgid "Recaudado este mes"
+msgstr "Collected this month"
+
+#: usuarios/templates/usuarios/dashboard_admin.html
+msgid "Registrar vehículo"
+msgstr "Add vehicle"
+
+#: usuarios/templates/usuarios/dashboard_admin.html
+msgid "Reportes abiertos"
+msgstr "Open reports"
+
+#: usuarios/templates/usuarios/dashboard_admin.html
+msgid "Reservas por aprobar"
+msgstr "Bookings to approve"
+
+#: usuarios/templates/usuarios/dashboard_admin.html
+msgid "Salón, BBQ, piscina…"
+msgstr "Hall, BBQ, pool…"
+
+#: usuarios/templates/usuarios/dashboard_admin.html
+msgid "Sin reportes"
+msgstr "No reports"
+
+#: usuarios/templates/usuarios/dashboard_admin.html
+msgid "Solicitudes de zonas comunes"
+msgstr "Common area requests"
+
+#: usuarios/templates/usuarios/dashboard_admin.html
+msgid "Todo al día"
+msgstr "All up to date"
+
+#: usuarios/templates/usuarios/dashboard_admin.html
+msgid "Torre y apartamento"
+msgstr "Tower and apartment"
+
+#: usuarios/templates/usuarios/dashboard_admin.html
+msgid "Ver"
+msgstr "View"
+
+#: usuarios/templates/usuarios/dashboard_admin.html
+msgid "Ver todas"
+msgstr "View all"
+
+#: usuarios/templates/usuarios/dashboard_admin.html
+msgid "Vigilantes y sus credenciales"
+msgstr "Guards and their credentials"
+
+#: usuarios/templates/usuarios/dashboard_admin.html
+#, python-format
+msgid "venció el %(fecha)s"
+msgstr "was due on %(fecha)s"
+
+#: usuarios/templates/usuarios/dashboard_admin.html
+msgid "Últimos reportes de daños"
+msgstr "Latest damage reports"
+
+#: usuarios/templates/usuarios/dashboard_residente.html
+#, python-format
+msgid "%(n)s vehículo"
+msgid_plural "%(n)s vehículos"
+msgstr[0] "%(n)s vehicle"
+msgstr[1] "%(n)s vehicles"
+
+#: usuarios/templates/usuarios/dashboard_residente.html
+msgid "Aún no tienes una unidad asignada; la administración puede asignártela."
+msgstr "You do not have a unit assigned yet; management can assign one."
+
+#: usuarios/templates/usuarios/dashboard_residente.html
+#, python-format
+msgid "Bienvenido a tu hogar en %(unidad)s."
+msgstr "Welcome home to %(unidad)s."
+
+#: usuarios/templates/usuarios/dashboard_residente.html
+msgid "Daños aún sin cerrar"
+msgstr "Damage not yet closed"
+
+#: usuarios/templates/usuarios/dashboard_residente.html
+msgid "Estás al día"
+msgstr "You are up to date"
+
+#: usuarios/templates/usuarios/dashboard_residente.html
+msgid "Mi panel"
+msgstr "My dashboard"
+
+#: usuarios/templates/usuarios/dashboard_residente.html
+msgid "Mis próximas reservas"
+msgstr "My upcoming bookings"
+
+#: usuarios/templates/usuarios/dashboard_residente.html
+msgid "Mis últimos reportes"
+msgstr "My latest reports"
+
+#: usuarios/templates/usuarios/dashboard_residente.html
+msgid "No tienes reservas próximas"
+msgstr "You have no upcoming bookings"
+
+#: usuarios/templates/usuarios/dashboard_residente.html
+msgid "Pagar ahora"
+msgstr "Pay now"
+
+#: usuarios/templates/usuarios/dashboard_residente.html
+#, python-format
+msgid "Próximo vencimiento: %(fecha)s"
+msgstr "Next due date: %(fecha)s"
+
+#: usuarios/templates/usuarios/dashboard_residente.html
+msgid "Registrados en portería"
+msgstr "Registered at the front desk"
+
+#: usuarios/templates/usuarios/dashboard_residente.html
+msgid "Reportes en curso"
+msgstr "Reports in progress"
+
+#: usuarios/templates/usuarios/dashboard_residente.html
+msgid "Reserva el salón social, la BBQ u otra zona común para tu próximo plan."
+msgstr "Book the party hall, the BBQ or another common area for your next plan."
+
+#: usuarios/templates/usuarios/dashboard_residente.html
+msgid "Reservar zona"
+msgstr "Book an area"
+
+#: usuarios/templates/usuarios/dashboard_residente.html
+msgid "Reservas próximas"
+msgstr "Upcoming bookings"
+
+#: usuarios/templates/usuarios/dashboard_residente.html
+msgid "Saldo pendiente"
+msgstr "Outstanding balance"
+
+#: usuarios/templates/usuarios/dashboard_residente.html
+msgid "Si algo se daña en tu unidad o en las zonas comunes, repórtalo aquí."
+msgstr "If something breaks in your unit or in the common areas, report it here."
+
+#: usuarios/templates/usuarios/dashboard_residente.html
+#, python-format
+msgid "Tienes un pago vencido desde el %(fecha)s"
+msgstr "You have a payment overdue since %(fecha)s"
+
+#: usuarios/templates/usuarios/dashboard_residente.html
+msgid "Tu usuario todavía no está vinculado a un registro de residente. Pide a la administración que lo vincule para ver tus pagos y reservas."
+msgstr "Your user is not linked to a resident record yet. Ask management to link it to see your payments and bookings."
+
+#: usuarios/templates/usuarios/dashboard_residente.html
+msgid "Ver todos"
+msgstr "View all"
+
+#: usuarios/templates/usuarios/dashboard_residente.html
+msgid "Zonas comunes reservadas"
+msgstr "Common areas booked"
+
+#: usuarios/templates/usuarios/dashboard_seguridad.html
+msgid "Acción"
+msgstr "Action"
+
+#: usuarios/templates/usuarios/dashboard_seguridad.html
+msgid "Buscar placa"
+msgstr "Look up plate"
+
+#: usuarios/templates/usuarios/dashboard_seguridad.html
+msgid "Cuando registres un ingreso aparecerá aquí hasta que marques su salida."
+msgstr "When you record an entry, it will appear here until you record the exit."
+
+#: usuarios/templates/usuarios/dashboard_seguridad.html
+msgid "Historial"
+msgstr "History"
+
+#: usuarios/templates/usuarios/dashboard_seguridad.html
+msgid "Ingresos hoy"
+msgstr "Entries today"
+
+#: usuarios/templates/usuarios/dashboard_seguridad.html
+msgid "No hay visitantes dentro"
+msgstr "There are no visitors inside"
+
+#: usuarios/templates/usuarios/dashboard_seguridad.html
+msgid "Registra cada ingreso y marca la salida cuando el visitante se vaya."
+msgstr "Record every entry and mark the exit when the visitor leaves."
+
+#: usuarios/templates/usuarios/dashboard_seguridad.html
+msgid "Registrar salida"
+msgstr "Record exit"
+
+#: usuarios/templates/usuarios/dashboard_seguridad.html
+msgid "Registrar visitante"
+msgstr "Record visitor"
+
+#: usuarios/templates/usuarios/dashboard_seguridad.html
+msgid "Salidas hoy"
+msgstr "Exits today"
+
+#: usuarios/templates/usuarios/dashboard_seguridad.html
+msgid "Vehículos registrados"
+msgstr "Registered vehicles"
+
+#: usuarios/templates/usuarios/dashboard_seguridad.html
+msgid "Visitante"
+msgstr "Visitor"
+
+#: usuarios/templates/usuarios/dashboard_seguridad.html
+msgid "Visitantes dentro"
+msgstr "Visitors inside"
+
+#: usuarios/templates/usuarios/dashboard_seguridad.html
+msgid "Visitantes dentro del conjunto"
+msgstr "Visitors inside the community"
+
+#: usuarios/templates/usuarios/form_guardia.html
+msgid "Consultar las placas de los vehículos de los residentes."
+msgstr "Look up the plates of residents’ vehicles."
+
+#: usuarios/templates/usuarios/form_guardia.html
+msgid "Crear cuenta"
+msgstr "Create account"
+
+#: usuarios/templates/usuarios/form_guardia.html
+msgid "Editar vigilante"
+msgstr "Edit guard"
+
+#: usuarios/templates/usuarios/form_guardia.html
+msgid "No ve pagos, reservas ni datos personales de los residentes."
+msgstr "They cannot see residents’ payments, bookings or personal data."
+
+#: usuarios/templates/usuarios/form_guardia.html
+msgid "Para cambiar su contraseña usa el botón de la llave en la lista."
+msgstr "To change their password, use the key button in the list."
+
+#: usuarios/templates/usuarios/form_guardia.html
+msgid "Qué puede hacer"
+msgstr "What they can do"
+
+#: usuarios/templates/usuarios/form_guardia.html
+msgid "Registrar la entrada y salida de visitantes."
+msgstr "Record visitors’ entries and exits."
+
+#: usuarios/templates/usuarios/form_guardia.html
+msgid "Tú defines el usuario y la contraseña con los que entrará a portería."
+msgstr "You set the username and password they will use at the front desk."
+
+#: usuarios/templates/usuarios/form_guardia.html
+msgid "¿Olvidó su contraseña?"
+msgstr "Forgot their password?"
+
+#: usuarios/templates/usuarios/lista_guardias.html
+msgid "Correo"
+msgstr "Email"
+
+#: usuarios/templates/usuarios/lista_guardias.html
+msgid "Crea la cuenta de cada vigilante con su nombre de usuario y contraseña para que pueda registrar visitantes."
+msgstr "Create each guard’s account with a username and password so they can record visitors."
+
+#: usuarios/templates/usuarios/lista_guardias.html
+msgid "Cuentas activas"
+msgstr "Active accounts"
+
+#: usuarios/templates/usuarios/lista_guardias.html
+msgid "Cuentas desactivadas"
+msgstr "Deactivated accounts"
+
+#: usuarios/templates/usuarios/lista_guardias.html
+msgid "Desactivado"
+msgstr "Deactivated"
+
+#: usuarios/templates/usuarios/lista_guardias.html
+msgid "No hay personal de seguridad registrado"
+msgstr "There is no security staff yet"
+
+#: usuarios/templates/usuarios/lista_guardias.html
+msgid "Nombre o usuario"
+msgstr "Name or username"
+
+#: usuarios/templates/usuarios/lista_guardias.html
+msgid "Nunca"
+msgstr "Never"
+
+#: usuarios/templates/usuarios/lista_guardias.html
+msgid "Usuario"
+msgstr "Username"
+
+#: usuarios/templates/usuarios/lista_guardias.html
+msgid "Vigilante"
+msgstr "Guard"
+
+#: usuarios/templates/usuarios/lista_guardias.html
+msgid "Vigilantes de portería y las credenciales con las que entran al sistema."
+msgstr "Front desk guards and the credentials they use to sign in."
+
+#: usuarios/templates/usuarios/lista_guardias.html
+#, python-format
+msgid "¿Eliminar la cuenta de %(nombre)s? Si tiene visitas registradas, solo se desactivará."
+msgstr "Delete %(nombre)s’s account? If they have recorded visits, it will only be deactivated."
+
+#: usuarios/templates/usuarios/lista_guardias.html
+msgid "Último ingreso"
+msgstr "Last sign-in"
+
+#: usuarios/templates/usuarios/login.html
+msgid "Administración, residentes y portería trabajando con la misma información."
+msgstr "Management, residents and the front desk working with the same information."
+
+#: usuarios/templates/usuarios/login.html
+msgid "Control de visitantes en portería"
+msgstr "Visitor control at the front desk"
+
+#: usuarios/templates/usuarios/login.html
+msgid "Entra con tu nombre de usuario y tu contraseña."
+msgstr "Sign in with your username and password."
+
+#: usuarios/templates/usuarios/login.html
+msgid "Entrar"
+msgstr "Sign in"
+
+#: usuarios/templates/usuarios/login.html
+msgid "Iniciar sesión"
+msgstr "Sign in"
+
+#: usuarios/templates/usuarios/login.html
+msgid "Paga la administración en línea"
+msgstr "Pay your maintenance fee online"
+
+#: usuarios/templates/usuarios/login.html
+msgid "Regístrate"
+msgstr "Sign up"
+
+#: usuarios/templates/usuarios/login.html
+msgid "Reporta daños y sigue su arreglo"
+msgstr "Report damage and track the repair"
+
+#: usuarios/templates/usuarios/login.html
+msgid "Reserva el salón social o la BBQ"
+msgstr "Book the party hall or the BBQ"
+
+#: usuarios/templates/usuarios/login.html
+msgid "Tu conjunto, organizado en un solo lugar."
+msgstr "Your community, organized in one place."
+
+#: usuarios/templates/usuarios/login.html
+msgid "Usuario o contraseña incorrectos."
+msgstr "Incorrect username or password."
+
+#: usuarios/templates/usuarios/login.html
+msgid "¿Eres residente y aún no tienes cuenta?"
+msgstr "Are you a resident without an account?"
+
+#: usuarios/templates/usuarios/login.html
+msgid "¿Olvidaste tu contraseña? La administración puede asignarte una nueva."
+msgstr "Forgot your password? Management can set a new one for you."
+
+#: usuarios/templates/usuarios/password_cambiada.html
+msgid "Contraseña actualizada"
+msgstr "Password updated"
+
+#: usuarios/templates/usuarios/password_cambiada.html
+msgid "Desde ahora entra con la contraseña nueva."
+msgstr "From now on, sign in with the new password."
+
+#: usuarios/templates/usuarios/password_cambiada.html
+msgid "Ir al inicio"
+msgstr "Go to home"
+
+#: usuarios/templates/usuarios/password_cambiada.html
+msgid "Tu contraseña se actualizó"
+msgstr "Your password was updated"
+
+#: usuarios/templates/usuarios/registro.html
+msgid "1. Escribe tu documento y tu correo"
+msgstr "1. Enter your ID number and email"
+
+#: usuarios/templates/usuarios/registro.html
+msgid "2. Elige tu nombre de usuario"
+msgstr "2. Choose your username"
+
+#: usuarios/templates/usuarios/registro.html
+msgid "3. Crea tu contraseña"
+msgstr "3. Create your password"
+
+#: usuarios/templates/usuarios/registro.html
+msgid "Crea tu cuenta de residente."
+msgstr "Create your resident account."
+
+#: usuarios/templates/usuarios/registro.html
+msgid "Crear mi cuenta"
+msgstr "Create my account"
+
+#: usuarios/templates/usuarios/registro.html
+msgid "Inicia sesión"
+msgstr "Sign in"
+
+#: usuarios/templates/usuarios/registro.html
+msgid "La administración ya te registró con tu documento. Ahora elige con qué usuario y contraseña quieres entrar."
+msgstr "Management already registered you with your ID number. Now choose the username and password you want to sign in with."
+
+#: usuarios/templates/usuarios/registro.html
+msgid "Registrarse"
+msgstr "Sign up"
+
+#: usuarios/templates/usuarios/registro.html
+msgid "Solo para residentes que la administración ya tiene registrados."
+msgstr "Only for residents already registered by management."
+
+#: usuarios/templates/usuarios/registro.html
+msgid "¿Ya tienes cuenta?"
+msgstr "Already have an account?"
+
+#: usuarios/textos_db.py
+msgid "Abierto"
+msgstr "Open"
+
+#: usuarios/textos_db.py
+msgid "Activo"
+msgstr "Active"
+
+#: usuarios/textos_db.py
+msgid "Administración"
+msgstr "Maintenance fee"
+
+#: usuarios/textos_db.py
+msgid "Administrador"
+msgstr "Administrator"
+
+#: usuarios/textos_db.py
+msgid "Carro"
+msgstr "Car"
+
+#: usuarios/textos_db.py
+msgid "Cerrado"
+msgstr "Closed"
+
+#: usuarios/textos_db.py
+msgid "Dentro"
+msgstr "Inside"
+
+#: usuarios/textos_db.py
+msgid "Eléctrico"
+msgstr "Electrical"
+
+#: usuarios/textos_db.py
+msgid "En proceso"
+msgstr "In progress"
+
+#: usuarios/textos_db.py
+msgid "Estructural"
+msgstr "Structural"
+
+#: usuarios/textos_db.py
+msgid "Inactivo"
+msgstr "Inactive"
+
+#: usuarios/textos_db.py
+msgid "Moto"
+msgstr "Motorcycle"
+
+#: usuarios/textos_db.py
+msgid "Pagado"
+msgstr "Paid"
+
+#: usuarios/textos_db.py
+msgid "Plomería"
+msgstr "Plumbing"
+
+#: usuarios/textos_db.py
+msgid "Reserva"
+msgstr "Booking"
+
+#: usuarios/textos_db.py
+msgid "Salió"
+msgstr "Left"
+
+#: usuarios/textos_db.py
+msgid "Sin categoría"
+msgstr "No category"
+
+#: usuarios/textos_db.py
+msgid "Sin estado"
+msgstr "No status"
+
+#: usuarios/textos_db.py
+msgid "Vencido"
+msgstr "Overdue"
+
+#: usuarios/views.py
+#, python-format
+msgid "%(nombre)s tiene visitas registradas, así que se desactivó su cuenta en lugar de borrarla."
+msgstr "%(nombre)s has recorded visits, so their account was deactivated instead of deleted."
+
+#: usuarios/views.py
+msgid "Buenas noches"
+msgstr "Good evening"
+
+#: usuarios/views.py
+msgid "Buenas tardes"
+msgstr "Good afternoon"
+
+#: usuarios/views.py
+msgid "Buenos días"
+msgstr "Good morning"
+
+#: usuarios/views.py
+#, python-format
+msgid "Contraseña de \"%(usuario)s\" actualizada."
+msgstr "Password for \"%(usuario)s\" updated."
+
+#: usuarios/views.py
+#, python-format
+msgid "Cuenta de %(nombre)s eliminada."
+msgstr "%(nombre)s’s account deleted."
+
+#: usuarios/views.py
+#, python-format
+msgid "Cuenta de seguridad creada. Usuario para entrar: \"%(usuario)s\"."
+msgstr "Security account created. Sign-in username: \"%(usuario)s\"."
+
+#: usuarios/views.py
+#, python-format
+msgid "Datos de %(nombre)s actualizados."
+msgstr "%(nombre)s updated."
+
+#: usuarios/views.py
+#, python-format
+msgid "¡Bienvenido! Tu cuenta \"%(usuario)s\" quedó lista."
+msgstr "Welcome! Your account \"%(usuario)s\" is ready."
+
+#: validadores.py
+msgid "Este campo solo permite letras."
+msgstr "This field only allows letters."
+
+#: validadores.py
+msgid "Este campo solo permite números."
+msgstr "This field only allows numbers."
+
+#: vehiculos/forms.py
+msgid "Color"
+msgstr "Color"
+
+#: vehiculos/forms.py
+msgid "Marca"
+msgstr "Make"
+
+#: vehiculos/forms.py
+msgid "Modelo"
+msgstr "Model"
+
+#: vehiculos/forms.py
+msgid "Placa"
+msgstr "Plate"
+
+#: vehiculos/forms.py
+msgid "Placa de carro inválida. Formato: 3 letras + 3 números (ej: ABC123)."
+msgstr "Invalid car plate. Format: 3 letters + 3 numbers (e.g. ABC123)."
+
+#: vehiculos/forms.py
+msgid "Placa de moto inválida. Formato: 3 letras + 2 números + 1 letra (ej: ASD12G)."
+msgstr "Invalid motorcycle plate. Format: 3 letters + 2 numbers + 1 letter (e.g. ASD12G)."
+
+#: vehiculos/forms.py
+msgid "Propietario"
+msgstr "Owner"
+
+#: vehiculos/forms.py
+msgid "Tipo de vehículo"
+msgstr "Vehicle type"
+
+#: vehiculos/forms.py
+msgid "Ya hay un vehículo registrado con esta placa."
+msgstr "A vehicle with this plate is already registered."
+
+#: vehiculos/templates/vehiculos/form_vehiculo.html
+msgid "Asigna el vehículo a su propietario."
+msgstr "Assign the vehicle to its owner."
+
+#: vehiculos/templates/vehiculos/form_vehiculo.html
+msgid "Carro: 3 letras y 3 números"
+msgstr "Car: 3 letters and 3 numbers"
+
+#: vehiculos/templates/vehiculos/form_vehiculo.html
+msgid "Editar vehículo"
+msgstr "Edit vehicle"
+
+#: vehiculos/templates/vehiculos/form_vehiculo.html
+#, python-format
+msgid "Editar vehículo %(placa)s"
+msgstr "Edit vehicle %(placa)s"
+
+#: vehiculos/templates/vehiculos/form_vehiculo.html
+msgid "El vehículo queda registrado a tu nombre."
+msgstr "The vehicle is registered under your name."
+
+#: vehiculos/templates/vehiculos/form_vehiculo.html
+msgid "Formato de placa"
+msgstr "Plate format"
+
+#: vehiculos/templates/vehiculos/form_vehiculo.html
+msgid "Moto: 3 letras, 2 números y 1 letra"
+msgstr "Motorcycle: 3 letters, 2 numbers and 1 letter"
+
+#: vehiculos/templates/vehiculos/form_vehiculo.html
+msgid "Puedes escribirla en minúsculas o con espacios; se guarda en mayúsculas. No se pueden repetir placas."
+msgstr "You can type it in lowercase or with spaces; it is saved in uppercase. Plates cannot be repeated."
+
+#: vehiculos/templates/vehiculos/lista_vehiculos.html
+msgid "Buscar por placa o marca"
+msgstr "Search by plate or make"
+
+#: vehiculos/templates/vehiculos/lista_vehiculos.html
+msgid "Carros"
+msgstr "Cars"
+
+#: vehiculos/templates/vehiculos/lista_vehiculos.html
+msgid "Carros y motos de los residentes del conjunto."
+msgstr "Cars and motorcycles of the community’s residents."
+
+#: vehiculos/templates/vehiculos/lista_vehiculos.html
+msgid "Carros y motos registrados a tu nombre en portería."
+msgstr "Cars and motorcycles registered under your name at the front desk."
+
+#: vehiculos/templates/vehiculos/lista_vehiculos.html
+msgid "Consulta rápida de placas autorizadas para entrar al conjunto."
+msgstr "Quick lookup of plates allowed into the community."
+
+#: vehiculos/templates/vehiculos/lista_vehiculos.html
+msgid "Filtrar por tipo"
+msgstr "Filter by type"
+
+#: vehiculos/templates/vehiculos/lista_vehiculos.html
+msgid "Motos"
+msgstr "Motorcycles"
+
+#: vehiculos/templates/vehiculos/lista_vehiculos.html
+msgid "No hay vehículos con ese filtro"
+msgstr "No vehicles match that filter"
+
+#: vehiculos/templates/vehiculos/lista_vehiculos.html
+msgid "No hay vehículos registrados"
+msgstr "There are no registered vehicles"
+
+#: vehiculos/templates/vehiculos/lista_vehiculos.html
+msgid "Placa, marca o propietario"
+msgstr "Plate, make or owner"
+
+#: vehiculos/templates/vehiculos/lista_vehiculos.html
+msgid "Registra los carros y motos para que portería los reconozca."
+msgstr "Register cars and motorcycles so the front desk recognizes them."
+
+#: vehiculos/templates/vehiculos/lista_vehiculos.html
+msgid "Revisa la placa: debe ser como ABC123 (carro) o ABC12D (moto)."
+msgstr "Check the plate: it should look like ABC123 (car) or ABC12D (motorcycle)."
+
+#: vehiculos/templates/vehiculos/lista_vehiculos.html
+msgid "Sin propietario"
+msgstr "No owner"
+
+#: vehiculos/templates/vehiculos/lista_vehiculos.html
+msgid "Todavía no se ha registrado ningún vehículo."
+msgstr "No vehicle has been registered yet."
+
+#: vehiculos/templates/vehiculos/lista_vehiculos.html
+msgid "Vehículo"
+msgstr "Vehicle"
+
+#: vehiculos/templates/vehiculos/lista_vehiculos.html
+#, python-format
+msgid "¿Eliminar el vehículo %(placa)s?"
+msgstr "Delete vehicle %(placa)s?"
+
+#: vehiculos/views.py
+#, python-format
+msgid "Vehículo %(placa)s eliminado."
+msgstr "Vehicle %(placa)s deleted."
+
+#: vehiculos/views.py
+#, python-format
+msgid "Vehículo %(placa)s guardado."
+msgstr "Vehicle %(placa)s saved."
+
+#: visitantes/forms.py
+msgid "Dentro del conjunto"
+msgstr "Inside the community"
+
+#: visitantes/forms.py
+msgid "Ej: visita familiar, domicilio, mantenimiento"
+msgstr "E.g. family visit, delivery, maintenance"
+
+#: visitantes/forms.py
+msgid "Ingreso"
+msgstr "Entry"
+
+#: visitantes/forms.py
+msgid "La salida debe ser posterior al ingreso."
+msgstr "The exit must be after the entry."
+
+#: visitantes/forms.py
+msgid "Motivo"
+msgstr "Reason"
+
+#: visitantes/forms.py
+msgid "Salida"
+msgstr "Exit"
+
+#: visitantes/forms.py
+msgid "Si ya tiene hora de salida, el estado debe ser \"Ya salió\"."
+msgstr "If there is already an exit time, the status must be \"Has left\"."
+
+#: visitantes/forms.py
+msgid "Visita a"
+msgstr "Visiting"
+
+#: visitantes/forms.py
+msgid "Ya salió"
+msgstr "Has left"
+
+#: visitantes/templates/visitantes/form_visitante.html
+msgid "1. Pide el documento de identidad del visitante."
+msgstr "1. Ask for the visitor’s ID."
+
+#: visitantes/templates/visitantes/form_visitante.html
+msgid "2. Confirma por citófono con el residente que lo autoriza."
+msgstr "2. Confirm with the resident over the intercom."
+
+#: visitantes/templates/visitantes/form_visitante.html
+msgid "3. Al salir, usa el botón Salida en la lista de visitantes."
+msgstr "3. When they leave, use the Exit button in the visitor list."
+
+#: visitantes/templates/visitantes/form_visitante.html
+msgid "Antes de dejar entrar"
+msgstr "Before letting someone in"
+
+#: visitantes/templates/visitantes/form_visitante.html
+#, python-format
+msgid "Editar visita de %(nombre)s"
+msgstr "Edit %(nombre)s’s visit"
+
+#: visitantes/templates/visitantes/form_visitante.html
+msgid "Editar visitante"
+msgstr "Edit visitor"
+
+#: visitantes/templates/visitantes/form_visitante.html
+#, python-format
+msgid "Ingreso registrado por <strong>@%(usuario)s</strong>."
+msgstr "Entry recorded by <strong>@%(usuario)s</strong>."
+
+#: visitantes/templates/visitantes/form_visitante.html
+msgid "La hora de ingreso se llena sola con la hora actual."
+msgstr "The entry time is filled in automatically with the current time."
+
+#: visitantes/templates/visitantes/form_visitante.html
+msgid "Nuevo ingreso"
+msgstr "New entry"
+
+#: visitantes/templates/visitantes/form_visitante.html
+msgid "Registrar ingreso"
+msgstr "Record entry"
+
+#: visitantes/templates/visitantes/lista_visitantes.html
+#, python-format
+msgid "%(n)s ingreso hoy"
+msgid_plural "%(n)s ingresos hoy"
+msgstr[0] "%(n)s entry today"
+msgstr[1] "%(n)s entries today"
+
+#: visitantes/templates/visitantes/lista_visitantes.html
+#, python-format
+msgid "%(n)s persona dentro del conjunto"
+msgid_plural "%(n)s personas dentro del conjunto"
+msgstr[0] "%(n)s person inside the community"
+msgstr[1] "%(n)s people inside the community"
+
+#: visitantes/templates/visitantes/lista_visitantes.html
+msgid "Aún no hay visitas registradas"
+msgstr "There are no recorded visits yet"
+
+#: visitantes/templates/visitantes/lista_visitantes.html
+msgid "No hay visitantes con ese filtro"
+msgstr "No visitors match that filter"
+
+#: visitantes/templates/visitantes/lista_visitantes.html
+msgid "Nombre o documento"
+msgstr "Name or ID number"
+
+#: visitantes/templates/visitantes/lista_visitantes.html
+msgid "Prueba buscando por número de documento."
+msgstr "Try searching by ID number."
+
+#: visitantes/templates/visitantes/lista_visitantes.html
+msgid "Registra cada persona que entra al conjunto para tener control de quién está adentro."
+msgstr "Record everyone who enters the community to know who is inside."
+
+#: visitantes/templates/visitantes/lista_visitantes.html
+msgid "Registro de visitantes"
+msgstr "Visitor log"
+
+#: visitantes/templates/visitantes/lista_visitantes.html
+msgid "Ya salieron"
+msgstr "Already left"
+
+#: visitantes/templates/visitantes/lista_visitantes.html
+#, python-format
+msgid "por @%(usuario)s"
+msgstr "by @%(usuario)s"
+
+#: visitantes/views.py
+#, python-format
+msgid "%(nombre)s ya tenía registrada su salida."
+msgstr "%(nombre)s already had their exit recorded."
+
+#: visitantes/views.py
+#, python-format
+msgid "Ingreso de %(nombre)s registrado."
+msgstr "Entry for %(nombre)s recorded."
+
+#: visitantes/views.py
+msgid "Registro de visitante actualizado."
+msgstr "Visitor record updated."
+
+#: visitantes/views.py
+#, python-format
+msgid "Salida de %(nombre)s registrada a las %(hora)s."
+msgstr "Exit for %(nombre)s recorded at %(hora)s."

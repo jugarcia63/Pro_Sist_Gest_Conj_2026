@@ -1,26 +1,20 @@
-{% extends "base.html" %}
-{% block title %}Nuevo Pago{% endblock %}
-{% block content %}
-<div class="contenedor--angosto">
-    <div class="card-pagina">
-        <h2>Nuevo Pago</h2>
-        <form method="post">
-            {% csrf_token %}
-            {% if form.non_field_errors %}
-                <ul style="color:red;">
-                    {% for error in form.non_field_errors %}<li>{{ error }}</li>{% endfor %}
-                </ul>
-            {% endif %}
-            {% for field in form %}
-                <p>
-                    {{ field.label_tag }} {{ field }}
-                    {% if field.errors %}
-                        <ul style="color:red;">{% for error in field.errors %}<li>{{ error }}</li>{% endfor %}</ul>
-                    {% endif %}
-                </p>
-            {% endfor %}
-            <button type="submit" class="btn btn-primario">Guardar</button>
-        </form>
+{% extends "form_pagina.html" %}
+{% load i18n ui %}
+{% block title %}{% translate "Generar factura" %}{% endblock %}
+{% block miga %}{% icono "derecha" %}<a href="{% url 'lista_pagos_admin' %}">{% translate "Pagos" %}</a>{% icono "derecha" %}<strong>{% translate "Nueva factura" %}</strong>{% endblock %}
+{% block eyebrow %}<span class="encabezado__eyebrow">{% icono "factura" %} {% translate "Pagos" %}</span>{% endblock %}
+{% block titulo_pagina %}{% translate "Generar factura" %}{% endblock %}
+{% block subtitulo %}<p>{% translate "La factura queda pendiente hasta que el residente la pague en línea." %}</p>{% endblock %}
+{% block url_volver %}{% url 'lista_pagos_admin' %}{% endblock %}
+{% block texto_boton %}{% translate "Generar factura" %}{% endblock %}
+{% block campos %}{% with anchos="id_residente_fk id_reserva_fk" %}{% include "partials/form_campos.html" %}{% endwith %}{% endblock %}
+{% block lateral %}
+<section class="panel">
+    <div class="panel__cabecera"><h2>{% icono "info" %} {% translate "Recuerda" %}</h2></div>
+    <div class="panel__cuerpo" style="display:grid;gap:.6rem">
+        <p>{% translate "El valor va en pesos colombianos, sin puntos. Ej: 320000." %}</p>
+        <p>{% translate "Si el concepto es Reserva, elige la reserva que se está cobrando." %}</p>
+        <p>{% translate "Puedes anular la factura mientras esté pendiente." %}</p>
     </div>
-</div>
+</section>
 {% endblock %}

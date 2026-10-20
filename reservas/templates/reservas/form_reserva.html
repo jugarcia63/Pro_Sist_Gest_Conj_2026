@@ -1,37 +1,39 @@
-{% extends "base.html" %}
-{% block title %}{% if form.instance.pk %}Editar Reserva{% else %}Nueva Reserva{% endif %}{% endblock %}
-{% block content %}
-<div class="contenedor--angosto">
-    <div class="card-pagina">
-        <h2>{% if form.instance.pk %}Editar{% else %}Nueva{% endif %} Reserva</h2>
-
-        <form method="post">
-            {% csrf_token %}
-
-            {% if form.non_field_errors %}
-    <ul class="messages">
-        {% for error in form.non_field_errors %}
-            <li class="error">{{ error }}</li>
-        {% endfor %}
-    </ul>
+{% extends "form_pagina.html" %}
+{% load i18n ui %}
+{% block title %}{% if object %}{% translate "Editar reserva" %}{% else %}{% translate "Nueva reserva" %}{% endif %}{% endblock %}
+{% block miga %}{% icono "derecha" %}<a href="{% url 'lista_reservas' %}">{% translate "Reservas" %}</a>{% icono "derecha" %}<strong>{% if object %}{% translate "Editar" %}{% else %}{% translate "Nueva" %}{% endif %}</strong>{% endblock %}
+{% block eyebrow %}<span class="encabezado__eyebrow">{% icono "calendario" %} {% translate "Reservas" %}</span>{% endblock %}
+{% block titulo_pagina %}{% if object %}{% translate "Editar reserva" %}{% else %}{% translate "Reservar una zona común" %}{% endif %}{% endblock %}
+{% block subtitulo %}<p>{% if user.rol == 'residente' %}{% translate "Tu solicitud quedará pendiente hasta que la administración la apruebe." %}{% else %}{% translate "Puedes crear la reserva ya aprobada para cualquier unidad." %}{% endif %}</p>{% endblock %}
+{% block url_volver %}{% url 'lista_reservas' %}{% endblock %}
+{% block texto_boton %}{% if object %}{% translate "Guardar cambios" %}{% elif user.rol == 'residente' %}{% translate "Enviar solicitud" %}{% else %}{% translate "Crear reserva" %}{% endif %}{% endblock %}
+{% block campos %}{% with anchos="id_zona_fk id_unidad_fk estado" %}{% include "partials/form_campos.html" %}{% endwith %}{% endblock %}
+{% block antes_form %}
+{% if not zonas %}
+    <div class="aviso">{% icono "alerta" %}<div><strong>{% translate "No hay zonas comunes disponibles." %}</strong> {% if user.rol == 'admin' %}<a href="{% url 'crear_zona' %}">{% translate "Crea una zona" %}</a> {% translate "antes de registrar reservas." %}{% else %}{% translate "La administración aún no ha habilitado zonas para reservar." %}{% endif %}</div></div>
 {% endif %}
-
-            {% for field in form %}
-                <p>
-                    {{ field.label_tag }} {{ field }}
-                    {% if field.errors %}
-                        <ul style="color:red;">
-                            {% for error in field.errors %}
-                                <li>{{ error }}</li>
-                            {% endfor %}
-                        </ul>
-                    {% endif %}
-                </p>
+{% endblock %}
+{% block lateral %}
+<section class="panel">
+    <div class="panel__cabecera"><h2>{% icono "zona" %} {% translate "Zonas disponibles" %}</h2></div>
+    {% if zonas %}
+        <div class="lista">
+            {% for z in zonas %}
+                <div class="lista__item">
+                    <span class="avatar avatar--menta">{% icono "zona" %}</span>
+                    <div class="lista__cuerpo"><strong>{{ z.nombre }}</strong><small>{% if z.capacidad %}{% blocktranslate with n=z.capacidad %}Hasta {{ n }} personas{% endblocktranslate %}{% else %}{% translate "Capacidad sin definir" %}{% endif %}</small></div>
+                </div>
             {% endfor %}
-
-            <button type="submit" class="btn btn-primario">Guardar</button>
-        </form>
-        <a href="{% url 'lista_reservas' %}" class="btn btn-secundario">Volver</a>
+        </div>
+    {% else %}
+        <div class="panel__cuerpo"><p>{% translate "Sin zonas habilitadas." %}</p></div>
+    {% endif %}
+</section>
+<section class="panel">
+    <div class="panel__cabecera"><h2>{% icono "info" %} {% translate "Reglas" %}</h2></div>
+    <div class="panel__cuerpo" style="display:grid;gap:.6rem">
+        <p>{% translate "Una reserva puede durar máximo 12 horas." %}</p>
+        <p>{% translate "Si la zona ya está ocupada en ese horario, el sistema te avisará para que elijas otro." %}</p>
     </div>
-</div>
+</section>
 {% endblock %}

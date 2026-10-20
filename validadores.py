@@ -1,5 +1,6 @@
 import re
 from django import forms
+from django.utils.translation import gettext_lazy as _
 
 REGEX_LETRAS = re.compile(r'^[A-Za-zÁÉÍÓÚáéíóúÑñ\s]+$')
 REGEX_NUMEROS = re.compile(r'^[0-9]+$')
@@ -20,11 +21,11 @@ class ValidacionLetrasNumerosMixin:
         for campo in self.campos_solo_letras:
             valor = cleaned_data.get(campo)
             if valor and not REGEX_LETRAS.match(str(valor)):
-                self.add_error(campo, 'Este campo solo permite letras.')
+                self.add_error(campo, _('Este campo solo permite letras.'))
 
         for campo in self.campos_solo_numeros:
             valor = cleaned_data.get(campo)
             if valor is not None and not REGEX_NUMEROS.match(str(valor)):
-                self.add_error(campo, 'Este campo solo permite números.')
+                self.add_error(campo, _('Este campo solo permite números.'))
 
         return cleaned_data

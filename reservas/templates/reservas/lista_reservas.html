@@ -1,17 +1,78 @@
-{% extends "base.html" %}
-{% block title %}Lista de Reservas{% endblock %}
-{% block content %}
-<div class="contenedor">
-    <h2>Reservas</h2>
-    <p>
-        <a href="{% url 'crear_reserva' %}" class="btn btn-primario">+ Nueva reserva</a>
-        <a href="{% url 'lista_zonas' %}" class="btn btn-secundario">Ver zonas comunes</a>
-    </p>
-    {% for r in reservas %}
-        <div class="card">
-            {{ r.id_zona_fk }} - {{ r.fecha_inicio }} a {{ r.fecha_fin }} - Estado: {{ r.estado }}
-            <a href="{% url 'editar_reserva' r.id_reservas %}" class="btn btn-secundario">Editar</a>
+{% extends "app.html" %}
+{% load i18n ui %}
+{% block title %}{% translate "Reservas" %}{% endblock %}
+{% block miga %}{% icono "derecha" %}<strong>{% translate "Reservas" %}</strong>{% endblock %}
+{% block eyebrow %}<span class="encabezado__eyebrow">{% icono "calendario" %} {% translate "Zonas comunes" %}</span>{% endblock %}
+{% block titulo_pagina %}{% if user.rol == 'admin' %}{% translate "Reservas del conjunto" %}{% else %}{% translate "Mis reservas" %}{% endif %}{% endblock %}
+{% block subtitulo %}<p>{% if user.rol == 'admin' %}{% translate "Aprueba o rechaza las solicitudes de los residentes." %}{% else %}{% translate "Tus solicitudes quedan pendientes hasta que la administración las apruebe." %}{% endif %}</p>{% endblock %}
+{% block acciones %}
+    <a href="{% url 'lista_zonas' %}" class="btn btn-secundario">{% icono "zona" %} {% translate "Ver zonas" %}</a>
+    {% if not sin_unidad %}<a href="{% url 'crear_reserva' %}" class="btn btn-primario">{% icono "mas" %} {% translate "Nueva reserva" %}</a>{% endif %}
+{% endblock %}
+{% block contenido %}
+{% if sin_unidad %}
+    <div class="aviso">{% icono "alerta" %}<div><strong>{% translate "No tienes una unidad asignada." %}</strong> {% translate "Para reservar zonas comunes, la administración debe asignarte tu apartamento." %}</div></div>
+{% endif %}
+
+<section class="panel">
+    <div class="toolbar">
+        <nav class="segmentos" aria-label="{% translate 'Periodo' %}">
+            <a href="?cuando=proximas{% if estado %}&estado={{ estado }}{% endif %}" class="{% if cuando == 'proximas' %}activo{% endif %}">{% translate "Próximas" %}</a>
+            <a href="?cuando=pasadas{% if estado %}&estado={{ estado }}{% endif %}" class="{% if cuando == 'pasadas' %}activo{% endif %}">{% translate "Pasadas" %}</a>
+            <a href="?cuando=todas{% if estado %}&estado={{ estado }}{% endif %}" class="{% if cuando == 'todas' %}activo{% endif %}">{% translate "Todas" %}</a>
+        </nav>
+        <form method="get">
+            <input type="hidden" name="cuando" value="{{ cuando }}">
+            <label for="filtro-estado" class="sr-only">{% translate "Estado" %}</label>
+            <select name="estado" id="filtro-estado" data-enviar-al-cambiar>
+                <option value="">{% translate "Todos los estados" %}</option>
+                <option value="Pendiente" {% if estado == 'Pendiente' %}selected{% endif %}>{% translate "Pendientes" %}{% if pendientes %} ({{ pendientes }}){% endif %}</option>
+                <option value="Aprobada" {% if estado == 'Aprobada' %}selected{% endif %}>{% translate "Aprobadas" %}</option>
+                <option value="Rechazada" {% if estado == 'Rechazada' %}selected{% endif %}>{% translate "Rechazadas" %}</option>
+                <option value="Cancelada" {% if estado == 'Cancelada' %}selected{% endif %}>{% translate "Canceladas" %}</option>
+            </select>
+            <noscript><button class="btn btn-secundario" type="submit">{% translate "Filtrar" %}</button></noscript>
+        </form>
+    </div>
+
+    {% if reservas %}
+        <div class="lista">
+            {% for r in reservas %}
+                <div class="lista__item">
+                    <div class="dia"><span>{{ r.fecha_inicio|date:"M" }}</span><strong>{{ r.fecha_inicio|date:"j" }}</strong></div>
+                    <div class="lista__cuerpo">
+                        <strong>{{ r.id_zona_fk|default:_("Zona sin nombre") }}</strong>
+                        <small>{% icono "reloj" %} {{ r.fecha_inicio|date:"l" }}, {{ r.fecha_inicio|date:"MONTH_DAY_FORMAT" }} · {{ r.fecha_inicio|date:"H:i" }} – {{ r.fecha_fin|date:"H:i" }}{% if user.rol == 'admin' %} · {{ r.id_unidad_fk|default:_("Sin unidad") }}{% endif %}</small>
+                        {% if r.observaciones %}<small class="recortar" title="{{ r.observaciones }}">“{{ r.observaciones }}”</small>{% endif %}
+                    </div>
+                    <div class="lista__lado">
+                        <span class="badge badge-{{ r.estado|color_estado }}">{{ r.estado|traducir:"Sin estado" }}</span>
+                        <div class="acciones">
+                            {% if user.rol == 'admin' %}
+                                {% if r.estado != 'Aprobada' %}
+                                    <form method="post" action="{% url 'cambiar_estado_reserva' r.pk %}">{% csrf_token %}<input type="hidden" name="next" value="{{ request.get_full_path }}"><button class="btn btn-exito btn-sm" name="estado" value="Aprobada">{% icono "check" %} {% translate "Aprobar" %}</button></form>
+                                {% endif %}
+                                {% if r.estado == 'Pendiente' or r.estado == 'Aprobada' %}
+                                    <form method="post" action="{% url 'cambiar_estado_reserva' r.pk %}" data-confirmar="{% translate '¿Rechazar esta reserva?' %}">{% csrf_token %}<input type="hidden" name="next" value="{{ request.get_full_path }}"><button class="btn btn-peligro btn-sm" name="estado" value="Rechazada">{% icono "x" %} {% translate "Rechazar" %}</button></form>
+                                {% endif %}
+                                <a href="{% url 'editar_reserva' r.pk %}" class="btn btn-fantasma btn-sm btn-icono" title="{% translate 'Editar' %}" aria-label="{% translate 'Editar' %}">{% icono "editar" %}</a>
+                            {% elif r.fecha_inicio > ahora and r.estado == 'Pendiente' or r.fecha_inicio > ahora and r.estado == 'Aprobada' %}
+                                <a href="{% url 'editar_reserva' r.pk %}" class="btn btn-secundario btn-sm">{% icono "editar" %} {% translate "Cambiar" %}</a>
+                                <form method="post" action="{% url 'cambiar_estado_reserva' r.pk %}" data-confirmar="{% blocktranslate with zona=r.id_zona_fk %}¿Cancelar tu reserva de {{ zona }}?{% endblocktranslate %}">{% csrf_token %}<button class="btn btn-peligro btn-sm" name="estado" value="Cancelada">{% icono "x" %} {% translate "Cancelar" %}</button></form>
+                            {% endif %}
+                        </div>
+                    </div>
+                </div>
+            {% endfor %}
         </div>
-    {% endfor %}
-</div>
+        {% include "partials/paginacion.html" %}
+    {% else %}
+        <div class="vacio">
+            <div class="vacio__icono">{% icono "calendario" %}</div>
+            <h3>{% if cuando == 'pasadas' %}{% translate "No hay reservas pasadas" %}{% else %}{% translate "No hay reservas próximas" %}{% endif %}</h3>
+            <p>{% translate "Mira las zonas comunes disponibles y separa la que necesites." %}</p>
+            <a href="{% url 'lista_zonas' %}" class="btn btn-secundario btn-sm">{% icono "zona" %} {% translate "Ver zonas comunes" %}</a>
+        </div>
+    {% endif %}
+</section>
 {% endblock %}

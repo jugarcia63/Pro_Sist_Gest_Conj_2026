@@ -1,36 +1,28 @@
-{% extends "base.html" %}
-{% block title %}Reportar un daño{% endblock %}
-{% block content %}
-<div class="contenedor--angosto">
-    <div class="card-pagina">
-        <h1>Reportar un daño</h1>
-
-        <form method="post">
-            {% csrf_token %}
-            {% if form.non_field_errors %}
-                <ul class="messages">
-                    {% for error in form.non_field_errors %}
-                        <li class="error">{{ error }}</li>
-                    {% endfor %}
-                </ul>
-            {% endif %}
-
-            {% for field in form %}
-                <p>
-                    {{ field.label_tag }}
-                    {{ field }}
-                    {% if field.errors %}
-                        <ul class="messages">
-                            {% for error in field.errors %}
-                                <li class="error">{{ error }}</li>
-                            {% endfor %}
-                        </ul>
-                    {% endif %}
-                </p>
-            {% endfor %}
-
-            <button type="submit" class="btn btn-primario">Enviar reporte</button>
-        </form>
+{% extends "form_pagina.html" %}
+{% load i18n ui %}
+{% block title %}{% translate "Reportar un daño" %}{% endblock %}
+{% block miga %}{% icono "derecha" %}<a href="{% url 'mis_reportes' %}">{% translate "Mis reportes" %}</a>{% icono "derecha" %}<strong>{% translate "Nuevo" %}</strong>{% endblock %}
+{% block eyebrow %}<span class="encabezado__eyebrow">{% icono "alerta" %} {% translate "Mantenimiento" %}</span>{% endblock %}
+{% block titulo_pagina %}{% translate "Reportar un daño" %}{% endblock %}
+{% block subtitulo %}<p>{% translate "Cuéntale a la administración qué se dañó y dónde. Te avisaremos el avance aquí mismo." %}</p>{% endblock %}
+{% block url_volver %}{% url 'mis_reportes' %}{% endblock %}
+{% block texto_boton %}{% translate "Enviar reporte" %}{% endblock %}
+{% block campos %}{% with anchos="categoria" %}{% include "partials/form_campos.html" %}{% endwith %}{% endblock %}
+{% block lateral %}
+<section class="panel">
+    <div class="panel__cabecera"><h2>{% icono "info" %} {% translate "Un buen reporte" %}</h2></div>
+    <div class="panel__cuerpo" style="display:grid;gap:.6rem">
+        <p>{% translate "Di el lugar exacto: «baño principal», «pasillo del piso 4», «puerta del parqueadero»." %}</p>
+        <p>{% translate "Indica desde cuándo pasa y si empeora." %}</p>
+        <p>{% translate "Si es urgente (fuga grande, corto eléctrico), avisa también en portería." %}</p>
     </div>
-</div>
+</section>
+<section class="panel">
+    <div class="panel__cabecera"><h2>{% icono "reloj" %} {% translate "Qué pasa después" %}</h2></div>
+    <div class="lista">
+        <div class="lista__item"><span class="badge badge-error">{% translate "Abierto" %}</span><div class="lista__cuerpo"><small>{% translate "La administración recibe tu reporte." %}</small></div></div>
+        <div class="lista__item"><span class="badge badge-aviso">{% translate "En proceso" %}</span><div class="lista__cuerpo"><small>{% translate "Se asigna el arreglo." %}</small></div></div>
+        <div class="lista__item"><span class="badge badge-exito">{% translate "Cerrado" %}</span><div class="lista__cuerpo"><small>{% translate "El daño quedó solucionado." %}</small></div></div>
+    </div>
+</section>
 {% endblock %}

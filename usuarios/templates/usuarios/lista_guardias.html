@@ -1,0 +1,63 @@
+{% extends "app.html" %}
+{% load i18n ui %}
+{% block title %}{% translate "Personal de seguridad" %}{% endblock %}
+{% block miga %}{% icono "derecha" %}<strong>{% translate "Seguridad" %}</strong>{% endblock %}
+{% block eyebrow %}<span class="encabezado__eyebrow">{% icono "escudo" %} {% translate "Comunidad" %}</span>{% endblock %}
+{% block titulo_pagina %}{% translate "Personal de seguridad" %}{% endblock %}
+{% block subtitulo %}<p>{% translate "Vigilantes de portería y las credenciales con las que entran al sistema." %}</p>{% endblock %}
+{% block acciones %}
+    <a href="{% url 'dashboard' %}" class="btn btn-secundario">{% icono "volver" %} {% translate "Volver" %}</a>
+    <a href="{% url 'crear_guardia' %}" class="btn btn-primario">{% icono "mas" %} {% translate "Nuevo vigilante" %}</a>
+{% endblock %}
+{% block contenido %}
+<div class="grid-stats">
+    <div class="stat stat--menta"><span class="stat__icono">{% icono "escudo" %}</span><span class="stat__etiqueta">{% translate "Cuentas activas" %}</span><span class="stat__valor">{{ total_activos }}</span></div>
+    <div class="stat"><span class="stat__icono">{% icono "candado" %}</span><span class="stat__etiqueta">{% translate "Cuentas desactivadas" %}</span><span class="stat__valor">{{ total_inactivos }}</span></div>
+</div>
+
+<section class="panel">
+    <div class="toolbar">
+        <form method="get" role="search">
+            <div class="buscador">{% icono "buscar" %}<input type="search" name="buscar" value="{{ buscar }}" placeholder="{% translate 'Nombre o usuario' %}" aria-label="{% translate 'Buscar' %}"></div>
+            <button type="submit" class="btn btn-secundario">{% translate "Buscar" %}</button>
+            {% if buscar %}<a href="{% url 'lista_guardias' %}" class="btn btn-fantasma">{% icono "x" %} {% translate "Limpiar" %}</a>{% endif %}
+        </form>
+    </div>
+
+    {% if guardias %}
+        <div class="tabla-contenedor">
+            <table>
+                <thead><tr><th>{% translate "Vigilante" %}</th><th>{% translate "Usuario" %}</th><th class="ocultar-movil">{% translate "Correo" %}</th><th>{% translate "Último ingreso" %}</th><th>{% translate "Estado" %}</th><th class="derecha">{% translate "Acciones" %}</th></tr></thead>
+                <tbody>
+                {% for g in guardias %}
+                    <tr>
+                        <td><div class="celda-principal"><span class="avatar avatar--cielo">{{ g.first_name|default:""|first|upper }}{{ g.last_name|default:""|first|upper }}</span><div><strong>{{ g.get_full_name|default:g.username }}</strong><small>{% translate "Desde" %} {{ g.date_joined|date:"M Y" }}</small></div></div></td>
+                        <td><span class="etiqueta etiqueta--cielo">@{{ g.username }}</span></td>
+                        <td class="ocultar-movil">{{ g.email|default:"—" }}</td>
+                        <td class="num">{% if g.last_login %}{{ g.last_login|date:"d M, H:i" }}{% else %}<span class="texto-tenue">{% translate "Nunca" %}</span>{% endif %}</td>
+                        <td>{% if g.is_active %}<span class="badge badge-exito">{% translate "Activo" %}</span>{% else %}<span class="badge badge-neutro">{% translate "Desactivado" %}</span>{% endif %}</td>
+                        <td class="derecha">
+                            <div class="acciones" style="justify-content:flex-end">
+                                <a href="{% url 'editar_guardia' g.pk %}" class="btn btn-secundario btn-sm">{% icono "editar" %} {% translate "Editar" %}</a>
+                                <a href="{% url 'asignar_password' g.pk %}" class="btn btn-fantasma btn-sm btn-icono" title="{% translate 'Asignar contraseña' %}" aria-label="{% translate 'Asignar contraseña' %}">{% icono "llave" %}</a>
+                                <form method="post" action="{% url 'eliminar_guardia' g.pk %}" data-confirmar="{% blocktranslate with nombre=g.get_full_name %}¿Eliminar la cuenta de {{ nombre }}? Si tiene visitas registradas, solo se desactivará.{% endblocktranslate %}">
+                                    {% csrf_token %}
+                                    <button type="submit" class="btn btn-peligro btn-sm btn-icono" title="{% translate 'Eliminar' %}" aria-label="{% translate 'Eliminar' %}">{% icono "basura" %}</button>
+                                </form>
+                            </div>
+                        </td>
+                    </tr>
+                {% endfor %}
+                </tbody>
+            </table>
+        </div>
+    {% else %}
+        <div class="vacio">
+            <div class="vacio__icono">{% icono "escudo" %}</div>
+            <h3>{% translate "No hay personal de seguridad registrado" %}</h3>
+            <p>{% translate "Crea la cuenta de cada vigilante con su nombre de usuario y contraseña para que pueda registrar visitantes." %}</p>
+            <a href="{% url 'crear_guardia' %}" class="btn btn-primario btn-sm">{% icono "mas" %} {% translate "Nuevo vigilante" %}</a>
+        </div>
+    {% endif %}
+</section>
+{% endblock %}

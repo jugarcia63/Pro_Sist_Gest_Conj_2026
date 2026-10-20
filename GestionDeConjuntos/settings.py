@@ -2,6 +2,7 @@
 Django settings for GestionDeConjuntos project.
 """
 
+import sys
 from pathlib import Path
 from decouple import config
 import dj_database_url
@@ -53,6 +54,7 @@ MIDDLEWARE = [
     'django.middleware.security.SecurityMiddleware',
     'whitenoise.middleware.WhiteNoiseMiddleware',
     'django.contrib.sessions.middleware.SessionMiddleware',
+    'django.middleware.locale.LocaleMiddleware',
     'django.middleware.common.CommonMiddleware',
     'django.middleware.csrf.CsrfViewMiddleware',
     'django.contrib.auth.middleware.AuthenticationMiddleware',
@@ -74,6 +76,7 @@ TEMPLATES = [
                 'django.template.context_processors.request',
                 'django.contrib.auth.context_processors.auth',
                 'django.contrib.messages.context_processors.messages',
+                'usuarios.context_processors.navegacion',
             ],
         },
     },
@@ -84,8 +87,8 @@ WSGI_APPLICATION = 'GestionDeConjuntos.wsgi.application'
 
 # Database
 
-# PostgreSQL. En Render se usa DATABASE_URL (la URL que entrega la base de datos);
-# en local se puede usar DATABASE_URL o las variables DB_* por separado.
+# En Render se usa PostgreSQL a través de DATABASE_URL (la URL que entrega la base de datos).
+# En local, si no hay DATABASE_URL, se usa SQLite (db.sqlite3): no hay que instalar nada.
 DATABASE_URL = config('DATABASE_URL', default='')
 
 if DATABASE_URL:
@@ -95,12 +98,8 @@ if DATABASE_URL:
 else:
     DATABASES = {
         'default': {
-            'ENGINE': 'django.db.backends.postgresql',
-            'NAME': config('DB_NAME'),
-            'USER': config('DB_USER'),
-            'PASSWORD': config('DB_PASSWORD'),
-            'HOST': config('DB_HOST', default='127.0.0.1'),
-            'PORT': config('DB_PORT', default='5432'),
+            'ENGINE': 'django.db.backends.sqlite3',
+            'NAME': BASE_DIR / 'db.sqlite3',
         }
     }
 
@@ -125,7 +124,14 @@ AUTH_PASSWORD_VALIDATORS = [
 
 # Internationalization
 
-LANGUAGE_CODE = 'es-co'
+LANGUAGE_CODE = 'es'
+
+# Idiomas que el usuario puede elegir con el selector de la página
+LANGUAGES = [
+    ('es', 'Español'),
+    ('en', 'English'),
+]
+LOCALE_PATHS = [BASE_DIR / 'locale']
 
 TIME_ZONE = 'America/Bogota'
 
@@ -151,6 +157,9 @@ STORAGES = {
         'BACKEND': 'whitenoise.storage.CompressedManifestStaticFilesStorage',
     },
 }
+# Las pruebas corren con DEBUG=False y sin collectstatic: ahí no se exige el manifiesto
+if 'test' in sys.argv:
+    STORAGES['staticfiles']['BACKEND'] = 'django.contrib.staticfiles.storage.StaticFilesStorage'
 
 
 # Email
@@ -158,6 +167,9 @@ STORAGES = {
 EMAIL_BACKEND = config('EMAIL_BACKEND', default='django.core.mail.backends.console.EmailBackend')
 
 AUTH_USER_MODEL = 'usuarios.Usuario'
+
+# El nombre de usuario no distingue mayúsculas al iniciar sesión (Juan_Garcia = juan_garcia)
+AUTHENTICATION_BACKENDS = ['usuarios.backends.UsuarioSinMayusculasBackend']
 
 LOGIN_URL = 'login'
 LOGIN_REDIRECT_URL = 'dashboard'

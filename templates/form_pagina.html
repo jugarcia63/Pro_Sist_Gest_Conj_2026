@@ -1,0 +1,29 @@
+{% extends "app.html" %}
+{% load i18n ui %}
+{% comment %}
+Página de formulario estándar. Las plantillas hijas definen:
+  url_volver (a dónde llevan "Volver" y "Cancelar"), texto_boton, y opcionalmente campos, antes_form, lateral.
+{% endcomment %}
+{% block acciones %}<a href="{% block url_volver %}{% url 'dashboard' %}{% endblock %}" class="btn btn-secundario" id="enlace-volver">{% icono "volver" %} {% translate "Volver" %}</a>{% endblock %}
+{% block contenido %}
+<div class="grid-3-1">
+    <div class="columna">
+        {% block antes_form %}{% endblock %}
+        <section class="panel">
+            <div class="panel__cuerpo panel__cuerpo--form">
+                <form method="post" novalidate>
+                    {% csrf_token %}
+                    {% block campos %}{% include "partials/form_campos.html" %}{% endblock %}
+                    <div class="form-acciones">
+                        <a href="{% url 'dashboard' %}" class="btn btn-fantasma" data-igual-que="enlace-volver">{% translate "Cancelar" %}</a>
+                        <button type="submit" class="btn btn-primario">{% icono "check" %} {% block texto_boton %}{% translate "Guardar" %}{% endblock %}</button>
+                    </div>
+                </form>
+            </div>
+        </section>
+    </div>
+    <div class="columna">
+        {% block lateral %}{% endblock %}
+    </div>
+</div>
+{% endblock %}

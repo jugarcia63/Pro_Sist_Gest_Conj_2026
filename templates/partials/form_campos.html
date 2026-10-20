@@ -1,0 +1,27 @@
+{% comment %}Pinta todos los campos de un formulario en rejilla de dos columnas, con ayudas y errores.{% endcomment %}
+{% load ui %}
+{% if form.non_field_errors %}
+  <div class="form-errores" role="alert">
+    {% icono "alerta" %}
+    <div>{% for error in form.non_field_errors %}<div>{{ error }}</div>{% endfor %}</div>
+  </div>
+{% endif %}
+<div class="form-grid">
+  {% for hidden in form.hidden_fields %}{{ hidden }}{% endfor %}
+  {% for field in form.visible_fields %}
+    {% if field.widget_type == 'checkbox' %}
+      <div class="campo campo--ancho campo--check{% if field.errors %} campo--error{% endif %}">
+        <label for="{{ field.id_for_label }}">{{ field }} <span>{{ field.label }}</span></label>
+        {% if field.help_text %}<div class="campo__ayuda">{{ field.help_text|safe }}</div>{% endif %}
+        {% for error in field.errors %}<div class="campo__error">{{ error }}</div>{% endfor %}
+      </div>
+    {% else %}
+      <div class="campo{% if field.widget_type == 'textarea' or field.name in anchos %} campo--ancho{% endif %}{% if field.errors %} campo--error{% endif %}">
+        <label for="{{ field.id_for_label }}">{{ field.label }}{% if field.field.required %}<span class="requerido" aria-hidden="true">*</span>{% endif %}</label>
+        {{ field }}
+        {% if field.help_text %}<div class="campo__ayuda">{{ field.help_text|safe }}</div>{% endif %}
+        {% for error in field.errors %}<div class="campo__error">{{ error }}</div>{% endfor %}
+      </div>
+    {% endif %}
+  {% endfor %}
+</div>

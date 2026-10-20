@@ -23,3 +23,8 @@ services:
         generateValue: true
       - key: DEBUG
         value: "False"
+      - key: ADMIN_USERNAME
+        value: juan98
+      # La contraseña no va en el repositorio: Render la pide al crear el Blueprint
+      - key: ADMIN_PASSWORD
+        sync: false

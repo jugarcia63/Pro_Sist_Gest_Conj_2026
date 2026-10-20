@@ -1,0 +1,59 @@
+{% extends "app.html" %}
+{% load i18n ui %}
+{% block title %}{% translate "Unidades" %}{% endblock %}
+{% block miga %}{% icono "derecha" %}<strong>{% translate "Unidades" %}</strong>{% endblock %}
+{% block eyebrow %}<span class="encabezado__eyebrow">{% icono "edificio" %} {% translate "Comunidad" %}</span>{% endblock %}
+{% block titulo_pagina %}{% translate "Unidades" %}{% endblock %}
+{% block subtitulo %}<p>{% translate "Torres y apartamentos del conjunto." %}</p>{% endblock %}
+{% block acciones %}
+    <a href="{% url 'lista_residentes' %}" class="btn btn-secundario">{% icono "residentes" %} {% translate "Residentes" %}</a>
+    <a href="{% url 'crear_unidad' %}" class="btn btn-primario">{% icono "mas" %} {% translate "Nueva unidad" %}</a>
+{% endblock %}
+{% block contenido %}
+<section class="panel">
+    {% if torres %}
+        <div class="toolbar">
+            <nav class="segmentos" aria-label="{% translate 'Filtrar por torre' %}">
+                <a href="{% url 'lista_unidades' %}" class="{% if not torre_actual %}activo{% endif %}">{% translate "Todas" %}</a>
+                {% for t in torres %}<a href="?torre={{ t }}" class="{% if torre_actual|upper == t|upper %}activo{% endif %}">{% translate "Torre" %} {{ t }}</a>{% endfor %}
+            </nav>
+        </div>
+    {% endif %}
+
+    {% if unidades %}
+        <div class="tabla-contenedor">
+            <table>
+                <thead><tr><th>{% translate "Unidad" %}</th><th>{% translate "Piso" %}</th><th>{% translate "Área" %}</th><th>{% translate "Residentes" %}</th><th>{% translate "Estado" %}</th><th class="derecha">{% translate "Acciones" %}</th></tr></thead>
+                <tbody>
+                {% for u in unidades %}
+                    <tr>
+                        <td><div class="celda-principal"><span class="avatar">{{ u.torre|default:"?" }}</span><div><strong>{% translate "Apto" %} {{ u.apto|default:"—" }}</strong><small>{% translate "Torre" %} {{ u.torre|default:"—" }}</small></div></div></td>
+                        <td class="num">{{ u.piso|default_if_none:"—" }}</td>
+                        <td class="num">{% if u.area %}{{ u.area|floatformat:"-1" }} m²{% else %}—{% endif %}</td>
+                        <td class="num">{{ u.num_residentes }}</td>
+                        <td>{% if u.estado == 0 %}<span class="badge badge-neutro">{% translate "Desocupada" %}</span>{% else %}<span class="badge badge-exito">{% translate "Activa" %}</span>{% endif %}</td>
+                        <td class="derecha">
+                            <div class="acciones" style="justify-content:flex-end">
+                                <a href="{% url 'editar_unidad' u.pk %}" class="btn btn-secundario btn-sm">{% icono "editar" %} {% translate "Editar" %}</a>
+                                <form method="post" action="{% url 'eliminar_unidad' u.pk %}" data-confirmar="{% blocktranslate with unidad=u %}¿Eliminar la unidad {{ unidad }}?{% endblocktranslate %}">
+                                    {% csrf_token %}
+                                    <button type="submit" class="btn btn-peligro btn-sm btn-icono" aria-label="{% translate 'Eliminar' %}"{% if u.num_residentes %} disabled title="{% translate 'No se puede eliminar: tiene residentes' %}"{% else %} title="{% translate 'Eliminar' %}"{% endif %}>{% icono "basura" %}</button>
+                                </form>
+                            </div>
+                        </td>
+                    </tr>
+                {% endfor %}
+                </tbody>
+            </table>
+        </div>
+        {% include "partials/paginacion.html" %}
+    {% else %}
+        <div class="vacio">
+            <div class="vacio__icono">{% icono "edificio" %}</div>
+            <h3>{% translate "No hay unidades registradas" %}</h3>
+            <p>{% translate "Crea las torres y apartamentos para poder asignarlos a los residentes y habilitar las reservas." %}</p>
+            <a href="{% url 'crear_unidad' %}" class="btn btn-primario btn-sm">{% icono "mas" %} {% translate "Nueva unidad" %}</a>
+        </div>
+    {% endif %}
+</section>
+{% endblock %}

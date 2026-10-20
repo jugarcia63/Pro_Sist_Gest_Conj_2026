@@ -39,3 +39,15 @@ class RolRequeridoMixin(LoginRequiredMixin, UserPassesTestMixin):
 def residente_de(usuario):
     """Devuelve el registro Residentes vinculado a este Usuario, o None si no tiene."""
     return getattr(usuario, 'residente', None)
+
+
+def redirigir_a_siguiente(request, ruta_por_defecto):
+    """Vuelve a la página indicada en el campo 'next' del formulario, solo si es del mismo sitio."""
+    from django.shortcuts import redirect
+    from django.utils.http import url_has_allowed_host_and_scheme
+
+    siguiente = request.POST.get('next') or request.GET.get('next') or ''
+    if siguiente and url_has_allowed_host_and_scheme(siguiente, allowed_hosts={request.get_host()},
+                                                     require_https=request.is_secure()):
+        return redirect(siguiente)
+    return redirect(ruta_por_defecto)

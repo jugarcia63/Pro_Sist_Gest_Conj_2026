@@ -1,14 +1,59 @@
 {% extends "base.html" %}
-{% block title %}Iniciar Sesión{% endblock %}
-{% block content %}
-<div class="contenedor--angosto">
-    <div class="card-pagina">
-        <h2>Iniciar Sesión</h2>
-        <form method="post">
-            {% csrf_token %}
-            {{ form.as_p }}
-            <button type="submit" class="btn btn-primario">Entrar</button>
-        </form>
+{% load i18n ui %}
+{% block title %}{% translate "Iniciar sesión" %}{% endblock %}
+{% block body %}
+<div class="auth-pagina">
+    <div class="auth-pagina__barra">{% include "partials/idioma.html" %}</div>
+    <div class="auth">
+        <section class="auth__intro">
+            <div class="auth__marca"><span class="sidebar__logo">{% icono "edificio" %}</span>{% translate "Gestión de Conjuntos" %}</div>
+            <div class="auth__copy">
+                <h1>{% translate "Tu conjunto, organizado en un solo lugar." %}</h1>
+                <p>{% translate "Administración, residentes y portería trabajando con la misma información." %}</p>
+            </div>
+            <ul class="auth__puntos">
+                <li>{% icono "tarjeta" %} {% translate "Paga la administración en línea" %}</li>
+                <li>{% icono "calendario" %} {% translate "Reserva el salón social o la BBQ" %}</li>
+                <li>{% icono "visitante" %} {% translate "Control de visitantes en portería" %}</li>
+                <li>{% icono "alerta" %} {% translate "Reporta daños y sigue su arreglo" %}</li>
+            </ul>
+            {% include "partials/fachada.html" %}
+        </section>
+
+        <section class="auth__form">
+            <div>
+                <h2>{% translate "Iniciar sesión" %}</h2>
+                <p class="sub">{% translate "Entra con tu nombre de usuario y tu contraseña." %}</p>
+            </div>
+
+            <form method="post" novalidate>
+                {% csrf_token %}
+                <input type="hidden" name="next" value="{{ next }}">
+                {% if form.non_field_errors %}
+                    <div class="form-errores" role="alert" style="margin-bottom:1rem">
+                        {% icono "alerta" %}
+                        <div>{% translate "Usuario o contraseña incorrectos." %}</div>
+                    </div>
+                {% endif %}
+                <div class="form-grid" style="grid-template-columns:1fr">
+                    <div class="campo">
+                        <label for="id_username">{% translate "Nombre de usuario" %}</label>
+                        <input type="text" name="username" id="id_username" value="{{ form.username.value|default:'' }}" autocomplete="username" autofocus required placeholder="laura.gomez">
+                    </div>
+                    <div class="campo">
+                        <label for="id_password">{% translate "Contraseña" %}</label>
+                        <input type="password" name="password" id="id_password" autocomplete="current-password" required placeholder="••••••••">
+                    </div>
+                    <button type="submit" class="btn btn-primario btn-bloque">{% icono "entrar" %} {% translate "Entrar" %}</button>
+                </div>
+            </form>
+
+            <div class="auth__cambio">
+                <span>{% translate "¿Eres residente y aún no tienes cuenta?" %}</span>
+                <a href="{% url 'registro' %}">{% translate "Regístrate" %} {% icono "adelante" %}</a>
+            </div>
+            <p class="auth__pie">{% icono "candado" %} {% translate "¿Olvidaste tu contraseña? La administración puede asignarte una nueva." %}</p>
+        </section>
     </div>
 </div>
 {% endblock %}

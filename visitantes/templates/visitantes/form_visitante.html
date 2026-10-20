@@ -1,14 +1,25 @@
-{% extends "base.html" %}
-{% block title %}Formulario de visitante{% endblock %}
-{% block content %}
-<div class="contenedor--angosto">
-    <div class="card-pagina">
-        <h1>Formulario de visitante</h1>
-        <form method="post">
-            {% csrf_token %}
-            {{ form.as_p }}
-            <button type="submit" class="btn btn-primario">Guardar</button>
-        </form>
+{% extends "form_pagina.html" %}
+{% load i18n ui %}
+{% block title %}{% if object %}{% translate "Editar visitante" %}{% else %}{% translate "Registrar visitante" %}{% endif %}{% endblock %}
+{% block miga %}{% icono "derecha" %}<a href="{% url 'lista_visitantes' %}">{% translate "Visitantes" %}</a>{% icono "derecha" %}<strong>{% if object %}{{ object }}{% else %}{% translate "Nuevo ingreso" %}{% endif %}</strong>{% endblock %}
+{% block eyebrow %}<span class="encabezado__eyebrow">{% icono "escudo" %} {% translate "Portería" %}</span>{% endblock %}
+{% block titulo_pagina %}{% if object %}{% blocktranslate with nombre=object %}Editar visita de {{ nombre }}{% endblocktranslate %}{% else %}{% translate "Registrar ingreso" %}{% endif %}{% endblock %}
+{% block subtitulo %}<p>{% translate "La hora de ingreso se llena sola con la hora actual." %}</p>{% endblock %}
+{% block url_volver %}{% url 'lista_visitantes' %}{% endblock %}
+{% block texto_boton %}{% if object %}{% translate "Guardar cambios" %}{% else %}{% translate "Registrar ingreso" %}{% endif %}{% endblock %}
+{% block campos %}{% with anchos="id_residente_fk motivo" %}{% include "partials/form_campos.html" %}{% endwith %}{% endblock %}
+{% block lateral %}
+<section class="panel">
+    <div class="panel__cabecera"><h2>{% icono "info" %} {% translate "Antes de dejar entrar" %}</h2></div>
+    <div class="panel__cuerpo" style="display:grid;gap:.6rem">
+        <p>{% translate "1. Pide el documento de identidad del visitante." %}</p>
+        <p>{% translate "2. Confirma por citófono con el residente que lo autoriza." %}</p>
+        <p>{% translate "3. Al salir, usa el botón Salida en la lista de visitantes." %}</p>
     </div>
-</div>
+</section>
+{% if object and object.autorizado_por %}
+<section class="panel">
+    <div class="panel__cuerpo"><p>{% blocktranslate with usuario=object.autorizado_por.username %}Ingreso registrado por <strong>@{{ usuario }}</strong>.{% endblocktranslate %}</p></div>
+</section>
+{% endif %}
 {% endblock %}

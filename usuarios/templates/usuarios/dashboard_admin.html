@@ -1,20 +1,161 @@
-{% extends "base.html" %}
-{% block title %}Panel de administración{% endblock %}
-{% block content %}
-<div class="contenedor">
-    <h1>Bienvenido, {{ usuario.username }}</h1>
-    <p>Panel de Administración</p>
+{% extends "app.html" %}
+{% load i18n ui %}
+{% block title %}{% translate "Panel de administración" %}{% endblock %}
+{% block encabezado %}{% endblock %}
+{% block contenido %}
+<section class="banner">
+    <div class="banner__texto">
+        <span class="encabezado__eyebrow" style="color:#C4B5FD">{% icono "escudo" %} {% translate "Panel de administración" %}</span>
+        <h1>{{ saludo }}, {{ nombre_visible }}</h1>
+        <p>{% translate "Esto es lo que necesita tu atención hoy en el conjunto." %}</p>
+        <div class="banner__chips">
+            <span class="banner__chip">{% icono "residentes" %} {% blocktranslate count n=total_residentes %}{{ n }} residente{% plural %}{{ n }} residentes{% endblocktranslate %}</span>
+            <span class="banner__chip">{% icono "edificio" %} {% blocktranslate count n=total_unidades %}{{ n }} unidad{% plural %}{{ n }} unidades{% endblocktranslate %}</span>
+            <span class="banner__chip">{% icono "escudo" %} {% blocktranslate count n=total_guardias %}{{ n }} vigilante{% plural %}{{ n }} vigilantes{% endblocktranslate %}</span>
+            <span class="banner__chip">{% icono "visitante" %} {% blocktranslate count n=visitantes_dentro %}{{ n }} visitante dentro{% plural %}{{ n }} visitantes dentro{% endblocktranslate %}</span>
+        </div>
+        <div class="banner__acciones">
+            <a href="{% url 'crear_residente' %}" class="btn btn-claro">{% icono "mas" %} {% translate "Nuevo residente" %}</a>
+            <a href="{% url 'crear_guardia' %}" class="btn btn-secundario">{% icono "escudo" %} {% translate "Nuevo vigilante" %}</a>
+            <a href="{% url 'crear_pago' %}" class="btn btn-secundario">{% icono "factura" %} {% translate "Generar factura" %}</a>
+        </div>
+    </div>
+    {% include "partials/fachada.html" %}
+</section>
 
-    <div class="resumen" style="grid-template-columns: repeat(2, 1fr); max-width:700px;">
-        <a href="{% url 'lista_residentes' %}" class="card">Gestión de Residentes</a>
-        <a href="{% url 'lista_vehiculos' %}" class="card">Gestión de Vehículos</a>
-        <a href="{% url 'lista_zonas' %}" class="card">Zonas Comunes</a>
-        <a href="{% url 'lista_reservas' %}" class="card">Todas las Reservas</a>
-        <a href="{% url 'lista_pagos_admin' %}" class="card">Estado de Pagos</a>
-        <a href="{% url 'lista_reportes_admin' %}" class="card">Gestión de Reportes</a>
-        <a href="{% url 'cambiar_password' %}" class="card">Cambiar Contraseña</a>
+<div class="grid-stats">
+    <a href="{% url 'lista_pagos_admin' %}?estado=pendiente" class="stat stat--ambar">
+        <span class="stat__icono">{% icono "billetera" %}</span>
+        <span class="stat__etiqueta">{% translate "Por cobrar" %}</span>
+        <span class="stat__valor">{{ valor_pendiente|pesos }}</span>
+        <span class="stat__nota">{% blocktranslate count n=pagos_pendientes %}{{ n }} factura pendiente{% plural %}{{ n }} facturas pendientes{% endblocktranslate %}</span>
+    </a>
+    <a href="{% url 'lista_pagos_admin' %}?estado=pagado" class="stat stat--menta">
+        <span class="stat__icono">{% icono "tarjeta" %}</span>
+        <span class="stat__etiqueta">{% translate "Recaudado este mes" %}</span>
+        <span class="stat__valor">{{ recaudado_mes|pesos }}</span>
+        <span class="stat__nota">{% blocktranslate with mes=hoy|date:"F" %}Pagos recibidos en {{ mes }}{% endblocktranslate %}</span>
+    </a>
+    <a href="{% url 'lista_reportes_admin' %}?estado=Abierto" class="stat stat--coral{% if reportes_abiertos %} stat--alerta{% endif %}">
+        <span class="stat__icono">{% icono "alerta" %}</span>
+        <span class="stat__etiqueta">{% translate "Reportes abiertos" %}</span>
+        <span class="stat__valor">{{ reportes_abiertos }}</span>
+        <span class="stat__nota">{% translate "Daños esperando revisión" %}</span>
+    </a>
+    <a href="{% url 'lista_reservas' %}?estado=Pendiente" class="stat stat--cielo">
+        <span class="stat__icono">{% icono "calendario" %}</span>
+        <span class="stat__etiqueta">{% translate "Reservas por aprobar" %}</span>
+        <span class="stat__valor">{{ reservas_pendientes }}</span>
+        <span class="stat__nota">{% translate "Solicitudes de zonas comunes" %}</span>
+    </a>
+</div>
+
+<div class="grid-3-1">
+    <div class="columna">
+        <section class="panel">
+            <div class="panel__cabecera">
+                <h2>{% icono "calendario" %} {% translate "Próximas reservas" %}</h2>
+                <a href="{% url 'lista_reservas' %}">{% translate "Ver todas" %} {% icono "derecha" %}</a>
+            </div>
+            {% if proximas_reservas %}
+                <div class="lista">
+                    {% for r in proximas_reservas %}
+                        <div class="lista__item">
+                            <div class="dia"><span>{{ r.fecha_inicio|date:"M" }}</span><strong>{{ r.fecha_inicio|date:"j" }}</strong></div>
+                            <div class="lista__cuerpo">
+                                <strong>{{ r.id_zona_fk|default:_("Zona sin nombre") }}</strong>
+                                <small>{{ r.fecha_inicio|date:"l, H:i" }} – {{ r.fecha_fin|date:"H:i" }} · {{ r.id_unidad_fk|default:_("Sin unidad") }}</small>
+                            </div>
+                            <div class="lista__lado">
+                                <span class="badge badge-{{ r.estado|color_estado }}">{{ r.estado|traducir:"Sin estado" }}</span>
+                                {% if r.estado == 'Pendiente' %}
+                                    <form method="post" action="{% url 'cambiar_estado_reserva' r.pk %}" class="acciones">
+                                        {% csrf_token %}<input type="hidden" name="next" value="{{ request.path }}">
+                                        <button class="btn btn-exito btn-sm" name="estado" value="Aprobada">{% icono "check" %} {% translate "Aprobar" %}</button>
+                                        <button class="btn btn-peligro btn-sm btn-icono" name="estado" value="Rechazada" title="{% translate 'Rechazar' %}" aria-label="{% translate 'Rechazar' %}">{% icono "x" %}</button>
+                                    </form>
+                                {% endif %}
+                            </div>
+                        </div>
+                    {% endfor %}
+                </div>
+            {% else %}
+                <div class="vacio">
+                    <div class="vacio__icono">{% icono "calendario" %}</div>
+                    <h3>{% translate "No hay reservas próximas" %}</h3>
+                    <p>{% translate "Cuando un residente reserve una zona común aparecerá aquí." %}</p>
+                </div>
+            {% endif %}
+        </section>
+
+        <section class="panel">
+            <div class="panel__cabecera">
+                <h2>{% icono "alerta" %} {% translate "Últimos reportes de daños" %}</h2>
+                <a href="{% url 'lista_reportes_admin' %}">{% translate "Gestionar" %} {% icono "derecha" %}</a>
+            </div>
+            {% if ultimos_reportes %}
+                <div class="lista">
+                    {% for r in ultimos_reportes %}
+                        <div class="lista__item">
+                            <span class="avatar avatar--coral">{% icono "alerta" %}</span>
+                            <div class="lista__cuerpo">
+                                <strong>{{ r.categoria|traducir:"Sin categoría" }} · {% translate "Torre" %} {{ r.torre|default:"–" }}{% if r.piso is not None %}, {% translate "piso" %} {{ r.piso }}{% endif %}</strong>
+                                <small class="recortar">{{ r.descripcion }}</small>
+                            </div>
+                            <div class="lista__lado">
+                                <span class="badge badge-{{ r.estado|color_estado }}">{{ r.estado|traducir }}</span>
+                                <small class="texto-suave">{% blocktranslate with tiempo=r.fecha_reporte|timesince %}hace {{ tiempo }}{% endblocktranslate %}</small>
+                            </div>
+                        </div>
+                    {% endfor %}
+                </div>
+            {% else %}
+                <div class="vacio">
+                    <div class="vacio__icono">{% icono "check" %}</div>
+                    <h3>{% translate "Sin reportes" %}</h3>
+                    <p>{% translate "Ningún residente ha reportado daños." %}</p>
+                </div>
+            {% endif %}
+        </section>
     </div>
 
-    <a href="{% url 'logout' %}" class="btn btn-secundario" style="margin-top:2rem; display:inline-flex;">Cerrar sesión</a>
+    <div class="columna">
+        <section class="panel">
+            <div class="panel__cabecera">
+                <h2>{% icono "reloj" %} {% translate "Pagos vencidos" %}</h2>
+                <a href="{% url 'lista_pagos_admin' %}?estado=vencido">{% translate "Ver" %} {% icono "derecha" %}</a>
+            </div>
+            {% if pagos_vencidos %}
+                <div class="lista">
+                    {% for p in pagos_vencidos %}
+                        <div class="lista__item">
+                            <div class="lista__cuerpo">
+                                <strong>{{ p.id_residente_fk|default:_("Sin residente") }}</strong>
+                                <small>{{ p.tipo_pago|traducir }} · {% blocktranslate with fecha=p.fecha_vencimiento|date:"j M" %}venció el {{ fecha }}{% endblocktranslate %}</small>
+                            </div>
+                            <strong class="num">{{ p.valor|pesos }}</strong>
+                        </div>
+                    {% endfor %}
+                </div>
+            {% else %}
+                <div class="vacio">
+                    <div class="vacio__icono" style="background:var(--color-menta-suave);color:var(--color-menta)">{% icono "check" %}</div>
+                    <h3>{% translate "Todo al día" %}</h3>
+                    <p>{% translate "No hay facturas vencidas." %}</p>
+                </div>
+            {% endif %}
+        </section>
+
+        <section class="panel">
+            <div class="panel__cabecera"><h2>{% icono "mas" %} {% translate "Accesos rápidos" %}</h2></div>
+            <div class="lista">
+                <a class="lista__item" href="{% url 'lista_guardias' %}"><span class="avatar avatar--cielo">{% icono "escudo" %}</span><div class="lista__cuerpo"><strong>{% translate "Personal de seguridad" %}</strong><small>{% translate "Vigilantes y sus credenciales" %}</small></div>{% icono "derecha" "texto-tenue" %}</a>
+                <a class="lista__item" href="{% url 'crear_unidad' %}"><span class="avatar">{% icono "edificio" %}</span><div class="lista__cuerpo"><strong>{% translate "Agregar unidad" %}</strong><small>{% translate "Torre y apartamento" %}</small></div>{% icono "derecha" "texto-tenue" %}</a>
+                <a class="lista__item" href="{% url 'crear_zona' %}"><span class="avatar avatar--menta">{% icono "zona" %}</span><div class="lista__cuerpo"><strong>{% translate "Crear zona común" %}</strong><small>{% translate "Salón, BBQ, piscina…" %}</small></div>{% icono "derecha" "texto-tenue" %}</a>
+                <a class="lista__item" href="{% url 'crear_vehiculo' %}"><span class="avatar avatar--ambar">{% icono "carro" %}</span><div class="lista__cuerpo"><strong>{% translate "Registrar vehículo" %}</strong><small>{% translate "Carro o moto de un residente" %}</small></div>{% icono "derecha" "texto-tenue" %}</a>
+                <a class="lista__item" href="{% url 'admin:index' %}"><span class="avatar avatar--coral">{% icono "llave" %}</span><div class="lista__cuerpo"><strong>{% translate "Panel técnico" %}</strong><small>{% translate "Administración de Django" %}</small></div>{% icono "derecha" "texto-tenue" %}</a>
+            </div>
+        </section>
+    </div>
 </div>
 {% endblock %}

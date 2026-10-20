@@ -1,13 +1,53 @@
-{% extends "base.html" %}
-{% block title %}Lista de Zonas{% endblock %}
-{% block content %}
-<div class="contenedor">
-    <h2>Zonas Comunes</h2>
-    {% for z in zonas %}
-        <div class="card">
-            <strong>{{ z.nombre }}</strong> - Capacidad: {{ z.capacidad }} - {{ z.descripcion }}
+{% extends "app.html" %}
+{% load i18n ui %}
+{% block title %}{% translate "Zonas comunes" %}{% endblock %}
+{% block miga %}{% icono "derecha" %}<strong>{% translate "Zonas comunes" %}</strong>{% endblock %}
+{% block eyebrow %}<span class="encabezado__eyebrow">{% icono "zona" %} {% translate "Mi conjunto" %}</span>{% endblock %}
+{% block titulo_pagina %}{% translate "Zonas comunes" %}{% endblock %}
+{% block subtitulo %}<p>{% if user.rol == 'admin' %}{% translate "Espacios que los residentes pueden reservar." %}{% else %}{% translate "Elige un espacio y reserva el horario que necesites." %}{% endif %}</p>{% endblock %}
+{% block acciones %}
+    <a href="{% url 'lista_reservas' %}" class="btn btn-secundario">{% icono "calendario" %} {% if user.rol == 'admin' %}{% translate "Reservas" %}{% else %}{% translate "Mis reservas" %}{% endif %}</a>
+    {% if user.rol == 'admin' %}<a href="{% url 'crear_zona' %}" class="btn btn-primario">{% icono "mas" %} {% translate "Nueva zona" %}</a>{% endif %}
+{% endblock %}
+{% block contenido %}
+{% if zonas %}
+    <div class="grid-zonas">
+        {% for z in zonas %}
+            <article class="zona">
+                <div class="zona__portada">
+                    {% icono "zona" %}
+                    {% if z.capacidad %}<span class="zona__capacidad">{% icono "residentes" %} {% blocktranslate with n=z.capacidad %}{{ n }} personas{% endblocktranslate %}</span>{% endif %}
+                </div>
+                <div class="zona__cuerpo">
+                    <h3>{{ z.nombre }}{% if z.estado == 0 %}<span class="badge badge-neutro">{% translate "No disponible" %}</span>{% endif %}</h3>
+                    <p>{{ z.descripcion|default:_("Sin descripción.") }}</p>
+                    {% if z.reglas %}<div class="zona__reglas">{{ z.reglas }}</div>{% endif %}
+                </div>
+                <div class="zona__pie">
+                    {% if z.estado != 0 %}<a href="{% url 'crear_reserva' %}?zona={{ z.pk }}" class="btn btn-primario btn-sm">{% icono "calendario" %} {% translate "Reservar" %}</a>{% endif %}
+                    {% if user.rol == 'admin' %}
+                        <a href="{% url 'editar_zona' z.pk %}" class="btn btn-secundario btn-sm">{% icono "editar" %} {% translate "Editar" %}</a>
+                        <form method="post" action="{% url 'eliminar_zona' z.pk %}" data-confirmar="{% blocktranslate with zona=z.nombre %}¿Eliminar la zona {{ zona }}? Si tiene reservas, solo se marcará como no disponible.{% endblocktranslate %}">
+                            {% csrf_token %}
+                            <button type="submit" class="btn btn-peligro btn-sm btn-icono" title="{% translate 'Eliminar' %}" aria-label="{% translate 'Eliminar' %}">{% icono "basura" %}</button>
+                        </form>
+                    {% endif %}
+                </div>
+            </article>
+        {% endfor %}
+    </div>
+{% else %}
+    <section class="panel">
+        <div class="vacio">
+            <div class="vacio__icono">{% icono "zona" %}</div>
+            <h3>{% translate "No hay zonas comunes registradas" %}</h3>
+            {% if user.rol == 'admin' %}
+                <p>{% translate "Crea el salón social, la zona BBQ, la piscina o cualquier espacio que se pueda reservar." %}</p>
+                <a href="{% url 'crear_zona' %}" class="btn btn-primario btn-sm">{% icono "mas" %} {% translate "Nueva zona" %}</a>
+            {% else %}
+                <p>{% translate "La administración aún no ha habilitado zonas para reservar." %}</p>
+            {% endif %}
         </div>
-    {% endfor %}
-    <p><a href="{% url 'lista_reservas' %}" class="btn btn-secundario">Ver reservas</a></p>
-</div>
+    </section>
+{% endif %}
 {% endblock %}

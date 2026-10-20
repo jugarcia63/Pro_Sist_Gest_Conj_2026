@@ -1,59 +1,80 @@
-{% extends "base.html" %}
-{% block title %}Residentes{% endblock %}
-{% block content %}
-<div class="contenedor">
-    <h1>Residentes</h1>
-
-    {% if messages %}
-        <ul class="messages">
-        {% for message in messages %}
-            <li class="{{ message.tags }}">{{ message }}</li>
-        {% endfor %}
-        </ul>
-    {% endif %}
-
-    <form method="get" style="display:flex; gap:0.6rem; margin-bottom:1.25rem; max-width:400px;">
-        <input type="text" name="buscar" placeholder="Buscar por nombre">
-        <button type="submit" class="btn btn-secundario">Buscar</button>
-    </form>
-
-    <a href="{% url 'crear_residente' %}" class="btn btn-primario" style="margin-bottom:1.5rem; display:inline-flex;">+ Nuevo residente</a>
-
-    <table>
-        <thead>
-            <tr>
-                <th>Nombre</th>
-                <th>Teléfono</th>
-                <th>Acciones</th>
-            </tr>
-        </thead>
-        <tbody>
-        {% for r in residentes %}
-            <tr>
-                <td>{{ r.nombres }} {{ r.apellidos }}</td>
-                <td>{{ r.telefono }}</td>
-                <td style="display:flex; gap:0.5rem; align-items:center;">
-                    <a href="{% url 'editar_residente' r.id_residente %}">Editar</a>
-
-                    <form method="post" action="{% url 'resetear_password' r.id_residente %}" style="display:inline;">
-                        {% csrf_token %}
-                        <button type="submit" class="btn btn-secundario"
-                            onclick="return confirm('¿Generar una nueva contraseña temporal para {{ r.nombres }}?');">
-                            Resetear contraseña
-                        </button>
-                    </form>
-
-                    <form method="post" action="{% url 'eliminar_residente' r.id_residente %}" style="display:inline;">
-                        {% csrf_token %}
-                        <button type="submit" class="btn btn-peligro"
-                            onclick="return confirm('¿Seguro que quieres eliminar a {{ r.nombres }} {{ r.apellidos }}? Esto también borra su cuenta de acceso.');">
-                            Eliminar
-                        </button>
-                    </form>
-                </td>
-            </tr>
-        {% endfor %}
-        </tbody>
-    </table>
+{% extends "app.html" %}
+{% load i18n ui %}
+{% block title %}{% translate "Residentes" %}{% endblock %}
+{% block miga %}{% icono "derecha" %}<strong>{% translate "Residentes" %}</strong>{% endblock %}
+{% block eyebrow %}<span class="encabezado__eyebrow">{% icono "residentes" %} {% translate "Comunidad" %}</span>{% endblock %}
+{% block titulo_pagina %}{% translate "Residentes" %}{% endblock %}
+{% block subtitulo %}<p>{% translate "Personas que viven en el conjunto. Cada residente crea su propia cuenta en «Registrarse» con su documento." %}</p>{% endblock %}
+{% block acciones %}
+    <a href="{% url 'lista_unidades' %}" class="btn btn-secundario">{% icono "edificio" %} {% translate "Unidades" %}</a>
+    <a href="{% url 'crear_residente' %}" class="btn btn-primario">{% icono "mas" %} {% translate "Nuevo residente" %}</a>
+{% endblock %}
+{% block contenido %}
+<div class="grid-stats">
+    <div class="stat"><span class="stat__icono">{% icono "residentes" %}</span><span class="stat__etiqueta">{% translate "Residentes registrados" %}</span><span class="stat__valor">{{ total }}</span></div>
+    <div class="stat stat--menta"><span class="stat__icono">{% icono "llave" %}</span><span class="stat__etiqueta">{% translate "Ya crearon su cuenta" %}</span><span class="stat__valor">{{ con_cuenta }}</span></div>
+    <div class="stat stat--ambar"><span class="stat__icono">{% icono "edificio" %}</span><span class="stat__etiqueta">{% translate "Sin unidad asignada" %}</span><span class="stat__valor">{{ sin_unidad }}</span></div>
 </div>
+
+<section class="panel">
+    <div class="toolbar">
+        <form method="get" role="search">
+            <div class="buscador">{% icono "buscar" %}<input type="search" name="buscar" value="{{ buscar }}" placeholder="{% translate 'Buscar por nombre, documento o correo' %}" aria-label="{% translate 'Buscar' %}"></div>
+            <button type="submit" class="btn btn-secundario">{% translate "Buscar" %}</button>
+            {% if buscar %}<a href="{% url 'lista_residentes' %}" class="btn btn-fantasma">{% icono "x" %} {% translate "Limpiar" %}</a>{% endif %}
+        </form>
+    </div>
+
+    {% if residentes %}
+        <div class="tabla-contenedor">
+            <table>
+                <thead>
+                    <tr><th>{% translate "Residente" %}</th><th>{% translate "Documento" %}</th><th>{% translate "Unidad" %}</th><th class="ocultar-movil">{% translate "Contacto" %}</th><th>{% translate "Cuenta" %}</th><th class="derecha">{% translate "Acciones" %}</th></tr>
+                </thead>
+                <tbody>
+                {% for r in residentes %}
+                    <tr>
+                        <td>
+                            <div class="celda-principal">
+                                <span class="avatar{% cycle '' ' avatar--cielo' ' avatar--menta' ' avatar--ambar' %}">{{ r.nombres|default:""|first|upper }}{{ r.apellidos|default:""|first|upper }}</span>
+                                <div><strong>{{ r }}</strong>{% if r.fecha_registro %}<small>{% translate "Desde" %} {{ r.fecha_registro|date:"M Y" }}</small>{% endif %}</div>
+                            </div>
+                        </td>
+                        <td class="num">{{ r.tipo_documento|default:"" }} {{ r.num_documento|default:"—" }}</td>
+                        <td>{% if r.id_unidad_fk %}<span class="etiqueta">{% icono "edificio" %} {{ r.id_unidad_fk }}</span>{% else %}<span class="texto-tenue">{% translate "Sin unidad" %}</span>{% endif %}</td>
+                        <td class="ocultar-movil"><div>{{ r.telefono|default:"—" }}</div><small class="texto-suave">{{ r.email|default:"" }}</small></td>
+                        <td>{% if r.usuario %}<span class="badge badge-exito">@{{ r.usuario.username }}</span>{% else %}<span class="badge badge-neutro" title="{% translate 'Puede registrarse con su documento' %}">{% translate "Aún no se registra" %}</span>{% endif %}</td>
+                        <td class="derecha">
+                            <div class="acciones" style="justify-content:flex-end">
+                                <a href="{% url 'crear_pago' %}?residente={{ r.pk }}" class="btn btn-fantasma btn-sm btn-icono" title="{% translate 'Generar factura' %}" aria-label="{% translate 'Generar factura' %}">{% icono "factura" %}</a>
+                                <a href="{% url 'editar_residente' r.pk %}" class="btn btn-secundario btn-sm">{% icono "editar" %} {% translate "Editar" %}</a>
+                                {% if r.usuario %}
+                                    <a href="{% url 'asignar_password' r.usuario.pk %}" class="btn btn-fantasma btn-sm btn-icono" title="{% translate 'Asignar contraseña' %}" aria-label="{% translate 'Asignar contraseña' %}">{% icono "llave" %}</a>
+                                {% endif %}
+                                <form method="post" action="{% url 'eliminar_residente' r.pk %}" data-confirmar="{% blocktranslate with nombre=r.nombres %}¿Eliminar a {{ nombre }}? También se borran su cuenta, pagos, vehículos, visitas y reportes.{% endblocktranslate %}">
+                                    {% csrf_token %}
+                                    <button type="submit" class="btn btn-peligro btn-sm btn-icono" title="{% translate 'Eliminar' %}" aria-label="{% translate 'Eliminar' %}">{% icono "basura" %}</button>
+                                </form>
+                            </div>
+                        </td>
+                    </tr>
+                {% endfor %}
+                </tbody>
+            </table>
+        </div>
+        {% include "partials/paginacion.html" %}
+    {% else %}
+        <div class="vacio">
+            <div class="vacio__icono">{% icono "residentes" %}</div>
+            {% if buscar %}
+                <h3>{% blocktranslate %}Ningún residente coincide con "{{ buscar }}"{% endblocktranslate %}</h3>
+                <p>{% translate "Prueba con otro nombre o con el número de documento." %}</p>
+            {% else %}
+                <h3>{% translate "Todavía no hay residentes" %}</h3>
+                <p>{% translate "Registra el primero. Luego podrá crear su cuenta con su documento." %}</p>
+                <a href="{% url 'crear_residente' %}" class="btn btn-primario btn-sm">{% icono "mas" %} {% translate "Nuevo residente" %}</a>
+            {% endif %}
+        </div>
+    {% endif %}
+</section>
 {% endblock %}

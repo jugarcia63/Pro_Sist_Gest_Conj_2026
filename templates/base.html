@@ -1,16 +1,22 @@
-{% load static %}
-<!DOCTYPE html>
-<html lang="es">
+{% load static i18n %}<!DOCTYPE html>
+{% get_current_language as LANGUAGE_CODE %}
+<html lang="{{ LANGUAGE_CODE }}">
 <head>
     <meta charset="UTF-8">
-    <title>{% block title %}Gestión de Conjuntos{% endblock %}</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta name="theme-color" content="#1B1535">
+    <title>{% block title %}{% translate "Inicio" %}{% endblock %} · {% translate "Gestión de Conjuntos" %}</title>
     <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,500;9..144,600&family=Inter:wght@400;500;600;700&display=swap">
     <link rel="stylesheet" href="{% static 'css/base.css' %}">
     <link rel="stylesheet" href="{% static 'css/layout.css' %}">
     <link rel="stylesheet" href="{% static 'css/components.css' %}">
+    <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Crect width='32' height='32' rx='8' fill='%236D28D9'/%3E%3Cpath d='M10 25V8h12v17M14 12h1M17 12h1M14 16h1M17 16h1M14 21h4v4' stroke='white' stroke-width='2' fill='none' stroke-linecap='round'/%3E%3C/svg%3E">
 </head>
-<body>
-    {% block content %}{% endblock %}
+<body class="{% block body_class %}{% endblock %}">
+    {% include "partials/iconos.html" %}
+    {% block body %}{% endblock %}
+    <script src="{% static 'js/app.js' %}"></script>
 </body>
 </html>

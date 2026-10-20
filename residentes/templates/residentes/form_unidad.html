@@ -1,0 +1,19 @@
+{% extends "form_pagina.html" %}
+{% load i18n ui %}
+{% block title %}{% if object %}{% translate "Editar unidad" %}{% else %}{% translate "Nueva unidad" %}{% endif %}{% endblock %}
+{% block miga %}{% icono "derecha" %}<a href="{% url 'lista_unidades' %}">{% translate "Unidades" %}</a>{% icono "derecha" %}<strong>{% if object %}{{ object }}{% else %}{% translate "Nueva" %}{% endif %}</strong>{% endblock %}
+{% block eyebrow %}<span class="encabezado__eyebrow">{% icono "edificio" %} {% translate "Unidades" %}</span>{% endblock %}
+{% block titulo_pagina %}{% if object %}{% blocktranslate with unidad=object %}Editar {{ unidad }}{% endblocktranslate %}{% else %}{% translate "Nueva unidad" %}{% endif %}{% endblock %}
+{% block subtitulo %}<p>{% translate "Cada unidad es un apartamento dentro de una torre." %}</p>{% endblock %}
+{% block url_volver %}{% url 'lista_unidades' %}{% endblock %}
+{% block texto_boton %}{% if object %}{% translate "Guardar cambios" %}{% else %}{% translate "Crear unidad" %}{% endif %}{% endblock %}
+{% block lateral %}
+<section class="panel">
+    <div class="panel__cabecera"><h2>{% icono "info" %} {% translate "Cómo llenarlo" %}</h2></div>
+    <div class="panel__cuerpo" style="display:grid;gap:.6rem">
+        <p>{% translate "Torre: letra o número, por ejemplo A o 2." %}</p>
+        <p>{% translate "Apartamento: número como aparece en la puerta, por ejemplo 302." %}</p>
+        <p>{% translate "No se puede repetir la misma torre con el mismo apartamento." %}</p>
+    </div>
+</section>
+{% endblock %}

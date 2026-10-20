@@ -1,30 +1,118 @@
-{% extends "base.html" %}
-{% block title %}panel de residente{% endblock %}
-{% block content %}
-    <style>
-        body { font-family: Arial, sans-serif; margin: 40px; }
-        h2 { border-bottom: 2px solid #333; padding-bottom: 8px; }
-        .menu { display: grid; grid-template-columns: repeat(2, 1fr); gap: 15px; max-width: 600px; margin-top: 20px; }
-        .menu a {
-            display: block; padding: 15px; background: #f2f2f2; border-radius: 6px;
-            text-decoration: none; color: #333; text-align: center; border: 1px solid #ccc;
-        }
-        .menu a:hover { background: #e0e0e0; }
-        .logout { margin-top: 30px; display: inline-block; }
-    </style>
-</head>
-<body>
-    <h2>Bienvenido, {{ usuario.username }}</h2>
-    <p>Panel de Residente</p>
-
-    <div class="menu">
-        <a href="{% url 'lista_vehiculos' %}">Mis Vehículos</a>
-        <a href="{% url 'lista_reservas' %}">Reservar Zona Común</a>
-        <a href="{% url 'lista_pagos_residente' %}">Mis Pagos</a>
-        <a href="{% url 'mis_reportes' %}">Mis Reportes</a>
-        <a href="{% url 'crear_reporte' %}">Reportar un Daño</a>
-        <a href="{% url 'cambiar_password' %}">Cambiar Contraseña</a>
+{% extends "app.html" %}
+{% load i18n ui %}
+{% block title %}{% translate "Mi panel" %}{% endblock %}
+{% block encabezado %}{% endblock %}
+{% block contenido %}
+<section class="banner">
+    <div class="banner__texto">
+        <span class="encabezado__eyebrow" style="color:#C4B5FD">{% icono "inicio" %} {% translate "Residente" %}</span>
+        <h1>{{ saludo }}, {{ nombre_visible }}</h1>
+        {% if residente %}
+            <p>{% if residente.id_unidad_fk %}{% blocktranslate with unidad=residente.id_unidad_fk %}Bienvenido a tu hogar en {{ unidad }}.{% endblocktranslate %}{% else %}{% translate "Aún no tienes una unidad asignada; la administración puede asignártela." %}{% endif %}</p>
+            <div class="banner__chips">
+                {% if residente.id_unidad_fk %}<span class="banner__chip">{% icono "edificio" %} {{ residente.id_unidad_fk }}{% if residente.id_unidad_fk.piso is not None %} · {% translate "piso" %} {{ residente.id_unidad_fk.piso }}{% endif %}</span>{% endif %}
+                <span class="banner__chip">{% icono "carro" %} {% blocktranslate count n=total_vehiculos %}{{ n }} vehículo{% plural %}{{ n }} vehículos{% endblocktranslate %}</span>
+            </div>
+            <div class="banner__acciones">
+                {% if pagos_pendientes %}<a href="{% url 'lista_pagos_residente' %}" class="btn btn-claro">{% icono "tarjeta" %} {% translate "Pagar ahora" %}</a>{% endif %}
+                <a href="{% url 'crear_reserva' %}" class="btn {% if pagos_pendientes %}btn-secundario{% else %}btn-claro{% endif %}">{% icono "calendario" %} {% translate "Reservar zona" %}</a>
+                <a href="{% url 'crear_reporte' %}" class="btn btn-secundario">{% icono "alerta" %} {% translate "Reportar daño" %}</a>
+            </div>
+        {% else %}
+            <p>{% translate "Tu usuario todavía no está vinculado a un registro de residente. Pide a la administración que lo vincule para ver tus pagos y reservas." %}</p>
+        {% endif %}
     </div>
+    {% include "partials/fachada.html" %}
+</section>
 
-    <a class="logout" href="{% url 'logout' %}">Cerrar sesión</a>
+{% if residente %}
+<div class="grid-stats">
+    <a href="{% url 'lista_pagos_residente' %}" class="stat stat--ambar{% if proximo_pago and proximo_pago.fecha_vencimiento < hoy %} stat--alerta{% endif %}">
+        <span class="stat__icono">{% icono "billetera" %}</span>
+        <span class="stat__etiqueta">{% translate "Saldo pendiente" %}</span>
+        <span class="stat__valor">{{ valor_pendiente|pesos }}</span>
+        <span class="stat__nota">
+            {% if proximo_pago %}
+                {% if proximo_pago.fecha_vencimiento < hoy %}{% blocktranslate with fecha=proximo_pago.fecha_vencimiento|date:"j M" %}Tienes un pago vencido desde el {{ fecha }}{% endblocktranslate %}{% else %}{% blocktranslate with fecha=proximo_pago.fecha_vencimiento|date:"MONTH_DAY_FORMAT" %}Próximo vencimiento: {{ fecha }}{% endblocktranslate %}{% endif %}
+            {% else %}{% translate "Estás al día" %}{% endif %}
+        </span>
+    </a>
+    <a href="{% url 'lista_reservas' %}" class="stat stat--cielo">
+        <span class="stat__icono">{% icono "calendario" %}</span>
+        <span class="stat__etiqueta">{% translate "Reservas próximas" %}</span>
+        <span class="stat__valor">{{ total_reservas }}</span>
+        <span class="stat__nota">{% translate "Zonas comunes reservadas" %}</span>
+    </a>
+    <a href="{% url 'mis_reportes' %}" class="stat stat--coral">
+        <span class="stat__icono">{% icono "alerta" %}</span>
+        <span class="stat__etiqueta">{% translate "Reportes en curso" %}</span>
+        <span class="stat__valor">{{ reportes_abiertos }}</span>
+        <span class="stat__nota">{% translate "Daños aún sin cerrar" %}</span>
+    </a>
+    <a href="{% url 'lista_vehiculos' %}" class="stat stat--menta">
+        <span class="stat__icono">{% icono "carro" %}</span>
+        <span class="stat__etiqueta">{% translate "Mis vehículos" %}</span>
+        <span class="stat__valor">{{ total_vehiculos }}</span>
+        <span class="stat__nota">{% translate "Registrados en portería" %}</span>
+    </a>
+</div>
+
+<div class="grid-2">
+    <section class="panel">
+        <div class="panel__cabecera">
+            <h2>{% icono "calendario" %} {% translate "Mis próximas reservas" %}</h2>
+            <a href="{% url 'crear_reserva' %}">{% icono "mas" %} {% translate "Reservar" %}</a>
+        </div>
+        {% if proximas_reservas %}
+            <div class="lista">
+                {% for r in proximas_reservas %}
+                    <div class="lista__item">
+                        <div class="dia"><span>{{ r.fecha_inicio|date:"M" }}</span><strong>{{ r.fecha_inicio|date:"j" }}</strong></div>
+                        <div class="lista__cuerpo">
+                            <strong>{{ r.id_zona_fk }}</strong>
+                            <small>{{ r.fecha_inicio|date:"l, H:i" }} – {{ r.fecha_fin|date:"H:i" }}</small>
+                        </div>
+                        <span class="badge badge-{{ r.estado|color_estado }}">{{ r.estado|traducir }}</span>
+                    </div>
+                {% endfor %}
+            </div>
+        {% else %}
+            <div class="vacio">
+                <div class="vacio__icono">{% icono "zona" %}</div>
+                <h3>{% translate "No tienes reservas próximas" %}</h3>
+                <p>{% translate "Reserva el salón social, la BBQ u otra zona común para tu próximo plan." %}</p>
+                <a href="{% url 'lista_zonas' %}" class="btn btn-secundario btn-sm">{% translate "Ver zonas comunes" %}</a>
+            </div>
+        {% endif %}
+    </section>
+
+    <section class="panel">
+        <div class="panel__cabecera">
+            <h2>{% icono "alerta" %} {% translate "Mis últimos reportes" %}</h2>
+            <a href="{% url 'mis_reportes' %}">{% translate "Ver todos" %} {% icono "derecha" %}</a>
+        </div>
+        {% if ultimos_reportes %}
+            <div class="lista">
+                {% for r in ultimos_reportes %}
+                    <div class="lista__item">
+                        <span class="avatar avatar--coral">{% icono "alerta" %}</span>
+                        <div class="lista__cuerpo">
+                            <strong>{{ r.categoria|traducir }}</strong>
+                            <small class="recortar">{{ r.descripcion }}</small>
+                        </div>
+                        <span class="badge badge-{{ r.estado|color_estado }}">{{ r.estado|traducir }}</span>
+                    </div>
+                {% endfor %}
+            </div>
+        {% else %}
+            <div class="vacio">
+                <div class="vacio__icono">{% icono "check" %}</div>
+                <h3>{% translate "Sin reportes" %}</h3>
+                <p>{% translate "Si algo se daña en tu unidad o en las zonas comunes, repórtalo aquí." %}</p>
+                <a href="{% url 'crear_reporte' %}" class="btn btn-secundario btn-sm">{% translate "Reportar un daño" %}</a>
+            </div>
+        {% endif %}
+    </section>
+</div>
+{% endif %}
 {% endblock %}

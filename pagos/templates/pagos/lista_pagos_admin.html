@@ -1,27 +1,77 @@
-{% extends "base.html" %}
-{% block title %}Estado de Pagos{% endblock %}
-{% block content %}
-<div class="contenedor">
-    <h2>Estado de Pagos de Todos los Residentes</h2>
-    <p><a href="{% url 'crear_pago' %}" class="btn btn-primario">+ Nuevo pago</a></p>
-    <table>
-        <tr><th>Residente</th><th>Tipo</th><th>Mes/Año</th><th>Valor</th><th>Vencimiento</th><th>Estado</th></tr>
-        {% for p in pagos %}
-        <tr>
-            <td>{{ p.id_residente_fk }}</td>
-            <td>{{ p.tipo_pago }}</td>
-            <td>{{ p.mes_ano|date:"F Y" }}</td>
-            <td>${{ p.valor }}</td>
-            <td>{{ p.fecha_vencimiento }}</td>
-            <td>
-                {% if p.estado == 'Pagado' %}
-                    <span class="badge badge-exito">{{ p.estado }}</span>
-                {% else %}
-                    <span class="badge badge-aviso">{{ p.estado }}</span>
-                {% endif %}
-            </td>
-        </tr>
-        {% endfor %}
-    </table>
+{% extends "app.html" %}
+{% load i18n ui %}
+{% block title %}{% translate "Pagos" %}{% endblock %}
+{% block miga %}{% icono "derecha" %}<strong>{% translate "Pagos" %}</strong>{% endblock %}
+{% block eyebrow %}<span class="encabezado__eyebrow">{% icono "billetera" %} {% translate "Cartera" %}</span>{% endblock %}
+{% block titulo_pagina %}{% translate "Estado de pagos" %}{% endblock %}
+{% block subtitulo %}<p>{% translate "Facturas generadas a los residentes. El estado cambia a «Pagado» cuando el residente paga en línea." %}</p>{% endblock %}
+{% block acciones %}
+    <a href="{% url 'dashboard' %}" class="btn btn-secundario">{% icono "volver" %} {% translate "Volver" %}</a>
+    <a href="{% url 'crear_pago' %}" class="btn btn-primario">{% icono "factura" %} {% translate "Generar factura" %}</a>
+{% endblock %}
+{% block contenido %}
+<div class="grid-stats">
+    <div class="stat stat--ambar"><span class="stat__icono">{% icono "reloj" %}</span><span class="stat__etiqueta">{% translate "Pendiente (al día)" %}</span><span class="stat__valor">{{ total_pendiente|pesos }}</span></div>
+    <div class="stat stat--coral{% if num_vencidos %} stat--alerta{% endif %}"><span class="stat__icono">{% icono "alerta" %}</span><span class="stat__etiqueta">{% translate "Vencido" %}</span><span class="stat__valor">{{ total_vencido|pesos }}</span><span class="stat__nota">{% blocktranslate count n=num_vencidos %}{{ n }} factura con la fecha límite vencida{% plural %}{{ n }} facturas con la fecha límite vencida{% endblocktranslate %}</span></div>
+    <div class="stat stat--menta"><span class="stat__icono">{% icono "check" %}</span><span class="stat__etiqueta">{% blocktranslate with mes=hoy|date:"F" %}Recaudado en {{ mes }}{% endblocktranslate %}</span><span class="stat__valor">{{ recaudado_mes|pesos }}</span></div>
 </div>
+
+<section class="panel">
+    <div class="toolbar">
+        <nav class="segmentos" aria-label="{% translate 'Filtrar por estado' %}">
+            <a href="?{% if buscar %}buscar={{ buscar|urlencode }}{% endif %}" class="{% if not estado %}activo{% endif %}">{% translate "Todos" %}</a>
+            <a href="?estado=pendiente{% if buscar %}&buscar={{ buscar|urlencode }}{% endif %}" class="{% if estado == 'pendiente' %}activo{% endif %}">{% translate "Pendientes" %}</a>
+            <a href="?estado=vencido{% if buscar %}&buscar={{ buscar|urlencode }}{% endif %}" class="{% if estado == 'vencido' %}activo{% endif %}">{% translate "Vencidos" %}{% if num_vencidos %} <span class="cuenta">{{ num_vencidos }}</span>{% endif %}</a>
+            <a href="?estado=pagado{% if buscar %}&buscar={{ buscar|urlencode }}{% endif %}" class="{% if estado == 'pagado' %}activo{% endif %}">{% translate "Pagados" %}</a>
+        </nav>
+        <form method="get" role="search">
+            {% if estado %}<input type="hidden" name="estado" value="{{ estado }}">{% endif %}
+            <div class="buscador">{% icono "buscar" %}<input type="search" name="buscar" value="{{ buscar }}" placeholder="{% translate 'Residente o documento' %}" aria-label="{% translate 'Buscar' %}"></div>
+        </form>
+    </div>
+
+    {% if pagos %}
+        <div class="tabla-contenedor">
+            <table>
+                <thead><tr><th>{% translate "Residente" %}</th><th>{% translate "Concepto" %}</th><th>{% translate "Mes" %}</th><th class="derecha">{% translate "Valor" %}</th><th>{% translate "Fecha límite" %}</th><th>{% translate "Estado" %}</th><th class="derecha"></th></tr></thead>
+                <tbody>
+                {% for p in pagos %}
+                    <tr>
+                        <td><div class="celda-principal"><span class="avatar">{{ p.id_residente_fk.nombres|default:""|first|upper }}{{ p.id_residente_fk.apellidos|default:""|first|upper }}</span><div><strong>{{ p.id_residente_fk|default:_("Sin residente") }}</strong><small>{{ p.id_residente_fk.id_unidad_fk|default:"" }}</small></div></div></td>
+                        <td>{{ p.tipo_pago|traducir }}</td>
+                        <td>{{ p.mes_ano|date:"F Y"|capfirst }}</td>
+                        <td class="derecha num"><strong>{{ p.valor|pesos }}</strong></td>
+                        <td class="num">{{ p.fecha_vencimiento|date:"d M Y" }}</td>
+                        <td>
+                            {% if p.estado == 'Pagado' %}
+                                <span class="badge badge-exito">{% translate "Pagado" %}</span><small class="texto-suave" style="display:block">{{ p.fecha_pago|date:"d M" }} · {{ p.metodo_pago|default:"" }}</small>
+                            {% elif p.fecha_vencimiento < hoy %}
+                                <span class="badge badge-error">{% translate "Vencido" %}</span>
+                            {% else %}
+                                <span class="badge badge-aviso">{% translate "Pendiente" %}</span>
+                            {% endif %}
+                        </td>
+                        <td class="derecha">
+                            {% if p.estado != 'Pagado' %}
+                                <form method="post" action="{% url 'anular_pago' p.pk %}" data-confirmar="{% blocktranslate with valor=p.valor|pesos residente=p.id_residente_fk %}¿Anular la factura de {{ valor }} a {{ residente }}?{% endblocktranslate %}">
+                                    {% csrf_token %}
+                                    <button type="submit" class="btn btn-fantasma btn-sm" title="{% translate 'Anular factura' %}">{% icono "basura" %} {% translate "Anular" %}</button>
+                                </form>
+                            {% endif %}
+                        </td>
+                    </tr>
+                {% endfor %}
+                </tbody>
+            </table>
+        </div>
+        {% include "partials/paginacion.html" %}
+    {% else %}
+        <div class="vacio">
+            <div class="vacio__icono">{% icono "factura" %}</div>
+            <h3>{% if estado %}{% translate "No hay facturas con este filtro" %}{% else %}{% translate "No hay facturas" %}{% endif %}</h3>
+            <p>{% translate "Genera la cuota de administración u otros cobros para los residentes." %}</p>
+            <a href="{% url 'crear_pago' %}" class="btn btn-primario btn-sm">{% icono "factura" %} {% translate "Generar factura" %}</a>
+        </div>
+    {% endif %}
+</section>
 {% endblock %}

@@ -1,54 +1,74 @@
-{% extends "base.html" %}
-{% block title %}Reportes de daños{% endblock %}
-{% block content %}
-<div class="contenedor">
-    <h1>Reportes de daños</h1>
-
-    {% if messages %}
-        <ul class="messages">
-            {% for message in messages %}
-                <li class="{{ message.tags }}">{{ message }}</li>
-            {% endfor %}
-        </ul>
-    {% endif %}
-
-    <table>
-        <thead>
-            <tr>
-                <th>Residente</th><th>Categoría</th><th>Ubicación</th><th>Descripción</th>
-                <th>Fecha</th><th>Estado</th><th>Cambiar estado</th>
-            </tr>
-        </thead>
-        <tbody>
-        {% for r in reportes %}
-            <tr>
-                <td>{{ r.id_residente_fk }}</td>
-                <td>{{ r.categoria }}</td>
-                <td>Torre {{ r.torre }} - Piso {{ r.piso }}</td>
-                <td>{{ r.descripcion }}</td>
-                <td>{{ r.fecha_reporte }}</td>
-                <td>
-                    <span class="badge
-                        {% if r.estado == 'Abierto' %}badge-error
-                        {% elif r.estado == 'En proceso' %}badge-aviso
-                        {% else %}badge-exito{% endif %}">
-                        {{ r.estado }}
-                    </span>
-                </td>
-                <td>
-                    <form method="post" action="{% url 'cambiar_estado_reporte' r.pk %}" style="display:flex; gap:0.5rem;">
-                        {% csrf_token %}
-                        <select name="estado">
-                            <option value="Abierto" {% if r.estado == "Abierto" %}selected{% endif %}>Abierto</option>
-                            <option value="En proceso" {% if r.estado == "En proceso" %}selected{% endif %}>En proceso</option>
-                            <option value="Cerrado" {% if r.estado == "Cerrado" %}selected{% endif %}>Cerrado</option>
-                        </select>
-                        <button type="submit" class="btn btn-secundario">Actualizar</button>
-                    </form>
-                </td>
-            </tr>
-        {% endfor %}
-        </tbody>
-    </table>
+{% extends "app.html" %}
+{% load i18n ui %}
+{% block title %}{% translate "Reportes de daños" %}{% endblock %}
+{% block miga %}{% icono "derecha" %}<strong>{% translate "Reportes" %}</strong>{% endblock %}
+{% block eyebrow %}<span class="encabezado__eyebrow">{% icono "alerta" %} {% translate "Mantenimiento" %}</span>{% endblock %}
+{% block titulo_pagina %}{% translate "Reportes de daños" %}{% endblock %}
+{% block subtitulo %}<p>{% translate "Cambia el estado a medida que avanza cada arreglo; el residente lo ve en su panel." %}</p>{% endblock %}
+{% block acciones %}<a href="{% url 'dashboard' %}" class="btn btn-secundario">{% icono "volver" %} {% translate "Volver" %}</a>{% endblock %}
+{% block contenido %}
+<div class="grid-stats">
+    <a href="?estado=Abierto" class="stat stat--coral{% if num_abiertos %} stat--alerta{% endif %}"><span class="stat__icono">{% icono "alerta" %}</span><span class="stat__etiqueta">{% translate "Abiertos" %}</span><span class="stat__valor">{{ num_abiertos }}</span></a>
+    <a href="?estado=En%20proceso" class="stat stat--ambar"><span class="stat__icono">{% icono "reloj" %}</span><span class="stat__etiqueta">{% translate "En proceso" %}</span><span class="stat__valor">{{ num_proceso }}</span></a>
+    <a href="?estado=Cerrado" class="stat stat--menta"><span class="stat__icono">{% icono "check" %}</span><span class="stat__etiqueta">{% translate "Cerrados" %}</span><span class="stat__valor">{{ num_cerrados }}</span></a>
 </div>
+
+<section class="panel">
+    <div class="toolbar">
+        <form method="get" role="search">
+            <div class="buscador">{% icono "buscar" %}<input type="search" name="buscar" value="{{ buscar }}" placeholder="{% translate 'Buscar en descripción o residente' %}" aria-label="{% translate 'Buscar' %}"></div>
+            <label for="f-estado" class="sr-only">{% translate "Estado" %}</label>
+            <select name="estado" id="f-estado" data-enviar-al-cambiar>
+                <option value="">{% translate "Todos los estados" %}</option>
+                {% for e in estados %}<option value="{{ e }}" {% if estado == e %}selected{% endif %}>{{ e|traducir }}</option>{% endfor %}
+            </select>
+            <label for="f-categoria" class="sr-only">{% translate "Categoría" %}</label>
+            <select name="categoria" id="f-categoria" data-enviar-al-cambiar>
+                <option value="">{% translate "Todas las categorías" %}</option>
+                {% for valor, texto in categorias %}<option value="{{ valor }}" {% if categoria == valor %}selected{% endif %}>{{ valor|traducir }}</option>{% endfor %}
+            </select>
+            <button type="submit" class="btn btn-secundario">{% translate "Filtrar" %}</button>
+            {% if estado or categoria or buscar %}<a href="{% url 'lista_reportes_admin' %}" class="btn btn-fantasma">{% icono "x" %} {% translate "Limpiar" %}</a>{% endif %}
+        </form>
+    </div>
+
+    {% if reportes %}
+        {% for r in reportes %}
+            <article class="reporte">
+                <div class="reporte__cabecera">
+                    <div class="celda-principal">
+                        <span class="avatar avatar--coral">{% icono "alerta" %}</span>
+                        <div><strong>#{{ r.pk }} · {{ r.categoria|traducir:"Sin categoría" }}</strong><small>{{ r.id_residente_fk }}</small></div>
+                    </div>
+                    <form method="post" action="{% url 'cambiar_estado_reporte' r.pk %}" class="acciones">
+                        {% csrf_token %}
+                        <input type="hidden" name="next" value="{{ request.get_full_path }}">
+                        <span class="badge badge-{{ r.estado|color_estado }}">{{ r.estado|traducir }}</span>
+                        {% if r.estado == 'Abierto' %}
+                            <button class="btn btn-secundario btn-sm" name="estado" value="En proceso">{% icono "reloj" %} {% translate "Marcar en proceso" %}</button>
+                        {% endif %}
+                        {% if r.estado != 'Cerrado' %}
+                            <button class="btn btn-exito btn-sm" name="estado" value="Cerrado">{% icono "check" %} {% translate "Cerrar" %}</button>
+                        {% else %}
+                            <button class="btn btn-fantasma btn-sm" name="estado" value="Abierto">{% icono "rotar" %} {% translate "Reabrir" %}</button>
+                        {% endif %}
+                    </form>
+                </div>
+                <p>{{ r.descripcion }}</p>
+                <div class="reporte__meta">
+                    <span>{% icono "ubicacion" %} {% translate "Torre" %} {{ r.torre|default:"—" }}{% if r.piso is not None %}, {% translate "piso" %} {{ r.piso }}{% endif %}</span>
+                    <span>{% icono "calendario" %} {{ r.fecha_reporte|date:"j M Y, H:i" }} ({% blocktranslate with tiempo=r.fecha_reporte|timesince %}hace {{ tiempo }}{% endblocktranslate %})</span>
+                    {% if r.fecha_resolucion %}<span>{% icono "check" %} {% blocktranslate with fecha=r.fecha_resolucion|date:"j M Y" %}Cerrado el {{ fecha }}{% endblocktranslate %}</span>{% endif %}
+                </div>
+            </article>
+        {% endfor %}
+        {% include "partials/paginacion.html" %}
+    {% else %}
+        <div class="vacio">
+            <div class="vacio__icono">{% icono "check" %}</div>
+            <h3>{% if estado or categoria or buscar %}{% translate "No hay reportes con ese filtro" %}{% else %}{% translate "No hay reportes" %}{% endif %}</h3>
+            <p>{% translate "Los daños que reporten los residentes aparecerán aquí." %}</p>
+        </div>
+    {% endif %}
+</section>
 {% endblock %}

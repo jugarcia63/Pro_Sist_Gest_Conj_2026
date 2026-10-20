@@ -1,0 +1,28 @@
+{% extends "form_pagina.html" %}
+{% load i18n ui %}
+{% block title %}{% if object %}{% translate "Editar vigilante" %}{% else %}{% translate "Nuevo vigilante" %}{% endif %}{% endblock %}
+{% block miga %}{% icono "derecha" %}<a href="{% url 'lista_guardias' %}">{% translate "Seguridad" %}</a>{% icono "derecha" %}<strong>{% if object %}{{ object.get_full_name|default:object.username }}{% else %}{% translate "Nuevo" %}{% endif %}</strong>{% endblock %}
+{% block eyebrow %}<span class="encabezado__eyebrow">{% icono "escudo" %} {% translate "Personal de seguridad" %}</span>{% endblock %}
+{% block titulo_pagina %}{% if object %}{% blocktranslate with nombre=object.get_full_name %}Editar a {{ nombre }}{% endblocktranslate %}{% else %}{% translate "Nuevo vigilante" %}{% endif %}{% endblock %}
+{% block subtitulo %}<p>{% if object %}{% translate "Para cambiar su contraseña usa el botón de la llave en la lista." %}{% else %}{% translate "Tú defines el usuario y la contraseña con los que entrará a portería." %}{% endif %}</p>{% endblock %}
+{% block url_volver %}{% url 'lista_guardias' %}{% endblock %}
+{% block texto_boton %}{% if object %}{% translate "Guardar cambios" %}{% else %}{% translate "Crear cuenta" %}{% endif %}{% endblock %}
+{% block campos %}{% with anchos="email" %}{% include "partials/form_campos.html" %}{% endwith %}{% endblock %}
+{% block lateral %}
+<section class="panel">
+    <div class="panel__cabecera"><h2>{% icono "info" %} {% translate "Qué puede hacer" %}</h2></div>
+    <div class="panel__cuerpo" style="display:grid;gap:.6rem">
+        <p>{% translate "Registrar la entrada y salida de visitantes." %}</p>
+        <p>{% translate "Consultar las placas de los vehículos de los residentes." %}</p>
+        <p>{% translate "No ve pagos, reservas ni datos personales de los residentes." %}</p>
+    </div>
+</section>
+{% if object %}
+<section class="panel">
+    <div class="panel__cuerpo" style="display:grid;gap:.75rem">
+        <p>{% translate "¿Olvidó su contraseña?" %}</p>
+        <a href="{% url 'asignar_password' object.pk %}" class="btn btn-secundario btn-sm">{% icono "llave" %} {% translate "Asignar contraseña" %}</a>
+    </div>
+</section>
+{% endif %}
+{% endblock %}

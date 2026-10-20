@@ -3,6 +3,7 @@ from django.urls import path, include
 
 urlpatterns = [
     path('admin/', admin.site.urls),
+    path('i18n/', include('django.conf.urls.i18n')),  # cambio de idioma (vista set_language)
     path('', include('usuarios.urls')),
     path('residentes/', include('residentes.urls')),
     path('vehiculos/', include('vehiculos.urls')),

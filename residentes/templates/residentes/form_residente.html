@@ -1,14 +1,32 @@
-{% extends "base.html" %}
-{% block title %}Formulario de residente{% endblock %}
-{% block content %}
-<div class="contenedor--angosto">
-    <div class="card-pagina">
-        <h1>Formulario de residente</h1>
-        <form method="post">
-            {% csrf_token %}
-            {{ form.as_p }}
-            <button type="submit" class="btn btn-primario">Guardar</button>
-        </form>
+{% extends "form_pagina.html" %}
+{% load i18n ui %}
+{% block title %}{% if object %}{% translate "Editar residente" %}{% else %}{% translate "Nuevo residente" %}{% endif %}{% endblock %}
+{% block miga %}{% icono "derecha" %}<a href="{% url 'lista_residentes' %}">{% translate "Residentes" %}</a>{% icono "derecha" %}<strong>{% if object %}{{ object }}{% else %}{% translate "Nuevo" %}{% endif %}</strong>{% endblock %}
+{% block eyebrow %}<span class="encabezado__eyebrow">{% icono "residentes" %} {% translate "Residentes" %}</span>{% endblock %}
+{% block titulo_pagina %}{% if object %}{% blocktranslate with nombre=object %}Editar a {{ nombre }}{% endblocktranslate %}{% else %}{% translate "Registrar residente" %}{% endif %}{% endblock %}
+{% block subtitulo %}<p>{% translate "Los campos con * son obligatorios." %}</p>{% endblock %}
+{% block url_volver %}{% url 'lista_residentes' %}{% endblock %}
+{% block texto_boton %}{% if object %}{% translate "Guardar cambios" %}{% else %}{% translate "Registrar residente" %}{% endif %}{% endblock %}
+{% block campos %}{% with anchos="email id_unidad_fk" %}{% include "partials/form_campos.html" %}{% endwith %}{% endblock %}
+{% block lateral %}
+<section class="panel">
+    <div class="panel__cabecera"><h2>{% icono "llave" %} {% translate "Cuenta de acceso" %}</h2></div>
+    <div class="panel__cuerpo" style="display:grid;gap:.75rem">
+        {% if object.usuario %}
+            <p>{% blocktranslate with usuario=object.usuario.username %}Este residente entra con el usuario <strong>@{{ usuario }}</strong>.{% endblocktranslate %}</p>
+            <p>{% translate "Si cambias el correo aquí, también se actualiza en su cuenta." %}</p>
+            <a href="{% url 'asignar_password' object.usuario.pk %}" class="btn btn-secundario btn-sm">{% icono "llave" %} {% translate "Asignar contraseña" %}</a>
+        {% else %}
+            <p>{% translate "El residente crea su propia cuenta: entra a «Registrarse», escribe su documento y su correo, y elige su usuario y su contraseña." %}</p>
+            <p>{% translate "Por eso es importante que el documento y el correo queden bien escritos." %}</p>
+        {% endif %}
     </div>
-</div>
+</section>
+<section class="panel">
+    <div class="panel__cabecera"><h2>{% icono "edificio" %} {% translate "¿No aparece la unidad?" %}</h2></div>
+    <div class="panel__cuerpo" style="display:grid;gap:.75rem">
+        <p>{% translate "Primero crea la torre y el apartamento en Unidades, y luego vuelve aquí." %}</p>
+        <a href="{% url 'crear_unidad' %}" class="btn btn-secundario btn-sm">{% icono "mas" %} {% translate "Crear unidad" %}</a>
+    </div>
+</section>
 {% endblock %}

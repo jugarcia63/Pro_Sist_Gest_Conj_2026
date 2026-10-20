@@ -1,37 +1,20 @@
-{% extends "base.html" %}
-{% block title %}Formulario de vehículo{% endblock %}
-{% block content %}
-<div class="contenedor--angosto">
-    <div class="card-pagina">
-        <h1>Formulario de vehículo</h1>
-
-        <form method="post">
-            {% csrf_token %}
-
-            {% if form.non_field_errors %}
-                <ul class="messages">
-                    {% for error in form.non_field_errors %}
-                        <li class="error">{{ error }}</li>
-                    {% endfor %}
-                </ul>
-            {% endif %}
-
-            {% for field in form %}
-                <p>
-                    {{ field.label_tag }}
-                    {{ field }}
-                    {% if field.errors %}
-                        <ul class="messages">
-                            {% for error in field.errors %}
-                                <li class="error">{{ error }}</li>
-                            {% endfor %}
-                        </ul>
-                    {% endif %}
-                </p>
-            {% endfor %}
-
-            <button type="submit" class="btn btn-primario">Guardar</button>
-        </form>
+{% extends "form_pagina.html" %}
+{% load i18n ui %}
+{% block title %}{% if object %}{% translate "Editar vehículo" %}{% else %}{% translate "Registrar vehículo" %}{% endif %}{% endblock %}
+{% block miga %}{% icono "derecha" %}<a href="{% url 'lista_vehiculos' %}">{% translate "Vehículos" %}</a>{% icono "derecha" %}<strong>{% if object %}{{ object.placa }}{% else %}{% translate "Nuevo" %}{% endif %}</strong>{% endblock %}
+{% block eyebrow %}<span class="encabezado__eyebrow">{% icono "carro" %} {% translate "Vehículos" %}</span>{% endblock %}
+{% block titulo_pagina %}{% if object %}{% blocktranslate with placa=object.placa %}Editar vehículo {{ placa }}{% endblocktranslate %}{% else %}{% translate "Registrar vehículo" %}{% endif %}{% endblock %}
+{% block subtitulo %}<p>{% if user.rol == 'residente' %}{% translate "El vehículo queda registrado a tu nombre." %}{% else %}{% translate "Asigna el vehículo a su propietario." %}{% endif %}</p>{% endblock %}
+{% block url_volver %}{% url 'lista_vehiculos' %}{% endblock %}
+{% block texto_boton %}{% if object %}{% translate "Guardar cambios" %}{% else %}{% translate "Registrar vehículo" %}{% endif %}{% endblock %}
+{% block campos %}{% with anchos="id_residente_fk" %}{% include "partials/form_campos.html" %}{% endwith %}{% endblock %}
+{% block lateral %}
+<section class="panel">
+    <div class="panel__cabecera"><h2>{% icono "info" %} {% translate "Formato de placa" %}</h2></div>
+    <div class="panel__cuerpo" style="display:grid;gap:.9rem">
+        <div class="celda-principal"><span class="placa">ABC123</span><small class="texto-suave">{% translate "Carro: 3 letras y 3 números" %}</small></div>
+        <div class="celda-principal"><span class="placa">ABC12D</span><small class="texto-suave">{% translate "Moto: 3 letras, 2 números y 1 letra" %}</small></div>
+        <p>{% translate "Puedes escribirla en minúsculas o con espacios; se guarda en mayúsculas. No se pueden repetir placas." %}</p>
     </div>
-</div>
+</section>
 {% endblock %}

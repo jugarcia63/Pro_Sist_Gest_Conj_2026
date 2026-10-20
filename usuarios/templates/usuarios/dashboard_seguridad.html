@@ -1,27 +1,78 @@
-{% extends "base.html" %}
-{% block title %}panel de seguridad{% endblock %}
-{% block content %}
-    <style>
-        body { font-family: Arial, sans-serif; margin: 40px; }
-        h2 { border-bottom: 2px solid #333; padding-bottom: 8px; }
-        .menu { display: grid; grid-template-columns: repeat(2, 1fr); gap: 15px; max-width: 600px; margin-top: 20px; }
-        .menu a {
-            display: block; padding: 15px; background: #f2f2f2; border-radius: 6px;
-            text-decoration: none; color: #333; text-align: center; border: 1px solid #ccc;
-        }
-        .menu a:hover { background: #e0e0e0; }
-        .logout { margin-top: 30px; display: inline-block; }
-    </style>
-</head>
-<body>
-    <h2>Bienvenido, {{ usuario.username }}</h2>
-    <p>Panel de Seguridad</p>
-
-    <div class="menu">
-        <a href="{% url 'lista_visitantes' %}">Registro de Visitantes</a>
-        <a href="{% url 'lista_vehiculos' %}">Consultar Vehículos</a>
-        <a href="{% url 'cambiar_password' %}">Cambiar Contraseña</a>
+{% extends "app.html" %}
+{% load i18n ui %}
+{% block title %}{% translate "Portería" %}{% endblock %}
+{% block encabezado %}{% endblock %}
+{% block contenido %}
+<section class="banner">
+    <div class="banner__texto">
+        <span class="encabezado__eyebrow" style="color:#C4B5FD">{% icono "escudo" %} {% translate "Portería" %}</span>
+        <h1>{{ saludo }}, {{ nombre_visible }}</h1>
+        <p>{% translate "Registra cada ingreso y marca la salida cuando el visitante se vaya." %}</p>
+        <div class="banner__acciones">
+            <a href="{% url 'crear_visitante' %}" class="btn btn-claro">{% icono "mas" %} {% translate "Registrar visitante" %}</a>
+            <a href="{% url 'lista_vehiculos' %}" class="btn btn-secundario">{% icono "buscar" %} {% translate "Buscar placa" %}</a>
+        </div>
     </div>
+    {% include "partials/fachada.html" %}
+</section>
 
-    <a class="logout" href="{% url 'logout' %}">Cerrar sesión</a>
+<div class="grid-stats">
+    <div class="stat stat--cielo">
+        <span class="stat__icono">{% icono "visitante" %}</span>
+        <span class="stat__etiqueta">{% translate "Visitantes dentro" %}</span>
+        <span class="stat__valor">{{ total_dentro }}</span>
+    </div>
+    <div class="stat">
+        <span class="stat__icono">{% icono "puerta" %}</span>
+        <span class="stat__etiqueta">{% translate "Ingresos hoy" %}</span>
+        <span class="stat__valor">{{ ingresos_hoy }}</span>
+    </div>
+    <div class="stat stat--menta">
+        <span class="stat__icono">{% icono "salir" %}</span>
+        <span class="stat__etiqueta">{% translate "Salidas hoy" %}</span>
+        <span class="stat__valor">{{ salidas_hoy }}</span>
+    </div>
+    <a href="{% url 'lista_vehiculos' %}" class="stat stat--ambar">
+        <span class="stat__icono">{% icono "carro" %}</span>
+        <span class="stat__etiqueta">{% translate "Vehículos registrados" %}</span>
+        <span class="stat__valor">{{ total_vehiculos }}</span>
+    </a>
+</div>
+
+<section class="panel">
+    <div class="panel__cabecera">
+        <h2>{% icono "visitante" %} {% translate "Visitantes dentro del conjunto" %}</h2>
+        <a href="{% url 'lista_visitantes' %}">{% translate "Historial" %} {% icono "derecha" %}</a>
+    </div>
+    {% if visitantes_dentro %}
+        <div class="tabla-contenedor">
+            <table>
+                <thead><tr><th>{% translate "Visitante" %}</th><th>{% translate "Visita a" %}</th><th>{% translate "Motivo" %}</th><th>{% translate "Ingreso" %}</th><th class="derecha">{% translate "Acción" %}</th></tr></thead>
+                <tbody>
+                {% for v in visitantes_dentro %}
+                    <tr>
+                        <td><div class="celda-principal"><span class="avatar avatar--cielo">{{ v.nombre|default:""|first|upper }}{{ v.apellidos|default:""|first|upper }}</span><div><strong>{{ v.nombre }} {{ v.apellidos }}</strong><small>{{ v.tipo_documento }} {{ v.num_documento }}</small></div></div></td>
+                        <td>{{ v.id_residente_fk|default:"—" }}{% if v.id_residente_fk.id_unidad_fk %}<small class="texto-suave" style="display:block">{{ v.id_residente_fk.id_unidad_fk }}</small>{% endif %}</td>
+                        <td>{{ v.motivo|default:"—" }}</td>
+                        <td class="num">{{ v.fecha_ingreso|date:"H:i" }}<small class="texto-suave" style="display:block">{% blocktranslate with tiempo=v.fecha_ingreso|timesince %}hace {{ tiempo }}{% endblocktranslate %}</small></td>
+                        <td class="derecha">
+                            <form method="post" action="{% url 'registrar_salida' v.pk %}">
+                                {% csrf_token %}<input type="hidden" name="next" value="{{ request.path }}">
+                                <button class="btn btn-secundario btn-sm">{% icono "salir" %} {% translate "Registrar salida" %}</button>
+                            </form>
+                        </td>
+                    </tr>
+                {% endfor %}
+                </tbody>
+            </table>
+        </div>
+    {% else %}
+        <div class="vacio">
+            <div class="vacio__icono">{% icono "escudo" %}</div>
+            <h3>{% translate "No hay visitantes dentro" %}</h3>
+            <p>{% translate "Cuando registres un ingreso aparecerá aquí hasta que marques su salida." %}</p>
+            <a href="{% url 'crear_visitante' %}" class="btn btn-primario btn-sm">{% icono "mas" %} {% translate "Registrar visitante" %}</a>
+        </div>
+    {% endif %}
+</section>
 {% endblock %}

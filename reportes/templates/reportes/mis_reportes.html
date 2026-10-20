@@ -1,25 +1,43 @@
-{% extends "base.html" %}
-{% block title %}Mis reportes{% endblock %}
-{% block content %}
-<div class="contenedor">
-    <h1>Mis reportes</h1>
-
-    <a href="{% url 'crear_reporte' %}" class="btn btn-primario" style="margin-bottom:1.5rem; display:inline-flex;">+ Nuevo reporte</a>
-
-    {% for r in reportes %}
-        <div class="card">
-            <strong>{{ r.categoria }}</strong> — Torre {{ r.torre }}, Piso {{ r.piso }}
-            <p style="margin:0.4rem 0;">{{ r.descripcion }}</p>
-            <span class="badge
-                {% if r.estado == 'Abierto' %}badge-error
-                {% elif r.estado == 'En proceso' %}badge-aviso
-                {% else %}badge-exito{% endif %}">
-                {{ r.estado }}
-            </span>
-            <span style="color:var(--color-texto-suave); font-size:0.85rem; margin-left:0.5rem;">{{ r.fecha_reporte }}</span>
+{% extends "app.html" %}
+{% load i18n ui %}
+{% block title %}{% translate "Mis reportes" %}{% endblock %}
+{% block miga %}{% icono "derecha" %}<strong>{% translate "Mis reportes" %}</strong>{% endblock %}
+{% block eyebrow %}<span class="encabezado__eyebrow">{% icono "alerta" %} {% translate "Mantenimiento" %}</span>{% endblock %}
+{% block titulo_pagina %}{% translate "Mis reportes de daños" %}{% endblock %}
+{% block subtitulo %}<p>{% translate "Sigue el estado de cada daño que has reportado." %}</p>{% endblock %}
+{% block acciones %}
+    <a href="{% url 'dashboard' %}" class="btn btn-secundario">{% icono "volver" %} {% translate "Volver" %}</a>
+    <a href="{% url 'crear_reporte' %}" class="btn btn-primario">{% icono "mas" %} {% translate "Reportar daño" %}</a>
+{% endblock %}
+{% block contenido %}
+<section class="panel">
+    {% if reportes %}
+        {% for r in reportes %}
+            <article class="reporte">
+                <div class="reporte__cabecera">
+                    <h3>{{ r.categoria|traducir:"Sin categoría" }}</h3>
+                    <span class="badge badge-{{ r.estado|color_estado }}">{{ r.estado|traducir }}</span>
+                </div>
+                <p>{{ r.descripcion }}</p>
+                <div class="progreso{% if r.estado == 'Cerrado' %} progreso--cerrado{% endif %}" aria-hidden="true">
+                    <span class="on"></span>
+                    <span class="{% if r.estado == 'En proceso' or r.estado == 'Cerrado' %}on{% endif %}"></span>
+                    <span class="{% if r.estado == 'Cerrado' %}on{% endif %}"></span>
+                </div>
+                <div class="reporte__meta">
+                    <span>{% icono "ubicacion" %} {% translate "Torre" %} {{ r.torre|default:"—" }}{% if r.piso is not None %}, {% translate "piso" %} {{ r.piso }}{% endif %}</span>
+                    <span>{% icono "calendario" %} {{ r.fecha_reporte|date:"j M Y, H:i" }}</span>
+                    {% if r.fecha_resolucion %}<span>{% icono "check" %} {% blocktranslate with fecha=r.fecha_resolucion|date:"j M Y" %}Resuelto el {{ fecha }}{% endblocktranslate %}</span>{% endif %}
+                </div>
+            </article>
+        {% endfor %}
+    {% else %}
+        <div class="vacio">
+            <div class="vacio__icono">{% icono "check" %}</div>
+            <h3>{% translate "No has reportado daños" %}</h3>
+            <p>{% translate "Si algo se daña en tu unidad o en las zonas comunes, cuéntanos." %}</p>
+            <a href="{% url 'crear_reporte' %}" class="btn btn-primario btn-sm">{% icono "mas" %} {% translate "Reportar daño" %}</a>
         </div>
-    {% empty %}
-        <p>No tienes reportes registrados.</p>
-    {% endfor %}
-</div>
+    {% endif %}
+</section>
 {% endblock %}
