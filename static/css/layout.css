@@ -34,6 +34,8 @@
   box-shadow: 0 6px 16px -6px rgba(139, 92, 246, .8), inset 0 1px 0 rgba(255,255,255,.25);
 }
 .sidebar__logo .ico { width: 20px; height: 20px; }
+.logo-conjunto { width: 42px; height: 42px; flex-shrink: 0; border-radius: 50%; box-shadow: 0 6px 16px -6px rgba(139, 92, 246, .8); }
+.logo-conjunto--grande { width: 52px; height: 52px; }
 .sidebar__nombre { font-family: var(--fuente-display); font-weight: 600; font-size: 1.08rem; line-height: 1.1; }
 .sidebar__nombre small { display: block; font-family: var(--fuente); font-weight: 500; font-size: .72rem; color: var(--sidebar-texto); letter-spacing: .02em; margin-top: 2px; }
 
@@ -250,7 +252,8 @@
   gap: 1.5rem;
   overflow: hidden;
 }
-.auth__marca { display: flex; align-items: center; gap: .7rem; font-family: var(--fuente-display); font-size: 1.1rem; font-weight: 600; }
+.auth__marca { display: flex; align-items: center; gap: .8rem; font-family: var(--fuente-display); font-size: 1.15rem; font-weight: 600; line-height: 1.15; }
+.auth__marca small { display: block; font-family: var(--fuente); font-size: .75rem; font-weight: 500; opacity: .75; margin-top: 2px; }
 .auth__copy h1 { color: #fff; font-size: 2.15rem; line-height: 1.12; margin-bottom: .8rem; }
 .auth__copy p { color: rgba(233, 227, 255, .78); font-size: .95rem; max-width: 34ch; }
 .auth__puntos { display: grid; gap: .55rem; font-size: .88rem; color: rgba(233, 227, 255, .9); }

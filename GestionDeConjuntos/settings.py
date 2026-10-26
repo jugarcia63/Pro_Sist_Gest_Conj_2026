@@ -48,6 +48,8 @@ INSTALLED_APPS = [
     'reservas',
     'pagos',
     'reportes',
+    'parqueadero',
+    'paquetes',
 ]
 
 MIDDLEWARE = [

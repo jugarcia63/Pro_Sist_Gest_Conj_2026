@@ -1,0 +1,53 @@
+{% extends "app.html" %}
+{% load i18n ui %}
+{% block title %}{% translate "Salida de vehículo" %}{% endblock %}
+{% block miga %}{% icono "derecha" %}<a href="{% url 'lista_parqueos' %}">{% translate "Parqueadero de visitantes" %}</a>{% icono "derecha" %}<strong>{{ parqueo.placa }}</strong>{% endblock %}
+{% block eyebrow %}<span class="encabezado__eyebrow">{% icono "parqueadero" %} {% translate "Portería" %}</span>{% endblock %}
+{% block titulo_pagina %}{% if parqueo.dentro %}{% blocktranslate with placa=parqueo.placa %}Salida del vehículo {{ placa }}{% endblocktranslate %}{% else %}{% blocktranslate with placa=parqueo.placa %}Cobro del vehículo {{ placa }}{% endblocktranslate %}{% endif %}{% endblock %}
+{% block subtitulo %}<p>{% if parqueo.dentro %}{% translate "Revisa el valor con el conductor y confirma la salida." %}{% else %}{% blocktranslate with fecha=parqueo.fecha_salida|date:"d M, H:i" %}Salida registrada el {{ fecha }}.{% endblocktranslate %}{% endif %}</p>{% endblock %}
+{% block acciones %}<a href="{% url 'lista_parqueos' %}" class="btn btn-secundario">{% icono "volver" %} {% translate "Volver" %}</a>{% endblock %}
+{% block contenido %}
+<div class="grid-3-1">
+    <div class="columna">
+        <section class="panel">
+            <div class="panel__cuerpo">
+                <div class="resumen-pago">
+                    <div class="resumen-pago__fila"><span>{% translate "Placa" %}</span><strong><span class="placa">{{ parqueo.placa }}</span></strong></div>
+                    <div class="resumen-pago__fila"><span>{% translate "Tipo" %}</span><strong>{{ parqueo.tipo_vehiculo|traducir }}</strong></div>
+                    <div class="resumen-pago__fila"><span>{% translate "Visita a" %}</span><strong>{{ parqueo.id_unidad_fk }}</strong></div>
+                    {% if parqueo.conductor %}<div class="resumen-pago__fila"><span>{% translate "Conductor" %}</span><strong>{{ parqueo.conductor }}</strong></div>{% endif %}
+                    <div class="resumen-pago__fila"><span>{% translate "Ingreso" %}</span><strong>{{ parqueo.fecha_ingreso|date:"d M, H:i" }}</strong></div>
+                    {% if parqueo.fecha_salida %}<div class="resumen-pago__fila"><span>{% translate "Salida" %}</span><strong>{{ parqueo.fecha_salida|date:"d M, H:i" }}</strong></div>{% endif %}
+                    {% if parqueo.dentro %}
+                        <div class="resumen-pago__fila" data-contador data-desde="{{ parqueo.fecha_ingreso|date:'c' }}" data-valor-hora="{{ parqueo.valor_hora|stringformat:'.0f' }}" data-horas-gratis="{{ parqueo.horas_gratis }}"><span>{% translate "Tiempo dentro" %}</span><strong data-contador-tiempo>{{ cobro.tiempo }}</strong></div>
+                    {% else %}
+                        <div class="resumen-pago__fila"><span>{% translate "Tiempo dentro" %}</span><strong>{{ cobro.tiempo }}</strong></div>
+                    {% endif %}
+                    <div class="resumen-pago__fila"><span>{% translate "Tarifa" %}</span><strong>{% blocktranslate with valor=parqueo.valor_hora|pesos count n=parqueo.horas_gratis %}{{ valor }}/hora · {{ n }} h gratis{% plural %}{{ valor }}/hora · {{ n }} h gratis{% endblocktranslate %}</strong></div>
+                    <div class="resumen-pago__fila"><span>{% translate "Horas cobradas" %}</span><strong>{% if parqueo.dentro %}{{ cobro.horas }}{% else %}{{ parqueo.horas_cobradas }}{% endif %}</strong></div>
+                    <div class="resumen-pago__total"><span>{% if parqueo.dentro %}{% translate "Total a cobrar" %}{% else %}{% translate "Total cobrado" %}{% endif %}</span><strong data-contador-valor>{% if parqueo.dentro %}{{ cobro.valor|pesos }}{% else %}{{ parqueo.valor_cobrado|pesos }}{% endif %}</strong></div>
+                </div>
+                {% if parqueo.dentro %}
+                    <form method="post" class="form-acciones">
+                        {% csrf_token %}<input type="hidden" name="next" value="{{ next }}">
+                        <a href="{% url 'lista_parqueos' %}" class="btn btn-fantasma">{% translate "Cancelar" %}</a>
+                        <button type="submit" class="btn btn-primario">{% icono "salir" %} {% translate "Confirmar salida" %}</button>
+                    </form>
+                {% endif %}
+            </div>
+        </section>
+    </div>
+    <div class="columna">
+        <section class="panel">
+            <div class="panel__cuerpo" style="display:grid;gap:.6rem">
+                {% if parqueo.dentro %}
+                    <p>{% translate "El valor se calcula al momento de confirmar; si el conductor se demora, puede subir." %}</p>
+                {% else %}
+                    {% if parqueo.salida_por %}<p>{% blocktranslate with usuario=parqueo.salida_por.username %}Salida registrada por <strong>@{{ usuario }}</strong>.{% endblocktranslate %}</p>{% endif %}
+                {% endif %}
+                {% if parqueo.registrado_por %}<p class="texto-suave">{% blocktranslate with usuario=parqueo.registrado_por.username %}Ingreso registrado por @{{ usuario }}.{% endblocktranslate %}</p>{% endif %}
+            </div>
+        </section>
+    </div>
+</div>
+{% endblock %}

@@ -35,6 +35,31 @@
     select.addEventListener('change', function () { select.form.submit(); });
   });
 
+  // Parqueadero de visitantes: contador de tiempo y valor a cobrar, en vivo.
+  // Misma regla que el servidor: cada hora iniciada cuenta entera y se descuentan las horas gratis.
+  var contadores = document.querySelectorAll('[data-contador]');
+  if (contadores.length) {
+    var dosCifras = function (n) { return (n < 10 ? '0' : '') + n; };
+    var formatoPesos = function (n) { return '$' + Math.round(n).toString().replace(/\B(?=(\d{3})+(?!\d))/g, '.'); };
+    var actualizar = function () {
+      contadores.forEach(function (celda) {
+        var desde = new Date(celda.dataset.desde);
+        if (isNaN(desde)) return;
+        var segundos = Math.max(0, Math.floor((Date.now() - desde.getTime()) / 1000));
+        var minutos = Math.floor(segundos / 60);
+        var cobradas = Math.max(0, Math.ceil(minutos / 60) - parseInt(celda.dataset.horasGratis || '0', 10));
+        var valor = cobradas * parseFloat(celda.dataset.valorHora || '0');
+        var tiempo = celda.querySelector('[data-contador-tiempo]');
+        if (tiempo) tiempo.textContent = Math.floor(minutos / 60) + ' h ' + dosCifras(minutos % 60) + ' min ' + dosCifras(segundos % 60) + ' s';
+        var fila = celda.closest('tr, .lista__item, .resumen-pago') || celda.parentNode;
+        var celdaValor = fila.querySelector('[data-contador-valor]');
+        if (celdaValor) celdaValor.textContent = formatoPesos(valor);
+      });
+    };
+    actualizar();
+    window.setInterval(actualizar, 1000);
+  }
+
   // Pasarela de pago: agrupa el número de tarjeta y pone la barra en MM/AA
   var numero = document.getElementById('id_numero_tarjeta');
   var vista = document.querySelector('[data-tarjeta-numero]');

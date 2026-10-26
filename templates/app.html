@@ -1,11 +1,11 @@
 {% extends "base.html" %}
-{% load i18n ui %}
+{% load i18n static ui %}
 {% block body %}
 <div class="app">
     <aside class="sidebar" id="menu-lateral" aria-label="{% translate 'Menú principal' %}">
         <a class="sidebar__marca" href="{% url 'dashboard' %}">
-            <span class="sidebar__logo">{% icono "edificio" %}</span>
-            <span class="sidebar__nombre">{% translate "Gestión de Conjuntos" %}<small>{% translate "Administración residencial" %}</small></span>
+            <img class="logo-conjunto" src="{% static 'img/logo-reserva-de-madrid.svg' %}" alt="" width="42" height="42">
+            <span class="sidebar__nombre">Reserva de Madrid<small>{% translate "Conjunto residencial" %}</small></span>
         </a>
 
         <nav class="sidebar__nav">

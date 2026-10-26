@@ -1,0 +1,43 @@
+{% extends "app.html" %}
+{% load i18n ui %}
+{% block title %}{% translate "Paquetes" %}{% endblock %}
+{% block miga %}{% icono "derecha" %}<strong>{% translate "Paquetes" %}</strong>{% endblock %}
+{% block eyebrow %}<span class="encabezado__eyebrow">{% icono "escudo" %} {% translate "Portería" %}</span>{% endblock %}
+{% block titulo_pagina %}{% translate "Paquetes en portería" %}{% endblock %}
+{% block subtitulo %}<p>{% blocktranslate count n=total_recepcion %}{{ n }} paquete en recepción{% plural %}{{ n }} paquetes en recepción{% endblocktranslate %} · {% blocktranslate count n=entregados_hoy %}{{ n }} entregado hoy{% plural %}{{ n }} entregados hoy{% endblocktranslate %}</p>{% endblock %}
+{% block acciones %}
+    <a href="{% url 'dashboard' %}" class="btn btn-secundario">{% icono "volver" %} {% translate "Volver" %}</a>
+    <a href="{% url 'crear_paquete' %}" class="btn btn-primario">{% icono "mas" %} {% translate "Registrar paquete" %}</a>
+{% endblock %}
+{% block contenido %}
+<section class="panel">
+    <div class="toolbar">
+        <form method="get" role="search">
+            <div class="buscador">{% icono "buscar" %}<input type="search" name="buscar" value="{{ buscar }}" placeholder="{% translate 'Guía, destinatario o transportadora' %}" aria-label="{% translate 'Buscar' %}"></div>
+            {% if estado %}<input type="hidden" name="estado" value="{{ estado }}">{% endif %}
+            <button type="submit" class="btn btn-secundario">{% translate "Buscar" %}</button>
+        </form>
+        <nav class="segmentos" aria-label="{% translate 'Filtrar por estado' %}">
+            <a href="?{% if buscar %}buscar={{ buscar|urlencode }}{% endif %}" class="{% if not estado %}activo{% endif %}">{% translate "Todos" %}</a>
+            <a href="?estado=En recepción{% if buscar %}&buscar={{ buscar|urlencode }}{% endif %}" class="{% if estado == 'En recepción' %}activo{% endif %}">{% translate "En recepción" %} <span class="cuenta">{{ total_recepcion }}</span></a>
+            <a href="?estado=Entregado{% if buscar %}&buscar={{ buscar|urlencode }}{% endif %}" class="{% if estado == 'Entregado' %}activo{% endif %}">{% translate "Entregados" %}</a>
+        </nav>
+    </div>
+    {% if paquetes %}
+        {% include "paquetes/_tabla.html" with con_acciones=True %}
+        {% include "partials/paginacion.html" %}
+    {% else %}
+        <div class="vacio">
+            <div class="vacio__icono">{% icono "paquete" %}</div>
+            {% if buscar or estado %}
+                <h3>{% translate "No hay paquetes con ese filtro" %}</h3>
+                <p>{% translate "Prueba buscando por el número de guía o el nombre del destinatario." %}</p>
+            {% else %}
+                <h3>{% translate "Aún no hay paquetes registrados" %}</h3>
+                <p>{% translate "Cuando llegue un paquete, regístralo con su guía para que el residente sepa que está en portería." %}</p>
+                <a href="{% url 'crear_paquete' %}" class="btn btn-primario btn-sm">{% icono "mas" %} {% translate "Registrar paquete" %}</a>
+            {% endif %}
+        </div>
+    {% endif %}
+</section>
+{% endblock %}

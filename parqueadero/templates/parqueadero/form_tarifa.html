@@ -1,0 +1,9 @@
+{% extends "form_pagina.html" %}
+{% load i18n ui %}
+{% block title %}{% translate "Tarifa del parqueadero" %}{% endblock %}
+{% block miga %}{% icono "derecha" %}<a href="{% url 'lista_parqueos' %}">{% translate "Parqueadero de visitantes" %}</a>{% icono "derecha" %}<strong>{% translate "Tarifa" %}</strong>{% endblock %}
+{% block eyebrow %}<span class="encabezado__eyebrow">{% icono "billetera" %} {% translate "Parqueadero" %}</span>{% endblock %}
+{% block titulo_pagina %}{% translate "Tarifa del parqueadero de visitantes" %}{% endblock %}
+{% block subtitulo %}<p>{% translate "Los vehículos que ya están dentro conservan la tarifa con la que entraron." %}</p>{% endblock %}
+{% block url_volver %}{% url 'lista_parqueos' %}{% endblock %}
+{% block texto_boton %}{% translate "Guardar tarifa" %}{% endblock %}

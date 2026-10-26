@@ -1,12 +1,12 @@
 {% extends "base.html" %}
-{% load i18n ui %}
+{% load i18n static ui %}
 {% block title %}{% translate "Iniciar sesión" %}{% endblock %}
 {% block body %}
 <div class="auth-pagina">
     <div class="auth-pagina__barra">{% include "partials/idioma.html" %}</div>
     <div class="auth">
         <section class="auth__intro">
-            <div class="auth__marca"><span class="sidebar__logo">{% icono "edificio" %}</span>{% translate "Gestión de Conjuntos" %}</div>
+            <div class="auth__marca"><img class="logo-conjunto logo-conjunto--grande" src="{% static 'img/logo-reserva-de-madrid.svg' %}" alt="" width="52" height="52"><span>Conjunto Reserva de Madrid<small>{% translate "Madrid, Cundinamarca" %}</small></span></div>
             <div class="auth__copy">
                 <h1>{% translate "Tu conjunto, organizado en un solo lugar." %}</h1>
                 <p>{% translate "Administración, residentes y portería trabajando con la misma información." %}</p>
