@@ -27,6 +27,18 @@ CLAVE_RESIDENTES = 'Conjunto2026'
 CLAVE_SEGURIDAD = 'Porteria2026'
 CLAVE_JUAN = '123456789'
 
+# Residente (ya existente en la base publicada) al que se le cargan paquetes de prueba en cada deploy.
+# Solo se crean si ese usuario existe y aún no los tiene; nunca se duplican.
+USUARIO_PAQUETES_PRUEBA = 'jvila69'
+PAQUETES_PRUEBA = [
+    # (guía, transportadora, descripción, horas atrás que llegó, entregado a o None si sigue en portería)
+    ('PRB700045981', 'Servientrega', 'Caja mediana', 2, None),
+    ('PRBMLC775102', 'Mercado Libre', 'Sobre', 9, None),
+    ('PRBCOO240377', 'Coordinadora', 'Caja grande', 26, None),
+    ('PRBAMZ553190', 'Amazon', 'Caja pequeña', 72, 'Juan Esteban Vila'),
+    ('PRBINT889014', 'Interrapidísimo', 'Bolsa', 120, 'Familiar en portería'),
+]
+
 TORRES = ['A', 'B', 'C']
 PISOS = range(1, 6)        # 5 pisos por torre
 APTOS_POR_PISO = (1, 2)    # 101, 102, 201, 202...
@@ -97,6 +109,7 @@ class Command(BaseCommand):
 
     def handle(self, *args, **options):
         juan = self._asegurar_juan_garcia()
+        self._paquetes_de_prueba(USUARIO_PAQUETES_PRUEBA)
 
         if Usuario.objects.filter(username='laura.gomez').exists():
             self.stdout.write('Los datos de ejemplo ya estaban cargados; no se duplicó nada.')
@@ -136,6 +149,30 @@ class Command(BaseCommand):
         juan.debe_cambiar_password = False
         juan.save()
         return juan
+
+    def _paquetes_de_prueba(self, username):
+        residente = Residentes.objects.select_related('id_unidad_fk').filter(usuario__username__iexact=username).first()
+        if residente is None or residente.id_unidad_fk is None:
+            self.stdout.write(f'Paquetes de prueba: el residente "{username}" no existe o no tiene unidad; se omiten.')
+            return
+        if Paquete.objects.filter(numero_guia__in=[g for g, *_ in PAQUETES_PRUEBA]).exists():
+            return
+        ahora = timezone.now()
+        vigilantes = list(Usuario.objects.filter(rol='seguridad', is_active=True).order_by('pk')[:2]) or [None]
+        destinatario = f"{residente.nombres or ''} {residente.apellidos or ''}".strip() or username
+        for i, (guia, empresa, descripcion, horas, entregado_a) in enumerate(PAQUETES_PRUEBA):
+            recepcion = ahora - timedelta(hours=horas)
+            paquete = Paquete(numero_guia=guia, empresa=empresa, destinatario=destinatario,
+                              id_unidad_fk=residente.id_unidad_fk, descripcion=descripcion,
+                              fecha_recepcion=recepcion, recibido_por=vigilantes[i % len(vigilantes)])
+            if entregado_a:
+                paquete.estado = 'Entregado'
+                paquete.fecha_entrega = recepcion + timedelta(hours=3)
+                paquete.entregado_a = entregado_a
+                paquete.entregado_por = vigilantes[(i + 1) % len(vigilantes)]
+            paquete.save()
+        self.stdout.write(self.style.SUCCESS(
+            f'Paquetes de prueba cargados para "{username}" ({residente.id_unidad_fk}).'))
 
     def _crear_unidades(self):
         unidades = {}

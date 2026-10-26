@@ -4,8 +4,6 @@ from django.contrib.auth.forms import SetPasswordForm
 from django.contrib.auth.validators import UnicodeUsernameValidator
 from django.utils.translation import gettext_lazy as _
 
-from residentes.forms import TIPOS_DOCUMENTO
-from residentes.models import Residentes
 from .models import Usuario
 
 AYUDA_USUARIO = _('Con este nombre entrarás al sistema. Usa letras, números y . _ - (sin espacios).')
@@ -40,67 +38,55 @@ def _campo_password(etiqueta, ayuda=''):
                            widget=forms.PasswordInput(attrs={'autocomplete': 'new-password'}))
 
 
-class RegistroForm(CamposUsuarioMixin, forms.Form):
-    """El residente crea su propia cuenta. Debe estar registrado antes por la administración."""
-    tipo_documento = forms.ChoiceField(label=_('Tipo de documento'), choices=TIPOS_DOCUMENTO)
-    num_documento = forms.CharField(label=_('Número de documento'), max_length=100,
-                                    widget=forms.TextInput(attrs={'inputmode': 'numeric', 'placeholder': '1020304050'}))
-    email = forms.EmailField(label=_('Correo electrónico'),
-                             help_text=_('Si la administración registró tu correo, debe ser el mismo.'),
-                             widget=forms.EmailInput(attrs={'autocomplete': 'email', 'placeholder': 'tu@correo.com'}))
-    username = forms.CharField(label=_('Nombre de usuario'), max_length=150, help_text=AYUDA_USUARIO,
-                               validators=[UnicodeUsernameValidator()],
-                               widget=forms.TextInput(attrs={'autocomplete': 'username', 'placeholder': 'laura.gomez'}))
-    password1 = _campo_password(_('Contraseña'), password_validation.password_validators_help_text_html())
+def usuario_sugerido(residente):
+    """laura.gomez a partir de 'Laura' 'Gómez Restrepo'; si ya existe, laura.gomez2, laura.gomez3..."""
+    import unicodedata
+    def limpiar(texto):
+        texto = unicodedata.normalize('NFKD', texto or '').encode('ascii', 'ignore').decode().lower()
+        return ''.join(c for c in texto.split()[0] if c.isalnum()) if texto.split() else ''
+    base = '.'.join(p for p in (limpiar(residente.nombres), limpiar(residente.apellidos)) if p) or 'residente'
+    candidato, n = base, 2
+    while Usuario.objects.filter(username__iexact=candidato).exists():
+        candidato, n = f'{base}{n}', n + 1
+    return candidato
+
+
+class CuentaResidenteForm(CamposUsuarioMixin, forms.Form):
+    """El administrador crea la cuenta de un residente con una contraseña temporal.
+    El residente debe cambiarla por una propia la primera vez que entre."""
+    username = forms.CharField(label=_('Nombre de usuario'), max_length=150, validators=[UnicodeUsernameValidator()],
+                               help_text=_('Con este nombre entrará el residente. Letras, números y . _ - (sin espacios).'),
+                               widget=forms.TextInput(attrs={'autocomplete': 'off'}))
+    password1 = _campo_password(_('Contraseña temporal'),
+                                _('Entrégasela al residente en persona. Al entrar, el sistema le pedirá cambiarla.'))
     password2 = _campo_password(_('Repite la contraseña'))
 
-    def __init__(self, *args, **kwargs):
+    def __init__(self, residente, *args, **kwargs):
         super().__init__(*args, **kwargs)
-        self.residente = None
+        self.residente = residente
 
     def clean(self):
         cleaned_data = super().clean()
-        numero = (cleaned_data.get('num_documento') or '').strip()
-        tipo = cleaned_data.get('tipo_documento')
-        email = (cleaned_data.get('email') or '').strip().lower()
-
-        if numero:
-            residente = Residentes.objects.filter(num_documento=numero).select_related('usuario').first()
-            if residente and residente.tipo_documento and tipo and residente.tipo_documento != tipo:
-                residente = None
-            if residente is None:
-                self.add_error('num_documento', _('No encontramos un residente con ese documento. '
-                                                  'La administración debe registrarte primero.'))
-            elif residente.usuario_id:
-                self.add_error('num_documento', _('Este residente ya tiene una cuenta. Inicia sesión con tu usuario.'))
-            elif residente.email and email and residente.email.lower() != email:
-                self.add_error('email', _('El correo no coincide con el que registró la administración.'))
-            else:
-                self.residente = residente
-
-        usuario_temporal = Usuario(
-            username=cleaned_data.get('username') or '', email=email,
-            first_name=getattr(self.residente, 'nombres', '') or '',
-            last_name=getattr(self.residente, 'apellidos', '') or '',
-        )
-        self.validar_contrasenas(usuario_temporal)
+        self.validar_contrasenas(Usuario(username=cleaned_data.get('username') or '',
+                                         email=self.residente.email or '',
+                                         first_name=self.residente.nombres or '',
+                                         last_name=self.residente.apellidos or ''))
         return cleaned_data
 
     def save(self):
         residente = self.residente
         usuario = Usuario.objects.create_user(
             username=self.cleaned_data['username'],
-            email=self.cleaned_data['email'].lower(),
+            email=(residente.email or '').lower(),
             password=self.cleaned_data['password1'],
             first_name=residente.nombres or '',
             last_name=residente.apellidos or '',
         )
         usuario.rol = 'residente'
-        usuario.save(update_fields=['rol'])
+        usuario.debe_cambiar_password = True
+        usuario.save(update_fields=['rol', 'debe_cambiar_password'])
         residente.usuario = usuario
-        if not residente.email:
-            residente.email = usuario.email
-        residente.save(update_fields=['usuario', 'email'])
+        residente.save(update_fields=['usuario'])
         return usuario
 
 

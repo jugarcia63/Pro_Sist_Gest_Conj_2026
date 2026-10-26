@@ -54,10 +54,10 @@ class CrearResidente(RolRequeridoMixin, CreateView):
     def form_valid(self, form):
         form.instance.fecha_registro = timezone.now()
         form.instance.estado = 1
-        response = super().form_valid(form)
-        messages.success(self.request, _('Residente "%(nombre)s" registrado. Ya puede crear su cuenta en '
-                                         '"Registrarse" con su número de documento.') % {'nombre': self.object})
-        return response
+        super().form_valid(form)
+        messages.success(self.request, _('Residente "%(nombre)s" registrado. Ahora créale su cuenta de acceso.')
+                         % {'nombre': self.object})
+        return redirect('crear_cuenta_residente', id_residente=self.object.pk)
 
 
 class EditarResidente(RolRequeridoMixin, UpdateView):

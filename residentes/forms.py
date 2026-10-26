@@ -33,7 +33,6 @@ class ResidenteForm(ValidacionLetrasNumerosMixin, forms.ModelForm):
     tipo_documento = forms.ChoiceField(choices=TIPOS_DOCUMENTO, label=_('Tipo de documento'))
     email = forms.EmailField(
         label=_('Correo electrónico'), required=False,
-        help_text=_('Con su documento y este correo, el residente crea su propia cuenta en "Registrarse".'),
     )
 
     class Meta:

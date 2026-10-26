@@ -1596,10 +1596,6 @@ msgid "Apellidos"
 msgstr "Last names"
 
 #: residentes/forms.py
-msgid "Con su documento y este correo, el residente crea su propia cuenta en \"Registrarse\"."
-msgstr "With their ID number and this email, the resident creates their own account under \"Sign up\"."
-
-#: residentes/forms.py
 msgid "Correo electrónico"
 msgstr "Email"
 
@@ -1690,8 +1686,16 @@ msgid "Torre %(torre)s - Apto %(apto)s"
 msgstr "Tower %(torre)s - Apt %(apto)s"
 
 #: residentes/templates/residentes/form_residente.html
+msgid "Al guardar el residente pasarás a crear su cuenta."
+msgstr "After saving the resident you will create their account."
+
+#: residentes/templates/residentes/form_residente.html
 msgid "Asignar contraseña"
 msgstr "Set password"
+
+#: residentes/templates/residentes/form_residente.html
+msgid "Crear cuenta"
+msgstr "Create account"
 
 #: residentes/templates/residentes/form_residente.html
 msgid "Crear unidad"
@@ -1711,8 +1715,8 @@ msgid "Editar residente"
 msgstr "Edit resident"
 
 #: residentes/templates/residentes/form_residente.html
-msgid "El residente crea su propia cuenta: entra a «Registrarse», escribe su documento y su correo, y elige su usuario y su contraseña."
-msgstr "The resident creates their own account: they go to “Sign up”, enter their ID number and email, and choose their username and password."
+msgid "Este residente aún no tiene cuenta. Tú le asignas su usuario y una contraseña temporal, que deberá cambiar al entrar."
+msgstr "This resident has no account yet. You assign their username and a temporary password, which they must change when they sign in."
 
 #: residentes/templates/residentes/form_residente.html
 #, python-format
@@ -1726,10 +1730,6 @@ msgstr "Fields marked with * are required."
 #: residentes/templates/residentes/form_residente.html
 msgid "Nuevo residente"
 msgstr "New resident"
-
-#: residentes/templates/residentes/form_residente.html
-msgid "Por eso es importante que el documento y el correo queden bien escritos."
-msgstr "That is why the ID number and email must be spelled correctly."
 
 #: residentes/templates/residentes/form_residente.html
 msgid "Primero crea la torre y el apartamento en Unidades, y luego vuelve aquí."
@@ -1781,12 +1781,12 @@ msgid "Torre: letra o número, por ejemplo A o 2."
 msgstr "Tower: letter or number, for example A or 2."
 
 #: residentes/templates/residentes/lista_residentes.html
-msgid "Aún no se registra"
-msgstr "Not signed up yet"
-
-#: residentes/templates/residentes/lista_residentes.html
 msgid "Buscar por nombre, documento o correo"
 msgstr "Search by name, ID number or email"
+
+#: residentes/templates/residentes/lista_residentes.html
+msgid "Con cuenta de acceso"
+msgstr "With an account"
 
 #: residentes/templates/residentes/lista_residentes.html
 msgid "Contacto"
@@ -1806,20 +1806,16 @@ msgid "Ningún residente coincide con \"%(buscar)s\""
 msgstr "No resident matches \"%(buscar)s\""
 
 #: residentes/templates/residentes/lista_residentes.html
-msgid "Personas que viven en el conjunto. Cada residente crea su propia cuenta en «Registrarse» con su documento."
-msgstr "People who live in the community. Each resident creates their own account under “Sign up” with their ID number."
+msgid "Personas que viven en el conjunto. La administración crea la cuenta de acceso de cada residente."
+msgstr "People who live in the complex. The administration creates each resident's account."
 
 #: residentes/templates/residentes/lista_residentes.html
 msgid "Prueba con otro nombre o con el número de documento."
 msgstr "Try another name or the ID number."
 
 #: residentes/templates/residentes/lista_residentes.html
-msgid "Puede registrarse con su documento"
-msgstr "Can sign up with their ID number"
-
-#: residentes/templates/residentes/lista_residentes.html
-msgid "Registra el primero. Luego podrá crear su cuenta con su documento."
-msgstr "Add the first one. They can then create their account with their ID number."
+msgid "Registra el primero y luego créale su cuenta de acceso."
+msgstr "Add the first one and then create their account."
 
 #: residentes/templates/residentes/lista_residentes.html
 msgid "Residentes registrados"
@@ -1828,10 +1824,6 @@ msgstr "Registered residents"
 #: residentes/templates/residentes/lista_residentes.html
 msgid "Todavía no hay residentes"
 msgstr "There are no residents yet"
-
-#: residentes/templates/residentes/lista_residentes.html
-msgid "Ya crearon su cuenta"
-msgstr "Have an account"
 
 #: residentes/templates/residentes/lista_residentes.html
 #, python-format
@@ -1897,8 +1889,8 @@ msgstr "%(unidad)s cannot be deleted: it has residents or bookings."
 
 #: residentes/views.py
 #, python-format
-msgid "Residente \"%(nombre)s\" registrado. Ya puede crear su cuenta en \"Registrarse\" con su número de documento."
-msgstr "Resident \"%(nombre)s\" added. They can now create their account under \"Sign up\" with their ID number."
+msgid "Residente \"%(nombre)s\" registrado. Ahora créale su cuenta de acceso."
+msgstr "Resident \"%(nombre)s\" added. Now create their account."
 
 #: residentes/views.py
 #, python-format
@@ -2088,6 +2080,10 @@ msgid "Visitantes"
 msgstr "Visitors"
 
 #: usuarios/forms.py
+msgid "Con este nombre entrará el residente. Letras, números y . _ - (sin espacios)."
+msgstr "The resident will sign in with this name. Letters, numbers and . _ - (no spaces)."
+
+#: usuarios/forms.py
 msgid "Con este nombre entrarás al sistema. Usa letras, números y . _ - (sin espacios)."
 msgstr "You will sign in with this name. Use letters, numbers and . _ - (no spaces)."
 
@@ -2096,32 +2092,28 @@ msgid "Contraseña"
 msgstr "Password"
 
 #: usuarios/forms.py
-msgid "Cuenta activa (puede iniciar sesión)"
-msgstr "Active account (can sign in)"
+msgid "Contraseña temporal"
+msgstr "Temporary password"
 
 #: usuarios/forms.py
-msgid "El correo no coincide con el que registró la administración."
-msgstr "The email does not match the one management recorded."
+msgid "Cuenta activa (puede iniciar sesión)"
+msgstr "Active account (can sign in)"
 
 #: usuarios/forms.py
 msgid "El vigilante entrará con esta contraseña."
 msgstr "The guard will sign in with this password."
 
 #: usuarios/forms.py
+msgid "Entrégasela al residente en persona. Al entrar, el sistema le pedirá cambiarla."
+msgstr "Give it to the resident in person. When they sign in, the system will ask them to change it."
+
+#: usuarios/forms.py
 msgid "Ese nombre de usuario ya está en uso. Elige otro."
 msgstr "That username is already taken. Choose another one."
 
 #: usuarios/forms.py
-msgid "Este residente ya tiene una cuenta. Inicia sesión con tu usuario."
-msgstr "This resident already has an account. Sign in with your username."
-
-#: usuarios/forms.py
 msgid "Las dos contraseñas no coinciden."
 msgstr "The two passwords do not match."
-
-#: usuarios/forms.py
-msgid "No encontramos un residente con ese documento. La administración debe registrarte primero."
-msgstr "We could not find a resident with that ID number. Management must register you first."
 
 #: usuarios/forms.py
 msgid "Nombre de usuario"
@@ -2134,10 +2126,6 @@ msgstr "Ask them to change it the next time they sign in"
 #: usuarios/forms.py
 msgid "Repite la contraseña"
 msgstr "Repeat the password"
-
-#: usuarios/forms.py
-msgid "Si la administración registró tu correo, debe ser el mismo."
-msgstr "If management recorded your email, it must be the same one."
 
 #: usuarios/templates/usuarios/asignar_password.html
 msgid "Cuentas"
@@ -2175,6 +2163,19 @@ msgstr "My account"
 #: usuarios/templates/usuarios/cambiar_password.html
 msgid "Usa una contraseña que no uses en otros sitios."
 msgstr "Use a password you do not use on other sites."
+
+#: usuarios/templates/usuarios/crear_cuenta_residente.html
+msgid "Ahora no"
+msgstr "Not now"
+
+#: usuarios/templates/usuarios/crear_cuenta_residente.html
+#, python-format
+msgid "Cuenta de acceso para %(nombre)s"
+msgstr "Account for %(nombre)s"
+
+#: usuarios/templates/usuarios/crear_cuenta_residente.html
+msgid "Elige su usuario y una contraseña temporal. Al entrar por primera vez, el sistema le pedirá cambiarla por una propia."
+msgstr "Choose their username and a temporary password. The first time they sign in, the system will ask them to set their own."
 
 #: usuarios/templates/usuarios/dashboard_admin.html
 #, python-format
@@ -2550,10 +2551,6 @@ msgid "Consultar las placas de los vehículos de los residentes."
 msgstr "Look up the plates of residents’ vehicles."
 
 #: usuarios/templates/usuarios/form_guardia.html
-msgid "Crear cuenta"
-msgstr "Create account"
-
-#: usuarios/templates/usuarios/form_guardia.html
 msgid "Editar vigilante"
 msgstr "Edit guard"
 
@@ -2659,10 +2656,6 @@ msgid "Paga la administración en línea"
 msgstr "Pay your maintenance fee online"
 
 #: usuarios/templates/usuarios/login.html
-msgid "Regístrate"
-msgstr "Sign up"
-
-#: usuarios/templates/usuarios/login.html
 msgid "Reporta daños y sigue su arreglo"
 msgstr "Report damage and track the repair"
 
@@ -2679,12 +2672,8 @@ msgid "Usuario o contraseña incorrectos."
 msgstr "Incorrect username or password."
 
 #: usuarios/templates/usuarios/login.html
-msgid "¿Eres residente y aún no tienes cuenta?"
-msgstr "Are you a resident without an account?"
-
-#: usuarios/templates/usuarios/login.html
-msgid "¿Olvidaste tu contraseña? La administración puede asignarte una nueva."
-msgstr "Forgot your password? Management can set a new one for you."
+msgid "¿No tienes cuenta u olvidaste tu contraseña? Pídela a la administración del conjunto."
+msgstr "No account or forgot your password? Ask the complex administration."
 
 #: usuarios/templates/usuarios/password_cambiada.html
 msgid "Contraseña actualizada"
@@ -2701,46 +2690,6 @@ msgstr "Go to home"
 #: usuarios/templates/usuarios/password_cambiada.html
 msgid "Tu contraseña se actualizó"
 msgstr "Your password was updated"
-
-#: usuarios/templates/usuarios/registro.html
-msgid "1. Escribe tu documento y tu correo"
-msgstr "1. Enter your ID number and email"
-
-#: usuarios/templates/usuarios/registro.html
-msgid "2. Elige tu nombre de usuario"
-msgstr "2. Choose your username"
-
-#: usuarios/templates/usuarios/registro.html
-msgid "3. Crea tu contraseña"
-msgstr "3. Create your password"
-
-#: usuarios/templates/usuarios/registro.html
-msgid "Crea tu cuenta de residente."
-msgstr "Create your resident account."
-
-#: usuarios/templates/usuarios/registro.html
-msgid "Crear mi cuenta"
-msgstr "Create my account"
-
-#: usuarios/templates/usuarios/registro.html
-msgid "Inicia sesión"
-msgstr "Sign in"
-
-#: usuarios/templates/usuarios/registro.html
-msgid "La administración ya te registró con tu documento. Ahora elige con qué usuario y contraseña quieres entrar."
-msgstr "Management already registered you with your ID number. Now choose the username and password you want to sign in with."
-
-#: usuarios/templates/usuarios/registro.html
-msgid "Registrarse"
-msgstr "Sign up"
-
-#: usuarios/templates/usuarios/registro.html
-msgid "Solo para residentes que la administración ya tiene registrados."
-msgstr "Only for residents already registered by management."
-
-#: usuarios/templates/usuarios/registro.html
-msgid "¿Ya tienes cuenta?"
-msgstr "Already have an account?"
 
 #: usuarios/textos_db.py
 msgid "Abierto"
@@ -2824,6 +2773,11 @@ msgid "%(nombre)s tiene registros en portería, así que se desactivó su cuenta
 msgstr "%(nombre)s has front desk records, so their account was deactivated instead of deleted."
 
 #: usuarios/views.py
+#, python-format
+msgid "%(nombre)s ya tiene la cuenta @%(usuario)s. Si la olvidó, asígnale una contraseña nueva."
+msgstr "%(nombre)s already has the account @%(usuario)s. If they forgot it, assign a new password."
+
+#: usuarios/views.py
 msgid "Buenas noches"
 msgstr "Good evening"
 
@@ -2842,6 +2796,11 @@ msgstr "Password for \"%(usuario)s\" updated."
 
 #: usuarios/views.py
 #, python-format
+msgid "Cuenta @%(usuario)s creada para %(nombre)s. Entrégale la contraseña temporal; al entrar deberá cambiarla."
+msgstr "Account @%(usuario)s created for %(nombre)s. Give them the temporary password; they must change it when they sign in."
+
+#: usuarios/views.py
+#, python-format
 msgid "Cuenta de %(nombre)s eliminada."
 msgstr "%(nombre)s’s account deleted."
 
@@ -2854,11 +2813,6 @@ msgstr "Security account created. Sign-in username: \"%(usuario)s\"."
 #, python-format
 msgid "Datos de %(nombre)s actualizados."
 msgstr "%(nombre)s updated."
-
-#: usuarios/views.py
-#, python-format
-msgid "¡Bienvenido! Tu cuenta \"%(usuario)s\" quedó lista."
-msgstr "Welcome! Your account \"%(usuario)s\" is ready."
 
 #: validadores.py
 msgid "Este campo solo permite letras."
