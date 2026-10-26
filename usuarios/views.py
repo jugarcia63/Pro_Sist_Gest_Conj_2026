@@ -1,5 +1,4 @@
 from django.contrib import messages
-from django.contrib.auth import login
 from django.contrib.auth.decorators import login_required
 from django.contrib.auth.views import LoginView, PasswordChangeView
 from django.db.models import Q, Sum
@@ -7,9 +6,9 @@ from django.shortcuts import get_object_or_404, redirect, render
 from django.urls import reverse_lazy
 from django.utils import timezone
 from django.utils.translation import gettext as _
-from django.views.generic import CreateView, FormView, ListView, UpdateView
+from django.views.generic import CreateView, ListView, UpdateView
 
-from .forms import AsignarPasswordForm, GuardiaForm, RegistroForm
+from .forms import AsignarPasswordForm, CuentaResidenteForm, GuardiaForm, usuario_sugerido
 from .models import Usuario
 from .permisos import RolRequeridoMixin, residente_de, rol_requerido
 
@@ -17,23 +16,6 @@ from .permisos import RolRequeridoMixin, residente_de, rol_requerido
 class MiLoginView(LoginView):
     template_name = 'usuarios/login.html'
     redirect_authenticated_user = True
-
-
-class RegistroView(FormView):
-    """El residente crea su cuenta eligiendo su nombre de usuario y su contraseña."""
-    template_name = 'usuarios/registro.html'
-    form_class = RegistroForm
-
-    def dispatch(self, request, *args, **kwargs):
-        if request.user.is_authenticated:
-            return redirect('dashboard')
-        return super().dispatch(request, *args, **kwargs)
-
-    def form_valid(self, form):
-        usuario = form.save()
-        login(self.request, usuario, backend='usuarios.backends.UsuarioSinMayusculasBackend')
-        messages.success(self.request, _('¡Bienvenido! Tu cuenta "%(usuario)s" quedó lista.') % {'usuario': usuario.username})
-        return redirect('dashboard')
 
 
 class CambiarPasswordView(PasswordChangeView):
@@ -134,6 +116,29 @@ def eliminar_guardia(request, pk):
             guardia.delete()
             messages.success(request, _('Cuenta de %(nombre)s eliminada.') % {'nombre': nombre})
     return redirect('lista_guardias')
+
+
+@rol_requerido('admin')
+def crear_cuenta_residente(request, id_residente):
+    """Solo la administración crea cuentas: aquí le da usuario y contraseña temporal a un residente."""
+    from residentes.models import Residentes
+    residente = get_object_or_404(Residentes.objects.select_related('id_unidad_fk', 'usuario'), pk=id_residente)
+    if residente.usuario_id:
+        messages.info(request, _('%(nombre)s ya tiene la cuenta @%(usuario)s. Si la olvidó, asígnale una contraseña nueva.')
+                      % {'nombre': residente, 'usuario': residente.usuario.username})
+        return redirect('lista_residentes')
+
+    if request.method == 'POST':
+        form = CuentaResidenteForm(residente, request.POST)
+        if form.is_valid():
+            usuario = form.save()
+            messages.success(request, _('Cuenta @%(usuario)s creada para %(nombre)s. Entrégale la contraseña temporal; '
+                                        'al entrar deberá cambiarla.') % {'usuario': usuario.username, 'nombre': residente})
+            return redirect('lista_residentes')
+    else:
+        form = CuentaResidenteForm(residente, initial={'username': usuario_sugerido(residente)})
+
+    return render(request, 'usuarios/crear_cuenta_residente.html', {'form': form, 'residente': residente})
 
 
 @rol_requerido('admin')

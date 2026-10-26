@@ -124,7 +124,7 @@ class SesionTests(BaseConjunto):
 
 
 class ResidentesTests(BaseConjunto):
-    def test_crear_residente_no_genera_cuenta_ni_contrasena(self):
+    def test_crear_residente_no_genera_cuenta_sola(self):
         self.entrar(self.admin)
         usuarios_antes = Usuario.objects.count()
         respuesta = self.client.post(reverse('crear_residente'), {
@@ -136,7 +136,7 @@ class ResidentesTests(BaseConjunto):
         self.assertIsNotNone(residente.fecha_registro)
         self.assertIsNone(residente.usuario)
         self.assertEqual(Usuario.objects.count(), usuarios_antes)
-        self.assertContains(respuesta, 'Registrarse')
+        self.assertContains(respuesta, 'Cuenta de acceso para Ana Torres')  # el admin pasa a crearle la cuenta
 
     def test_documento_repetido(self):
         self.entrar(self.admin)
@@ -330,55 +330,66 @@ class VisitantesYReportesTests(BaseConjunto):
         self.assertIsNotNone(reporte.fecha_resolucion)
 
 
-class RegistroTests(BaseConjunto):
-    """El residente crea su cuenta eligiendo usuario y contraseña."""
+class CuentaResidenteTests(BaseConjunto):
+    """Ya no hay auto-registro: solo el administrador crea la cuenta de un residente."""
 
     def setUp(self):
-        self.sin_cuenta = Residentes.objects.create(nombres='Paula', apellidos='Mendoza', tipo_documento='CC',
-                                                    num_documento='5050', email='paula@correo.co',
+        self.sin_cuenta = Residentes.objects.create(nombres='Paula', apellidos='Méndez Giraldo', tipo_documento='CC',
+                                                    num_documento='5050', email='Paula@Correo.co',
                                                     id_unidad_fk=self.unidad2)
 
     def datos(self, **cambios):
-        datos = {'tipo_documento': 'CC', 'num_documento': '5050', 'email': 'Paula@Correo.co',
-                 'username': 'paula.m', 'password1': 'MiClave-Segura-55', 'password2': 'MiClave-Segura-55'}
+        datos = {'username': 'paula.m', 'password1': 'Temporal-Segura-55', 'password2': 'Temporal-Segura-55'}
         datos.update(cambios)
         return datos
 
-    def test_registro_exitoso_y_entra_al_panel(self):
-        respuesta = self.client.post(reverse('registro'), self.datos())
-        self.assertRedirects(respuesta, reverse('dashboard'))
+    def test_ya_no_existe_el_registro_publico(self):
+        self.assertEqual(self.client.get('/registro/').status_code, 404)
+        self.assertNotContains(self.client.get(reverse('login')), 'Regístrate')
+
+    def test_admin_crea_la_cuenta_con_contrasena_temporal(self):
+        self.entrar(self.admin)
+        url = reverse('crear_cuenta_residente', args=[self.sin_cuenta.pk])
+        self.assertContains(self.client.get(url), 'value="paula.mendez"')  # usuario sugerido sin tildes
+        self.assertRedirects(self.client.post(url, self.datos()), reverse('lista_residentes'))
         self.sin_cuenta.refresh_from_db()
         usuario = self.sin_cuenta.usuario
-        self.assertEqual((usuario.username, usuario.rol), ('paula.m', 'residente'))
-        self.assertFalse(usuario.debe_cambiar_password)
+        self.assertEqual((usuario.username, usuario.rol, usuario.email), ('paula.m', 'residente', 'paula@correo.co'))
+        self.assertTrue(usuario.debe_cambiar_password)
+
+        # Al entrar, el residente debe cambiar la contraseña temporal antes de usar el sistema
         self.client.logout()
-        self.assertTrue(self.client.login(username='paula.m', password='MiClave-Segura-55'))
+        self.assertTrue(self.client.login(username='paula.m', password='Temporal-Segura-55'))
+        self.assertRedirects(self.client.get(reverse('dashboard')), reverse('cambiar_password'))
 
-    def test_documento_desconocido(self):
-        respuesta = self.client.post(reverse('registro'), self.datos(num_documento='9999'))
-        self.assertContains(respuesta, 'No encontramos un residente con ese documento')
+    def test_al_crear_residente_pasa_a_crear_su_cuenta(self):
+        self.entrar(self.admin)
+        respuesta = self.client.post(reverse('crear_residente'), {
+            'nombres': 'Tomás', 'apellidos': 'Ríos', 'tipo_documento': 'CC', 'num_documento': '7788',
+            'telefono': '3001112233', 'email': 'tomas@correo.co', 'id_unidad_fk': self.unidad.pk})
+        nuevo = Residentes.objects.get(num_documento='7788')
+        self.assertRedirects(respuesta, reverse('crear_cuenta_residente', args=[nuevo.pk]))
 
-    def test_correo_distinto_al_registrado(self):
-        respuesta = self.client.post(reverse('registro'), self.datos(email='otra@correo.co'))
-        self.assertContains(respuesta, 'El correo no coincide')
-
-    def test_residente_que_ya_tiene_cuenta(self):
-        respuesta = self.client.post(reverse('registro'), self.datos(num_documento='1020', email='laura@correo.co'))
-        self.assertContains(respuesta, 'ya tiene una cuenta')
-
-    def test_usuario_repetido_sin_importar_mayusculas(self):
-        respuesta = self.client.post(reverse('registro'), self.datos(username='LAURA'))
-        self.assertContains(respuesta, 'ya está en uso')
-
-    def test_contrasena_debil_rechazada(self):
-        respuesta = self.client.post(reverse('registro'), self.datos(password1='123456789', password2='123456789'))
-        self.assertEqual(respuesta.status_code, 200)
+    def test_validaciones(self):
+        self.entrar(self.admin)
+        url = reverse('crear_cuenta_residente', args=[self.sin_cuenta.pk])
+        self.assertContains(self.client.post(url, self.datos(username='LAURA')), 'ya está en uso')
+        self.assertContains(self.client.post(url, self.datos(password2='Otra-Clave-99')), 'no coinciden')
+        self.assertEqual(self.client.post(url, self.datos(password1='123456789', password2='123456789')).status_code, 200)
         self.sin_cuenta.refresh_from_db()
         self.assertIsNone(self.sin_cuenta.usuario)
 
-    def test_login_y_registro_se_enlazan(self):
-        self.assertContains(self.client.get(reverse('login')), reverse('registro'))
-        self.assertContains(self.client.get(reverse('registro')), reverse('login'))
+    def test_residente_que_ya_tiene_cuenta(self):
+        self.entrar(self.admin)
+        respuesta = self.client.get(reverse('crear_cuenta_residente', args=[self.residente.pk]))
+        self.assertRedirects(respuesta, reverse('lista_residentes'))
+
+    def test_solo_el_admin(self):
+        url = reverse('crear_cuenta_residente', args=[self.sin_cuenta.pk])
+        for usuario in (self.vigilante, self.usuario_res):
+            self.entrar(usuario)
+            with self.subTest(usuario=usuario.username):
+                self.assertEqual(self.client.get(url).status_code, 403)
 
 
 class GuardiasTests(BaseConjunto):
@@ -435,7 +446,7 @@ class IdiomaTests(BaseConjunto):
         self.client.post(reverse('set_language'), {'language': 'en', 'next': '/'})
         respuesta = self.client.get(reverse('login'))
         self.assertContains(respuesta, 'Sign in')
-        self.assertContains(respuesta, 'Are you a resident without an account?')
+        self.assertContains(respuesta, 'Ask the complex administration')
 
 
 class PoblarDatosTests(TestCase):
@@ -451,6 +462,21 @@ class PoblarDatosTests(TestCase):
         self.assertTrue(self.client.login(username='juan_garcia', password='123456789'))
         self.assertTrue(self.client.login(username='laura.gomez', password='Conjunto2026'))
         self.assertTrue(self.client.login(username='carlos.mejia', password='Porteria2026'))
+
+    def test_paquetes_de_prueba_para_jvila69(self):
+        call_command('poblar_datos', verbosity=0)
+        laura = Residentes.objects.get(usuario__username='laura.gomez')
+        laura.usuario.username = 'jvila69'
+        laura.usuario.save()
+        call_command('poblar_datos', verbosity=0)
+        call_command('poblar_datos', verbosity=0)  # no duplica
+        from paquetes.models import Paquete
+        prueba = Paquete.objects.filter(numero_guia__startswith='PRB')
+        self.assertEqual(prueba.count(), 5)
+        self.assertEqual(prueba.filter(estado='En recepción').count(), 3)
+        self.assertTrue(all(p.id_unidad_fk_id == laura.id_unidad_fk_id for p in prueba))
+        self.client.force_login(laura.usuario)
+        self.assertContains(self.client.get(reverse('dashboard')), 'PRB700045981')
 
     def test_no_duplica_al_repetirse(self):
         call_command('poblar_datos', verbosity=0)

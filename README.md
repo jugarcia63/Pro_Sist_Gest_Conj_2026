@@ -88,6 +88,6 @@ Accede en `http://127.0.0.1:8000/login/`
 ## Notas técnicas
 
 - El sistema usa un modelo de usuario personalizado (`Usuario`, en la app `usuarios`) con un campo `rol` (`residente` / `admin` / `seguridad`), separado del modelo de negocio `Residentes`. Ambos se sincronizan por coincidencia de email.
-- Al registrar un residente desde el panel de administrador, se genera automáticamente su cuenta de acceso con una contraseña temporal.
+- No hay registro público: solo el administrador crea cuentas. Al registrar un residente pasa a crearle su cuenta (usuario + contraseña temporal) y el residente debe cambiarla la primera vez que entra. Lo mismo para el personal de seguridad.
 - Los pagos usan una pasarela simulada con fines académicos — no procesan transacciones reales ni almacenan datos de tarjetas.
 - Requiere MySQL 8.0 (no 8.4+) junto con Django 5.x, ya que Django 6 eleva el requisito mínimo de versión de MySQL.

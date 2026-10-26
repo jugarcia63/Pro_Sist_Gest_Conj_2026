@@ -4,7 +4,7 @@
 {% block miga %}{% icono "derecha" %}<strong>{% translate "Residentes" %}</strong>{% endblock %}
 {% block eyebrow %}<span class="encabezado__eyebrow">{% icono "residentes" %} {% translate "Comunidad" %}</span>{% endblock %}
 {% block titulo_pagina %}{% translate "Residentes" %}{% endblock %}
-{% block subtitulo %}<p>{% translate "Personas que viven en el conjunto. Cada residente crea su propia cuenta en «Registrarse» con su documento." %}</p>{% endblock %}
+{% block subtitulo %}<p>{% translate "Personas que viven en el conjunto. La administración crea la cuenta de acceso de cada residente." %}</p>{% endblock %}
 {% block acciones %}
     <a href="{% url 'lista_unidades' %}" class="btn btn-secundario">{% icono "edificio" %} {% translate "Unidades" %}</a>
     <a href="{% url 'crear_residente' %}" class="btn btn-primario">{% icono "mas" %} {% translate "Nuevo residente" %}</a>
@@ -12,7 +12,7 @@
 {% block contenido %}
 <div class="grid-stats">
     <div class="stat"><span class="stat__icono">{% icono "residentes" %}</span><span class="stat__etiqueta">{% translate "Residentes registrados" %}</span><span class="stat__valor">{{ total }}</span></div>
-    <div class="stat stat--menta"><span class="stat__icono">{% icono "llave" %}</span><span class="stat__etiqueta">{% translate "Ya crearon su cuenta" %}</span><span class="stat__valor">{{ con_cuenta }}</span></div>
+    <div class="stat stat--menta"><span class="stat__icono">{% icono "llave" %}</span><span class="stat__etiqueta">{% translate "Con cuenta de acceso" %}</span><span class="stat__valor">{{ con_cuenta }}</span></div>
     <div class="stat stat--ambar"><span class="stat__icono">{% icono "edificio" %}</span><span class="stat__etiqueta">{% translate "Sin unidad asignada" %}</span><span class="stat__valor">{{ sin_unidad }}</span></div>
 </div>
 
@@ -43,7 +43,7 @@
                         <td class="num">{{ r.tipo_documento|default:"" }} {{ r.num_documento|default:"—" }}</td>
                         <td>{% if r.id_unidad_fk %}<span class="etiqueta">{% icono "edificio" %} {{ r.id_unidad_fk }}</span>{% else %}<span class="texto-tenue">{% translate "Sin unidad" %}</span>{% endif %}</td>
                         <td class="ocultar-movil"><div>{{ r.telefono|default:"—" }}</div><small class="texto-suave">{{ r.email|default:"" }}</small></td>
-                        <td>{% if r.usuario %}<span class="badge badge-exito">@{{ r.usuario.username }}</span>{% else %}<span class="badge badge-neutro" title="{% translate 'Puede registrarse con su documento' %}">{% translate "Aún no se registra" %}</span>{% endif %}</td>
+                        <td>{% if r.usuario %}<span class="badge badge-exito">@{{ r.usuario.username }}</span>{% else %}<a href="{% url 'crear_cuenta_residente' r.pk %}" class="btn btn-secundario btn-sm">{% icono "registro" %} {% translate "Crear cuenta" %}</a>{% endif %}</td>
                         <td class="derecha">
                             <div class="acciones" style="justify-content:flex-end">
                                 <a href="{% url 'crear_pago' %}?residente={{ r.pk }}" class="btn btn-fantasma btn-sm btn-icono" title="{% translate 'Generar factura' %}" aria-label="{% translate 'Generar factura' %}">{% icono "factura" %}</a>
@@ -71,7 +71,7 @@
                 <p>{% translate "Prueba con otro nombre o con el número de documento." %}</p>
             {% else %}
                 <h3>{% translate "Todavía no hay residentes" %}</h3>
-                <p>{% translate "Registra el primero. Luego podrá crear su cuenta con su documento." %}</p>
+                <p>{% translate "Registra el primero y luego créale su cuenta de acceso." %}</p>
                 <a href="{% url 'crear_residente' %}" class="btn btn-primario btn-sm">{% icono "mas" %} {% translate "Nuevo residente" %}</a>
             {% endif %}
         </div>

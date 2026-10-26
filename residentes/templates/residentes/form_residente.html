@@ -17,8 +17,8 @@
             <p>{% translate "Si cambias el correo aquí, también se actualiza en su cuenta." %}</p>
             <a href="{% url 'asignar_password' object.usuario.pk %}" class="btn btn-secundario btn-sm">{% icono "llave" %} {% translate "Asignar contraseña" %}</a>
         {% else %}
-            <p>{% translate "El residente crea su propia cuenta: entra a «Registrarse», escribe su documento y su correo, y elige su usuario y su contraseña." %}</p>
-            <p>{% translate "Por eso es importante que el documento y el correo queden bien escritos." %}</p>
+            <p>{% translate "Este residente aún no tiene cuenta. Tú le asignas su usuario y una contraseña temporal, que deberá cambiar al entrar." %}</p>
+            {% if object %}<a href="{% url 'crear_cuenta_residente' object.pk %}" class="btn btn-secundario btn-sm">{% icono "registro" %} {% translate "Crear cuenta" %}</a>{% else %}<p class="texto-suave">{% translate "Al guardar el residente pasarás a crear su cuenta." %}</p>{% endif %}
         {% endif %}
     </div>
 </section>

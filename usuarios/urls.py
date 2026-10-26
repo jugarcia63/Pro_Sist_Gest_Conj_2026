@@ -5,7 +5,6 @@ from . import views
 urlpatterns = [
     path('', views.inicio, name='inicio'),
     path('login/', views.MiLoginView.as_view(), name='login'),
-    path('registro/', views.RegistroView.as_view(), name='registro'),
     # LogoutView solo acepta POST: el botón "Cerrar sesión" es un formulario
     path('logout/', LogoutView.as_view(next_page='login'), name='logout'),
     path('dashboard/', views.dashboard, name='dashboard'),
@@ -19,4 +18,5 @@ urlpatterns = [
     path('seguridad/editar/<int:pk>/', views.EditarGuardia.as_view(), name='editar_guardia'),
     path('seguridad/eliminar/<int:pk>/', views.eliminar_guardia, name='eliminar_guardia'),
     path('cuentas/<int:pk>/contrasena/', views.asignar_password, name='asignar_password'),
+    path('cuentas/residente/<int:id_residente>/', views.crear_cuenta_residente, name='crear_cuenta_residente'),
 ]

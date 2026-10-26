@@ -1,0 +1,26 @@
+{% extends "app.html" %}
+{% load i18n ui %}
+{% block title %}{% translate "Crear cuenta" %}{% endblock %}
+{% block miga %}{% icono "derecha" %}<a href="{% url 'lista_residentes' %}">{% translate "Residentes" %}</a>{% icono "derecha" %}<strong>{% translate "Crear cuenta" %}</strong>{% endblock %}
+{% block eyebrow %}<span class="encabezado__eyebrow">{% icono "llave" %} {% translate "Cuentas" %}</span>{% endblock %}
+{% block titulo_pagina %}{% blocktranslate with nombre=residente %}Cuenta de acceso para {{ nombre }}{% endblocktranslate %}{% endblock %}
+{% block subtitulo %}<p>{% translate "Elige su usuario y una contraseña temporal. Al entrar por primera vez, el sistema le pedirá cambiarla por una propia." %}</p>{% endblock %}
+{% block acciones %}<a href="{% url 'lista_residentes' %}" class="btn btn-secundario">{% icono "volver" %} {% translate "Volver" %}</a>{% endblock %}
+{% block contenido %}
+<div class="panel panel--angosto">
+    <div class="panel__cuerpo panel__cuerpo--form">
+        <div class="celda-principal" style="margin-bottom:1.25rem">
+            <span class="avatar">{{ residente.nombres|default:""|first|upper }}{{ residente.apellidos|default:""|first|upper }}</span>
+            <div><strong>{{ residente }}</strong><small class="texto-suave">{{ residente.tipo_documento|default:"" }} {{ residente.num_documento|default:"" }}{% if residente.id_unidad_fk %} · {{ residente.id_unidad_fk }}{% endif %}</small></div>
+        </div>
+        <form method="post" novalidate>
+            {% csrf_token %}
+            {% with anchos="username" %}{% include "partials/form_campos.html" %}{% endwith %}
+            <div class="form-acciones">
+                <a href="{% url 'lista_residentes' %}" class="btn btn-fantasma">{% translate "Ahora no" %}</a>
+                <button type="submit" class="btn btn-primario">{% icono "check" %} {% translate "Crear cuenta" %}</button>
+            </div>
+        </form>
+    </div>
+</div>
+{% endblock %}
