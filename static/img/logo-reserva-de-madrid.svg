@@ -1,0 +1,39 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 64 64" role="img" aria-label="Conjunto Reserva de Madrid">
+  <defs>
+    <linearGradient id="cielo" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0" stop-color="#8B5CF6"/>
+      <stop offset="1" stop-color="#4C1D95"/>
+    </linearGradient>
+    <linearGradient id="colina" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0" stop-color="#34D399"/>
+      <stop offset="1" stop-color="#047857"/>
+    </linearGradient>
+    <clipPath id="circulo"><circle cx="32" cy="32" r="30"/></clipPath>
+  </defs>
+  <circle cx="32" cy="32" r="30" fill="url(#cielo)"/>
+  <g clip-path="url(#circulo)">
+    <circle cx="46" cy="18" r="5" fill="#FDE68A"/>
+    <!-- Cerros de la sabana al fondo -->
+    <path d="M0 40 L14 30 L24 37 L36 27 L50 36 L64 29 V64 H0Z" fill="#7DD3FC" opacity=".35"/>
+    <!-- Torres A, B y C -->
+    <rect x="14" y="24" width="10" height="26" rx="1.5" fill="#F5F3FF"/>
+    <rect x="26" y="15" width="12" height="35" rx="1.5" fill="#FFFFFF"/>
+    <rect x="40" y="27" width="10" height="23" rx="1.5" fill="#EDE9FE"/>
+    <g fill="#6D28D9">
+      <rect x="16.5" y="28" width="2" height="2"/><rect x="19.5" y="28" width="2" height="2"/>
+      <rect x="16.5" y="33" width="2" height="2"/><rect x="19.5" y="33" width="2" height="2"/>
+      <rect x="29" y="19" width="2.4" height="2.4"/><rect x="32.6" y="19" width="2.4" height="2.4"/>
+      <rect x="29" y="24.5" width="2.4" height="2.4"/><rect x="32.6" y="24.5" width="2.4" height="2.4"/>
+      <rect x="29" y="30" width="2.4" height="2.4"/><rect x="32.6" y="30" width="2.4" height="2.4"/>
+      <rect x="42.5" y="31" width="2" height="2"/><rect x="45.5" y="31" width="2" height="2"/>
+      <rect x="42.5" y="36" width="2" height="2"/><rect x="45.5" y="36" width="2" height="2"/>
+    </g>
+    <!-- Colina con árboles (la "reserva") -->
+    <path d="M-2 47 Q16 39 32 45 T66 43 V66 H-2Z" fill="url(#colina)"/>
+    <g fill="#065F46">
+      <path d="M9 44 l3 -7 l3 7z"/><path d="M52 43 l3 -8 l3 8z"/><path d="M47 45 l2.4 -5.5 l2.4 5.5z"/>
+    </g>
+    <path d="M14 58 Q32 50 50 58" stroke="#FDE68A" stroke-width="1.6" fill="none" stroke-linecap="round" opacity=".9"/>
+  </g>
+  <circle cx="32" cy="32" r="30" fill="none" stroke="#FFFFFF" stroke-opacity=".35" stroke-width="1.5"/>
+</svg>

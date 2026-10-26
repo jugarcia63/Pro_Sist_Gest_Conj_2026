@@ -1,0 +1,22 @@
+{% extends "form_pagina.html" %}
+{% load i18n ui %}
+{% block title %}{% if object %}{% translate "Editar vehículo visitante" %}{% else %}{% translate "Registrar vehículo visitante" %}{% endif %}{% endblock %}
+{% block miga %}{% icono "derecha" %}<a href="{% url 'lista_parqueos' %}">{% translate "Parqueadero de visitantes" %}</a>{% icono "derecha" %}<strong>{% if object %}{{ object.placa }}{% else %}{% translate "Nuevo ingreso" %}{% endif %}</strong>{% endblock %}
+{% block eyebrow %}<span class="encabezado__eyebrow">{% icono "parqueadero" %} {% translate "Portería" %}</span>{% endblock %}
+{% block titulo_pagina %}{% if object %}{% blocktranslate with placa=object.placa %}Editar vehículo {{ placa }}{% endblocktranslate %}{% else %}{% translate "Registrar vehículo visitante" %}{% endif %}{% endblock %}
+{% block subtitulo %}<p>{% if object %}{% blocktranslate with hora=object.fecha_ingreso|date:"d M, H:i" %}Ingresó el {{ hora }}. La hora de ingreso no se puede cambiar.{% endblocktranslate %}{% else %}{% translate "El tiempo empieza a contar desde que guardas el registro." %}{% endif %}</p>{% endblock %}
+{% block url_volver %}{% url 'lista_parqueos' %}{% endblock %}
+{% block texto_boton %}{% if object %}{% translate "Guardar cambios" %}{% else %}{% translate "Registrar ingreso" %}{% endif %}{% endblock %}
+{% block campos %}{% with anchos="visitante observaciones" %}{% include "partials/form_campos.html" %}{% endwith %}{% endblock %}
+{% block lateral %}
+<section class="panel">
+    <div class="panel__cabecera"><h2>{% icono "billetera" %} {% translate "Cómo se cobra" %}</h2></div>
+    <div class="panel__cuerpo" style="display:grid;gap:.6rem">
+        {% with t=object|default:tarifa %}
+        <p>{% blocktranslate count n=t.horas_gratis %}La primera hora es gratis.{% plural %}Las primeras {{ n }} horas son gratis.{% endblocktranslate %}</p>
+        <p>{% blocktranslate with valor=t.valor_hora|pesos %}Después se cobra {{ valor }} por cada hora o fracción.{% endblocktranslate %}</p>
+        {% endwith %}
+        <p class="texto-suave">{% translate "Ej.: con 2 horas gratis, un vehículo que se queda 2 h 10 min paga 1 hora." %}</p>
+    </div>
+</section>
+{% endblock %}

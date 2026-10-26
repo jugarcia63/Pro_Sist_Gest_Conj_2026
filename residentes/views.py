@@ -157,9 +157,14 @@ class EditarUnidad(RolRequeridoMixin, UpdateView):
 def eliminar_unidad(request, id_unidad):
     unidad = get_object_or_404(Unidades, pk=id_unidad)
     if request.method == 'POST':
+        from paquetes.models import Paquete
+        from parqueadero.models import ParqueoVisitante
         from reservas.models import Reservas
         if Residentes.objects.filter(id_unidad_fk=unidad).exists() or Reservas.objects.filter(id_unidad_fk=unidad).exists():
             messages.error(request, _('No se puede eliminar %(unidad)s: tiene residentes o reservas asociadas.')
+                           % {'unidad': unidad})
+        elif Paquete.objects.filter(id_unidad_fk=unidad).exists() or ParqueoVisitante.objects.filter(id_unidad_fk=unidad).exists():
+            messages.error(request, _('No se puede eliminar %(unidad)s: tiene paquetes o vehículos de visitantes registrados.')
                            % {'unidad': unidad})
         else:
             unidad.delete()

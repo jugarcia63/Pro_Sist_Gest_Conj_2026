@@ -10,6 +10,8 @@ VALORES_GUARDADOS = [
     N_('Abierto'), N_('En proceso'), N_('Cerrado'),
     N_('Dentro'), N_('Salió'),
     N_('Activo'), N_('Inactivo'),
+    # Estados de paquetes
+    N_('En recepción'), N_('Entregado'),
     # Tipos de vehículo
     N_('Carro'), N_('Moto'),
     # Categorías de reportes

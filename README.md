@@ -18,15 +18,17 @@ Proyecto de Ingeniería de Software desarrollado en Django, para la administraci
 
 | Rol | Accesos |
 |---|---|
-| **Residente** | Sus pagos, sus reservas, sus reportes, sus vehículos |
-| **Administrador** | Gestión completa: residentes, vehículos, zonas comunes, reportes, estado de pagos |
-| **Seguridad** | Registro de visitantes, consulta de vehículos |
+| **Residente** | Sus pagos, sus reservas, sus reportes, sus vehículos, los paquetes de su unidad |
+| **Administrador** | Gestión completa: residentes, vehículos, zonas comunes, reportes, estado de pagos, tarifa del parqueadero |
+| **Seguridad** | Registro de visitantes, parqueadero de visitantes, paquetes, consulta de vehículos |
 
 ## Módulos
 
 - Gestión de residentes y unidades habitacionales
 - Gestión de vehículos (carros y motos, con validación de formato de placa)
 - Registro de visitantes
+- Parqueadero de visitantes: placa asociada a una unidad, contador de tiempo en vivo y cobro al salir (horas gratis + cada hora iniciada; tarifa editable por el administrador)
+- Paquetes en portería: registro por número de guía y destinatario, entrega con hora, quién lo recoge y qué vigilante lo entregó; el residente ve en su panel los paquetes de su unidad
 - Reservas de zonas comunes (con validación de horarios y solapamiento)
 - Pagos con pasarela simulada
 - Reportes de daños

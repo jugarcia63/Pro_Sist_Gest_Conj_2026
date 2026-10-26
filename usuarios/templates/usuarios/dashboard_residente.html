@@ -12,6 +12,7 @@
             <div class="banner__chips">
                 {% if residente.id_unidad_fk %}<span class="banner__chip">{% icono "edificio" %} {{ residente.id_unidad_fk }}{% if residente.id_unidad_fk.piso is not None %} · {% translate "piso" %} {{ residente.id_unidad_fk.piso }}{% endif %}</span>{% endif %}
                 <span class="banner__chip">{% icono "carro" %} {% blocktranslate count n=total_vehiculos %}{{ n }} vehículo{% plural %}{{ n }} vehículos{% endblocktranslate %}</span>
+                {% if total_paquetes %}<a href="{% url 'mis_paquetes' %}" class="banner__chip">{% icono "paquete" %} {% blocktranslate count n=total_paquetes %}{{ n }} paquete en portería{% plural %}{{ n }} paquetes en portería{% endblocktranslate %}</a>{% endif %}
             </div>
             <div class="banner__acciones">
                 {% if pagos_pendientes %}<a href="{% url 'lista_pagos_residente' %}" class="btn btn-claro">{% icono "tarjeta" %} {% translate "Pagar ahora" %}</a>{% endif %}
@@ -55,7 +56,43 @@
         <span class="stat__valor">{{ total_vehiculos }}</span>
         <span class="stat__nota">{% translate "Registrados en portería" %}</span>
     </a>
+    <a href="{% url 'mis_paquetes' %}" class="stat stat--cielo{% if total_paquetes %} stat--alerta{% endif %}">
+        <span class="stat__icono">{% icono "paquete" %}</span>
+        <span class="stat__etiqueta">{% translate "Paquetes en recepción" %}</span>
+        <span class="stat__valor">{{ total_paquetes }}</span>
+        <span class="stat__nota">{% if total_paquetes %}{% translate "Pasa por portería a recogerlos" %}{% else %}{% translate "No tienes paquetes pendientes" %}{% endif %}</span>
+    </a>
 </div>
+
+<section class="panel">
+    <div class="panel__cabecera">
+        <h2>{% icono "paquete" %} {% translate "Mis paquetes en recepción" %}</h2>
+        <a href="{% url 'mis_paquetes' %}">{% translate "Historial" %} {% icono "derecha" %}</a>
+    </div>
+    {% if paquetes_recepcion %}
+        <div class="lista">
+            {% for p in paquetes_recepcion %}
+                <div class="lista__item">
+                    <span class="avatar avatar--ambar">{% icono "paquete" %}</span>
+                    <div class="lista__cuerpo">
+                        <strong>{{ p.destinatario }}{% if p.empresa %} · {{ p.empresa }}{% endif %}</strong>
+                        <small>{% translate "Guía" %} {{ p.numero_guia }}{% if p.descripcion %} · {{ p.descripcion }}{% endif %}</small>
+                    </div>
+                    <div class="lista__lado">
+                        <span class="badge badge-{{ p.estado|color_estado }}">{{ p.estado|traducir }}</span>
+                        <small class="texto-suave">{% blocktranslate with fecha=p.fecha_recepcion|date:"d M, H:i" %}Llegó {{ fecha }}{% endblocktranslate %}</small>
+                    </div>
+                </div>
+            {% endfor %}
+        </div>
+    {% else %}
+        <div class="vacio">
+            <div class="vacio__icono">{% icono "paquete" %}</div>
+            <h3>{% translate "No tienes paquetes en portería" %}</h3>
+            <p>{% translate "Cuando portería reciba un paquete para tu unidad, aparecerá aquí." %}</p>
+        </div>
+    {% endif %}
+</section>
 
 <div class="grid-2">
     <section class="panel">

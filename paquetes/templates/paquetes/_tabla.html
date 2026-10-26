@@ -1,0 +1,29 @@
+{% load i18n ui %}{% comment %}Tabla de paquetes. Variables: paquetes, con_acciones (portería) o no (residente).{% endcomment %}
+<div class="tabla-contenedor">
+    <table>
+        <thead><tr><th>{% translate "Guía" %}</th><th>{% translate "Destinatario" %}</th><th>{% translate "Recibido" %}</th><th>{% translate "Entrega" %}</th><th>{% translate "Estado" %}</th>{% if con_acciones %}<th class="derecha">{% translate "Acciones" %}</th>{% endif %}</tr></thead>
+        <tbody>
+        {% for p in paquetes %}
+            <tr>
+                <td><div class="celda-principal"><span class="avatar avatar--ambar">{% icono "paquete" %}</span><div><strong>{{ p.numero_guia }}</strong><small>{{ p.empresa|default:"—" }}{% if p.descripcion %} · {{ p.descripcion }}{% endif %}</small></div></div></td>
+                <td>{{ p.destinatario }}<small class="texto-suave" style="display:block">{{ p.id_unidad_fk }}</small></td>
+                <td class="num">{{ p.fecha_recepcion|date:"d M, H:i" }}{% if con_acciones and p.recibido_por %}<small class="texto-suave" style="display:block">{% blocktranslate with usuario=p.recibido_por.username %}por @{{ usuario }}{% endblocktranslate %}</small>{% endif %}</td>
+                <td class="num">{% if p.fecha_entrega %}{{ p.fecha_entrega|date:"d M, H:i" }}<small class="texto-suave" style="display:block">{% blocktranslate with nombre=p.entregado_a %}a {{ nombre }}{% endblocktranslate %}</small>{% else %}—{% endif %}</td>
+                <td><span class="badge badge-{{ p.estado|color_estado }}">{{ p.estado|traducir }}</span></td>
+                {% if con_acciones %}
+                    <td class="derecha">
+                        <div class="acciones" style="justify-content:flex-end">
+                            {% if p.pendiente %}
+                                <a href="{% url 'entregar_paquete' p.pk %}?next={{ request.get_full_path|urlencode }}" class="btn btn-exito btn-sm">{% icono "check" %} {% translate "Entregar" %}</a>
+                                <a href="{% url 'editar_paquete' p.pk %}" class="btn btn-fantasma btn-sm btn-icono" title="{% translate 'Editar' %}" aria-label="{% translate 'Editar' %}">{% icono "editar" %}</a>
+                            {% else %}
+                                <a href="{% url 'entregar_paquete' p.pk %}" class="btn btn-fantasma btn-sm">{% icono "info" %} {% translate "Detalle" %}</a>
+                            {% endif %}
+                        </div>
+                    </td>
+                {% endif %}
+            </tr>
+        {% endfor %}
+        </tbody>
+    </table>
+</div>

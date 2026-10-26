@@ -1,0 +1,8 @@
+{% load i18n ui %}{% comment %}
+Dos celdas (tiempo y valor) de un vehículo que sigue dentro. app.js las actualiza cada segundo
+con la misma regla de cobro del servidor (parqueadero.models.calcular_cobro).
+{% endcomment %}{% with cobro=p.cobro_actual %}<td class="num" data-contador data-desde="{{ p.fecha_ingreso|date:'c' }}" data-valor-hora="{{ p.valor_hora|stringformat:'.0f' }}" data-horas-gratis="{{ p.horas_gratis }}">
+    <strong data-contador-tiempo>{{ cobro.tiempo }}</strong>
+    <small class="texto-suave" style="display:block" data-contador-nota>{% blocktranslate count n=p.horas_gratis %}{{ n }} h gratis{% plural %}{{ n }} h gratis{% endblocktranslate %}</small>
+</td>
+<td class="num"><strong data-contador-valor>{{ cobro.valor|pesos }}</strong><small class="texto-suave" style="display:block">{% translate "hasta ahora" %}</small></td>{% endwith %}

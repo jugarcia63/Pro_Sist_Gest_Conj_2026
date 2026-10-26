@@ -1,12 +1,12 @@
 {% extends "base.html" %}
-{% load i18n ui %}
+{% load i18n static ui %}
 {% block title %}{% translate "Crear cuenta" %}{% endblock %}
 {% block body %}
 <div class="auth-pagina">
     <div class="auth-pagina__barra">{% include "partials/idioma.html" %}</div>
     <div class="auth auth--registro">
         <section class="auth__intro">
-            <div class="auth__marca"><span class="sidebar__logo">{% icono "edificio" %}</span>{% translate "Gestión de Conjuntos" %}</div>
+            <div class="auth__marca"><img class="logo-conjunto logo-conjunto--grande" src="{% static 'img/logo-reserva-de-madrid.svg' %}" alt="" width="52" height="52"><span>Conjunto Reserva de Madrid<small>{% translate "Madrid, Cundinamarca" %}</small></span></div>
             <div class="auth__copy">
                 <h1>{% translate "Crea tu cuenta de residente." %}</h1>
                 <p>{% translate "La administración ya te registró con tu documento. Ahora elige con qué usuario y contraseña quieres entrar." %}</p>

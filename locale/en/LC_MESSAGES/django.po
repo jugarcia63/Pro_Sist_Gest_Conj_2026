@@ -360,6 +360,623 @@ msgstr "A payment that has already been made cannot be voided."
 msgid "Pago de %(concepto)s realizado con éxito."
 msgstr "%(concepto)s payment completed successfully."
 
+#: paquetes/forms.py
+msgid "Como aparece en el paquete"
+msgstr "As it appears on the package"
+
+#: paquetes/forms.py
+msgid "Descripción"
+msgstr "Description"
+
+#: paquetes/forms.py
+msgid "Documento de quien recibe"
+msgstr "ID of the person picking it up"
+
+#: paquetes/forms.py
+msgid "Ej: 700045123987"
+msgstr "E.g. 700045123987"
+
+#: paquetes/forms.py
+msgid "Ej: Servientrega"
+msgstr "E.g. Servientrega"
+
+#: paquetes/forms.py
+msgid "Ej: caja mediana, sobre, bolsa"
+msgstr "E.g. medium box, envelope, bag"
+
+#: paquetes/forms.py
+msgid "Entregado a"
+msgstr "Delivered to"
+
+#: paquetes/forms.py
+msgid "Escribe a quién se entrega el paquete."
+msgstr "Enter who the package is delivered to."
+
+#: paquetes/forms.py
+msgid "Escribe el nombre del destinatario."
+msgstr "Enter the recipient's name."
+
+#: paquetes/forms.py
+msgid "Escribe el número de guía."
+msgstr "Enter the tracking number."
+
+#: paquetes/forms.py
+msgid "Este campo solo permite números."
+msgstr "This field only allows numbers."
+
+#: paquetes/forms.py
+msgid "Nombre de la persona que recoge el paquete en portería."
+msgstr "Name of the person picking up the package at the front desk."
+
+#: paquetes/forms.py
+msgid "Nombre del destinatario"
+msgstr "Recipient's name"
+
+#: paquetes/forms.py
+msgid "Número de guía"
+msgstr "Tracking number"
+
+#: paquetes/forms.py
+msgid "Opcional"
+msgstr "Optional"
+
+#: paquetes/forms.py
+msgid "Transportadora"
+msgstr "Courier"
+
+#: paquetes/forms.py
+msgid "Unidad destino"
+msgstr "Destination unit"
+
+#: paquetes/forms.py
+msgid "Ya hay un paquete en recepción con esta guía."
+msgstr "There is already a package at the front desk with this tracking number."
+
+#: paquetes/templates/paquetes/_tabla.html
+msgid "Acciones"
+msgstr "Actions"
+
+#: paquetes/templates/paquetes/_tabla.html
+msgid "Destinatario"
+msgstr "Recipient"
+
+#: paquetes/templates/paquetes/_tabla.html
+msgid "Detalle"
+msgstr "Details"
+
+#: paquetes/templates/paquetes/_tabla.html
+msgid "Editar"
+msgstr "Edit"
+
+#: paquetes/templates/paquetes/_tabla.html
+msgid "Entrega"
+msgstr "Delivery"
+
+#: paquetes/templates/paquetes/_tabla.html
+msgid "Entregar"
+msgstr "Deliver"
+
+#: paquetes/templates/paquetes/_tabla.html
+msgid "Guía"
+msgstr "Tracking no."
+
+#: paquetes/templates/paquetes/_tabla.html
+msgid "Recibido"
+msgstr "Received"
+
+#: paquetes/templates/paquetes/_tabla.html
+#, python-format
+msgid "a %(nombre)s"
+msgstr "to %(nombre)s"
+
+#: paquetes/templates/paquetes/_tabla.html
+#, python-format
+msgid "por @%(usuario)s"
+msgstr "by @%(usuario)s"
+
+#: paquetes/templates/paquetes/entregar_paquete.html
+msgid "Confirmar entrega"
+msgstr "Confirm delivery"
+
+#: paquetes/templates/paquetes/entregar_paquete.html
+msgid "Entregar paquete"
+msgstr "Deliver package"
+
+#: paquetes/templates/paquetes/entregar_paquete.html
+#, python-format
+msgid "Entregar paquete %(guia)s"
+msgstr "Deliver package %(guia)s"
+
+#: paquetes/templates/paquetes/entregar_paquete.html
+msgid "Este paquete ya fue entregado."
+msgstr "This package has already been delivered."
+
+#: paquetes/templates/paquetes/entregar_paquete.html
+msgid "La hora de entrega se guarda sola al confirmar."
+msgstr "The delivery time is saved automatically when you confirm."
+
+#: paquetes/templates/paquetes/entregar_paquete.html
+#, python-format
+msgid "Paquete %(guia)s"
+msgstr "Package %(guia)s"
+
+#: paquetes/templates/paquetes/entregar_paquete.html
+msgid "Si lo recoge otra persona de la unidad, escribe su nombre en lugar del destinatario."
+msgstr "If someone else from the unit picks it up, enter their name instead of the recipient's."
+
+#: paquetes/templates/paquetes/entregar_paquete.html
+msgid "Unidad"
+msgstr "Unit"
+
+#: paquetes/templates/paquetes/entregar_paquete.html
+msgid "Vigilante"
+msgstr "Guard"
+
+#: paquetes/templates/paquetes/form_paquete.html
+msgid "1. Copia el número de guía tal como aparece en la etiqueta."
+msgstr "1. Copy the tracking number exactly as it appears on the label."
+
+#: paquetes/templates/paquetes/form_paquete.html
+msgid "2. Escribe el nombre del destinatario y elige su unidad."
+msgstr "2. Enter the recipient's name and choose their unit."
+
+#: paquetes/templates/paquetes/form_paquete.html
+msgid "3. Al entregarlo, usa el botón Entregar y anota quién lo recoge."
+msgstr "3. When handing it over, use the Deliver button and note who picks it up."
+
+#: paquetes/templates/paquetes/form_paquete.html
+msgid "Al recibir un paquete"
+msgstr "When a package arrives"
+
+#: paquetes/templates/paquetes/form_paquete.html
+msgid "Editar paquete"
+msgstr "Edit package"
+
+#: paquetes/templates/paquetes/form_paquete.html
+#, python-format
+msgid "Editar paquete %(guia)s"
+msgstr "Edit package %(guia)s"
+
+#: paquetes/templates/paquetes/form_paquete.html
+msgid "El residente lo verá en su panel apenas lo guardes."
+msgstr "The resident will see it on their dashboard as soon as you save it."
+
+#: paquetes/templates/paquetes/form_paquete.html
+msgid "Guardar cambios"
+msgstr "Save changes"
+
+#: paquetes/templates/paquetes/form_paquete.html
+msgid "Nuevo paquete"
+msgstr "New package"
+
+#: paquetes/templates/paquetes/form_paquete.html
+msgid "Registrar paquete"
+msgstr "Log package"
+
+#: paquetes/templates/paquetes/lista_paquetes.html
+#, python-format
+msgid "%(n)s entregado hoy"
+msgid_plural "%(n)s entregados hoy"
+msgstr[0] "%(n)s delivered today"
+msgstr[1] "%(n)s delivered today"
+
+#: paquetes/templates/paquetes/lista_paquetes.html
+#, python-format
+msgid "%(n)s paquete en recepción"
+msgid_plural "%(n)s paquetes en recepción"
+msgstr[0] "%(n)s package at the front desk"
+msgstr[1] "%(n)s packages at the front desk"
+
+#: paquetes/templates/paquetes/lista_paquetes.html
+msgid "Aún no hay paquetes registrados"
+msgstr "No packages logged yet"
+
+#: paquetes/templates/paquetes/lista_paquetes.html
+msgid "Cuando llegue un paquete, regístralo con su guía para que el residente sepa que está en portería."
+msgstr "When a package arrives, log it with its tracking number so the resident knows it is at the front desk."
+
+#: paquetes/templates/paquetes/lista_paquetes.html
+msgid "Entregados"
+msgstr "Delivered"
+
+#: paquetes/templates/paquetes/lista_paquetes.html
+msgid "Guía, destinatario o transportadora"
+msgstr "Tracking no., recipient or courier"
+
+#: paquetes/templates/paquetes/lista_paquetes.html
+msgid "No hay paquetes con ese filtro"
+msgstr "No packages match that filter"
+
+#: paquetes/templates/paquetes/lista_paquetes.html
+msgid "Paquetes en portería"
+msgstr "Packages at the front desk"
+
+#: paquetes/templates/paquetes/lista_paquetes.html
+msgid "Prueba buscando por el número de guía o el nombre del destinatario."
+msgstr "Try searching by tracking number or recipient name."
+
+#: paquetes/templates/paquetes/mis_paquetes.html
+#, python-format
+msgid "%(n)s paquete esperándote en portería · %(unidad)s"
+msgid_plural "%(n)s paquetes esperándote en portería · %(unidad)s"
+msgstr[0] "%(n)s package waiting for you at the front desk · %(unidad)s"
+msgstr[1] "%(n)s packages waiting for you at the front desk · %(unidad)s"
+
+#: paquetes/templates/paquetes/mis_paquetes.html
+msgid "Cuando portería reciba un paquete para tu unidad, aparecerá aquí."
+msgstr "When the front desk receives a package for your unit, it will show up here."
+
+#: paquetes/templates/paquetes/mis_paquetes.html
+msgid "Cuando tengas una unidad asignada verás aquí los paquetes que lleguen."
+msgstr "Once you have a unit assigned, packages that arrive will show up here."
+
+#: paquetes/templates/paquetes/mis_paquetes.html
+msgid "No tienes paquetes"
+msgstr "You have no packages"
+
+#: paquetes/views.py
+#, python-format
+msgid "El paquete %(guia)s ya había sido entregado."
+msgstr "Package %(guia)s had already been delivered."
+
+#: paquetes/views.py
+#, python-format
+msgid "Paquete %(guia)s actualizado."
+msgstr "Package %(guia)s updated."
+
+#: paquetes/views.py
+#, python-format
+msgid "Paquete %(guia)s entregado a %(nombre)s a las %(hora)s."
+msgstr "Package %(guia)s delivered to %(nombre)s at %(hora)s."
+
+#: paquetes/views.py
+#, python-format
+msgid "Paquete con guía %(guia)s registrado para %(unidad)s."
+msgstr "Package %(guia)s logged for %(unidad)s."
+
+#: parqueadero/forms.py
+msgid "Carro"
+msgstr "Car"
+
+#: parqueadero/forms.py
+msgid "Conductor"
+msgstr "Driver"
+
+#: parqueadero/forms.py
+msgid "Ej: celda 12, rayón en la puerta"
+msgstr "E.g. spot 12, scratch on the door"
+
+#: parqueadero/forms.py
+msgid "El valor no puede ser negativo."
+msgstr "The amount cannot be negative."
+
+#: parqueadero/forms.py
+msgid "Esta placa es de un vehículo de residente; no se cobra como visitante."
+msgstr "This plate belongs to a resident's vehicle; it is not charged as a visitor."
+
+#: parqueadero/forms.py
+msgid "Este vehículo ya está registrado dentro del parqueadero."
+msgstr "This vehicle is already logged inside the parking lot."
+
+#: parqueadero/forms.py
+msgid "Horas gratis"
+msgstr "Free hours"
+
+#: parqueadero/forms.py
+msgid "Indica a qué unidad va el vehículo."
+msgstr "Choose which unit the vehicle is visiting."
+
+#: parqueadero/forms.py
+msgid "Moto"
+msgstr "Motorcycle"
+
+#: parqueadero/forms.py
+msgid "Máximo 24 horas gratis."
+msgstr "Maximum 24 free hours."
+
+#: parqueadero/forms.py
+msgid "Nombre de quien conduce"
+msgstr "Driver's name"
+
+#: parqueadero/forms.py
+msgid "Observaciones"
+msgstr "Notes"
+
+#: parqueadero/forms.py
+msgid "Placa"
+msgstr "Plate"
+
+#: parqueadero/forms.py
+msgid "Placa de carro inválida. Formato: 3 letras + 3 números (ej: ABC123)."
+msgstr "Invalid car plate. Format: 3 letters + 3 numbers (e.g. ABC123)."
+
+#: parqueadero/forms.py
+msgid "Placa de moto inválida. Formato: 3 letras + 2 números + 1 letra (ej: ASD12G)."
+msgstr "Invalid motorcycle plate. Format: 3 letters + 2 numbers + 1 letter (e.g. ASD12G)."
+
+#: parqueadero/forms.py
+msgid "Se cobra por cada hora iniciada después de las horas gratis."
+msgstr "Each started hour after the free hours is charged."
+
+#: parqueadero/forms.py
+msgid "Selecciona la unidad"
+msgstr "Select the unit"
+
+#: parqueadero/forms.py
+msgid "Si eliges el visitante, se toma la unidad a la que va."
+msgstr "If you pick the visitor, the unit they are visiting is used."
+
+#: parqueadero/forms.py
+msgid "Sin vincular a un visitante"
+msgstr "Not linked to a visitor"
+
+#: parqueadero/forms.py
+msgid "Solo aparecen los visitantes que están dentro del conjunto."
+msgstr "Only visitors currently inside the complex are listed."
+
+#: parqueadero/forms.py
+msgid "Tiempo inicial sin costo. Pon 0 si se cobra desde el primer minuto."
+msgstr "Initial free time. Enter 0 to charge from the first minute."
+
+#: parqueadero/forms.py
+msgid "Tipo de vehículo"
+msgstr "Vehicle type"
+
+#: parqueadero/forms.py
+msgid "Unidad que visita"
+msgstr "Unit being visited"
+
+#: parqueadero/forms.py
+msgid "Valor por hora (COP)"
+msgstr "Rate per hour (COP)"
+
+#: parqueadero/forms.py
+msgid "Visitante (opcional)"
+msgstr "Visitor (optional)"
+
+#: parqueadero/templates/parqueadero/form_parqueo.html
+msgid "Cómo se cobra"
+msgstr "How it is charged"
+
+#: parqueadero/templates/parqueadero/form_parqueo.html
+#, python-format
+msgid "Después se cobra %(valor)s por cada hora o fracción."
+msgstr "After that, %(valor)s is charged per hour or fraction."
+
+#: parqueadero/templates/parqueadero/form_parqueo.html
+#, python-format
+msgid "Editar vehículo %(placa)s"
+msgstr "Edit vehicle %(placa)s"
+
+#: parqueadero/templates/parqueadero/form_parqueo.html
+msgid "Editar vehículo visitante"
+msgstr "Edit visitor vehicle"
+
+#: parqueadero/templates/parqueadero/form_parqueo.html
+msgid "Ej.: con 2 horas gratis, un vehículo que se queda 2 h 10 min paga 1 hora."
+msgstr "E.g. with 2 free hours, a vehicle that stays 2 h 10 min pays for 1 hour."
+
+#: parqueadero/templates/parqueadero/form_parqueo.html
+msgid "El tiempo empieza a contar desde que guardas el registro."
+msgstr "The clock starts as soon as you save the entry."
+
+#: parqueadero/templates/parqueadero/form_parqueo.html
+#, python-format
+msgid "Ingresó el %(hora)s. La hora de ingreso no se puede cambiar."
+msgstr "Entered on %(hora)s. The entry time cannot be changed."
+
+#: parqueadero/templates/parqueadero/form_parqueo.html
+msgid "La primera hora es gratis."
+msgid_plural "Las primeras %(n)s horas son gratis."
+msgstr[0] "The first hour is free."
+msgstr[1] "The first %(n)s hours are free."
+
+#: parqueadero/templates/parqueadero/form_parqueo.html
+msgid "Nuevo ingreso"
+msgstr "New entry"
+
+#: parqueadero/templates/parqueadero/form_parqueo.html
+msgid "Parqueadero de visitantes"
+msgstr "Visitor parking"
+
+#: parqueadero/templates/parqueadero/form_parqueo.html
+msgid "Registrar ingreso"
+msgstr "Record entry"
+
+#: parqueadero/templates/parqueadero/form_parqueo.html
+msgid "Registrar vehículo visitante"
+msgstr "Log visitor vehicle"
+
+#: parqueadero/templates/parqueadero/form_tarifa.html
+msgid "Guardar tarifa"
+msgstr "Save rate"
+
+#: parqueadero/templates/parqueadero/form_tarifa.html
+msgid "Los vehículos que ya están dentro conservan la tarifa con la que entraron."
+msgstr "Vehicles already inside keep the rate they entered with."
+
+#: parqueadero/templates/parqueadero/form_tarifa.html
+msgid "Tarifa"
+msgstr "Rate"
+
+#: parqueadero/templates/parqueadero/form_tarifa.html
+msgid "Tarifa del parqueadero"
+msgstr "Parking rate"
+
+#: parqueadero/templates/parqueadero/form_tarifa.html
+msgid "Tarifa del parqueadero de visitantes"
+msgstr "Visitor parking rate"
+
+#: parqueadero/templates/parqueadero/lista_parqueos.html
+#, python-format
+msgid "%(n)s hora cobrada"
+msgid_plural "%(n)s horas cobradas"
+msgstr[0] "%(n)s hour charged"
+msgstr[1] "%(n)s hours charged"
+
+#: parqueadero/templates/parqueadero/lista_parqueos.html
+msgid "No hay vehículos con ese filtro"
+msgstr "No vehicles match that filter"
+
+#: parqueadero/templates/parqueadero/lista_parqueos.html
+msgid "No hay vehículos de visitantes"
+msgstr "No visitor vehicles"
+
+#: parqueadero/templates/parqueadero/lista_parqueos.html
+msgid "Placa o conductor"
+msgstr "Plate or driver"
+
+#: parqueadero/templates/parqueadero/lista_parqueos.html
+msgid "Recaudado hoy"
+msgstr "Collected today"
+
+#: parqueadero/templates/parqueadero/lista_parqueos.html
+msgid "Registra la placa cuando un visitante entre en carro o moto; el tiempo empieza a contar solo."
+msgstr "Log the plate when a visitor arrives by car or motorcycle; the clock starts automatically."
+
+#: parqueadero/templates/parqueadero/lista_parqueos.html
+msgid "Registrar vehículo"
+msgstr "Add vehicle"
+
+#: parqueadero/templates/parqueadero/lista_parqueos.html
+msgid "Revisa la placa: debe ser como ABC123 (carro) o ABC12D (moto)."
+msgstr "Check the plate: it should look like ABC123 (car) or ABC12D (motorcycle)."
+
+#: parqueadero/templates/parqueadero/lista_parqueos.html
+msgid "Salidas hoy"
+msgstr "Exits today"
+
+#: parqueadero/templates/parqueadero/lista_parqueos.html
+#, python-format
+msgid "Tarifa: %(valor)s por hora después de %(n)s hora gratis."
+msgid_plural "Tarifa: %(valor)s por hora después de %(n)s horas gratis."
+msgstr[0] "Rate: %(valor)s per hour after %(n)s free hour."
+msgstr[1] "Rate: %(valor)s per hour after %(n)s free hours."
+
+#: parqueadero/templates/parqueadero/lista_parqueos.html
+msgid "Tiempo"
+msgstr "Time"
+
+#: parqueadero/templates/parqueadero/lista_parqueos.html
+msgid "Vehículos dentro"
+msgstr "Vehicles inside"
+
+#: parqueadero/templates/parqueadero/lista_parqueos.html
+msgid "Ver cobro"
+msgstr "View charge"
+
+#: parqueadero/templates/parqueadero/lista_parqueos.html
+msgid "Ya salieron"
+msgstr "Already left"
+
+#: parqueadero/templates/parqueadero/lista_parqueos.html
+#, python-format
+msgid "salió %(hora)s"
+msgstr "left %(hora)s"
+
+#: parqueadero/templates/parqueadero/partials/contador.html
+#, python-format
+msgid "%(n)s h gratis"
+msgid_plural "%(n)s h gratis"
+msgstr[0] "%(n)s h free"
+msgstr[1] "%(n)s h free"
+
+#: parqueadero/templates/parqueadero/partials/contador.html
+msgid "hasta ahora"
+msgstr "so far"
+
+#: parqueadero/templates/parqueadero/salida_parqueo.html
+#, python-format
+msgid "%(valor)s/hora · %(n)s h gratis"
+msgid_plural "%(valor)s/hora · %(n)s h gratis"
+msgstr[0] "%(valor)s/hour · %(n)s h free"
+msgstr[1] "%(valor)s/hour · %(n)s h free"
+
+#: parqueadero/templates/parqueadero/salida_parqueo.html
+#, python-format
+msgid "Cobro del vehículo %(placa)s"
+msgstr "Charge for vehicle %(placa)s"
+
+#: parqueadero/templates/parqueadero/salida_parqueo.html
+msgid "Confirmar salida"
+msgstr "Confirm exit"
+
+#: parqueadero/templates/parqueadero/salida_parqueo.html
+msgid "El valor se calcula al momento de confirmar; si el conductor se demora, puede subir."
+msgstr "The amount is calculated when you confirm; if the driver takes longer, it may go up."
+
+#: parqueadero/templates/parqueadero/salida_parqueo.html
+msgid "Horas cobradas"
+msgstr "Hours charged"
+
+#: parqueadero/templates/parqueadero/salida_parqueo.html
+#, python-format
+msgid "Ingreso registrado por @%(usuario)s."
+msgstr "Entry logged by @%(usuario)s."
+
+#: parqueadero/templates/parqueadero/salida_parqueo.html
+msgid "Revisa el valor con el conductor y confirma la salida."
+msgstr "Check the amount with the driver and confirm the exit."
+
+#: parqueadero/templates/parqueadero/salida_parqueo.html
+msgid "Salida de vehículo"
+msgstr "Vehicle exit"
+
+#: parqueadero/templates/parqueadero/salida_parqueo.html
+#, python-format
+msgid "Salida del vehículo %(placa)s"
+msgstr "Exit of vehicle %(placa)s"
+
+#: parqueadero/templates/parqueadero/salida_parqueo.html
+#, python-format
+msgid "Salida registrada el %(fecha)s."
+msgstr "Exit logged on %(fecha)s."
+
+#: parqueadero/templates/parqueadero/salida_parqueo.html
+#, python-format
+msgid "Salida registrada por <strong>@%(usuario)s</strong>."
+msgstr "Exit logged by <strong>@%(usuario)s</strong>."
+
+#: parqueadero/templates/parqueadero/salida_parqueo.html
+msgid "Tiempo dentro"
+msgstr "Time inside"
+
+#: parqueadero/templates/parqueadero/salida_parqueo.html
+msgid "Tipo"
+msgstr "Type"
+
+#: parqueadero/templates/parqueadero/salida_parqueo.html
+msgid "Total a cobrar"
+msgstr "Amount due"
+
+#: parqueadero/templates/parqueadero/salida_parqueo.html
+msgid "Total cobrado"
+msgstr "Amount charged"
+
+#: parqueadero/views.py
+#, python-format
+msgid "El vehículo %(placa)s ya tenía registrada su salida."
+msgstr "Vehicle %(placa)s had already been checked out."
+
+#: parqueadero/views.py
+#, python-format
+msgid "Ingreso del vehículo %(placa)s registrado a las %(hora)s."
+msgstr "Vehicle %(placa)s logged in at %(hora)s."
+
+#: parqueadero/views.py
+#, python-format
+msgid "Registro del vehículo %(placa)s actualizado."
+msgstr "Vehicle %(placa)s entry updated."
+
+#: parqueadero/views.py
+#, python-format
+msgid "Salida de %(placa)s registrada: %(horas)s hora(s) cobrada(s), total %(valor)s."
+msgstr "Exit of %(placa)s logged: %(horas)s hour(s) charged, total %(valor)s."
+
+#: parqueadero/views.py
+msgid "Tarifa actualizada. Aplica a los vehículos que entren desde ahora."
+msgstr "Rate updated. It applies to vehicles entering from now on."
+
 #: reportes/forms.py
 msgid "Ascensor"
 msgstr "Elevator"
@@ -602,10 +1219,6 @@ msgid "Capacidad (personas)"
 msgstr "Capacity (people)"
 
 #: reservas/forms.py
-msgid "Descripción"
-msgstr "Description"
-
-#: reservas/forms.py
 msgid "Disponible"
 msgstr "Available"
 
@@ -650,10 +1263,6 @@ msgid "Nombre"
 msgstr "Name"
 
 #: reservas/forms.py
-msgid "Observaciones"
-msgstr "Notes"
-
-#: reservas/forms.py
 msgid "Pendiente"
 msgstr "Pending"
 
@@ -664,10 +1273,6 @@ msgstr "Rejected"
 #: reservas/forms.py
 msgid "Reglas"
 msgstr "Rules"
-
-#: reservas/forms.py
-msgid "Selecciona la unidad"
-msgstr "Select the unit"
 
 #: reservas/forms.py
 msgid "Selecciona una zona"
@@ -702,20 +1307,12 @@ msgid "Crear reserva"
 msgstr "Create booking"
 
 #: reservas/templates/reservas/form_reserva.html
-msgid "Editar"
-msgstr "Edit"
-
-#: reservas/templates/reservas/form_reserva.html
 msgid "Editar reserva"
 msgstr "Edit booking"
 
 #: reservas/templates/reservas/form_reserva.html
 msgid "Enviar solicitud"
 msgstr "Send request"
-
-#: reservas/templates/reservas/form_reserva.html
-msgid "Guardar cambios"
-msgstr "Save changes"
 
 #: reservas/templates/reservas/form_reserva.html
 #, python-format
@@ -1184,10 +1781,6 @@ msgid "Torre: letra o número, por ejemplo A o 2."
 msgstr "Tower: letter or number, for example A or 2."
 
 #: residentes/templates/residentes/lista_residentes.html
-msgid "Acciones"
-msgstr "Actions"
-
-#: residentes/templates/residentes/lista_residentes.html
 msgid "Aún no se registra"
 msgstr "Not signed up yet"
 
@@ -1235,10 +1828,6 @@ msgstr "Registered residents"
 #: residentes/templates/residentes/lista_residentes.html
 msgid "Todavía no hay residentes"
 msgstr "There are no residents yet"
-
-#: residentes/templates/residentes/lista_residentes.html
-msgid "Unidad"
-msgstr "Unit"
 
 #: residentes/templates/residentes/lista_residentes.html
 msgid "Ya crearon su cuenta"
@@ -1295,6 +1884,11 @@ msgstr "%(unidad)s deleted."
 #, python-format
 msgid "Datos de \"%(nombre)s\" actualizados."
 msgstr "\"%(nombre)s\" updated."
+
+#: residentes/views.py
+#, python-format
+msgid "No se puede eliminar %(unidad)s: tiene paquetes o vehículos de visitantes registrados."
+msgstr "%(unidad)s cannot be deleted: it has packages or visitor vehicles logged."
 
 #: residentes/views.py
 #, python-format
@@ -1360,10 +1954,6 @@ msgid "Adelante"
 msgstr "Forward"
 
 #: templates/app.html
-msgid "Administración residencial"
-msgstr "Residential management"
-
-#: templates/app.html
 msgid "Cerrar mensaje"
 msgstr "Close message"
 
@@ -1372,8 +1962,8 @@ msgid "Cerrar sesión"
 msgstr "Sign out"
 
 #: templates/app.html
-msgid "Gestión de Conjuntos"
-msgstr "Community Manager"
+msgid "Conjunto residencial"
+msgstr "Residential complex"
 
 #: templates/app.html
 msgid "Menú principal"
@@ -1438,6 +2028,10 @@ msgid "Mis pagos"
 msgstr "My payments"
 
 #: usuarios/context_processors.py
+msgid "Mis paquetes"
+msgstr "My packages"
+
+#: usuarios/context_processors.py
 msgid "Mis reportes"
 msgstr "My reports"
 
@@ -1452,6 +2046,14 @@ msgstr "Operations"
 #: usuarios/context_processors.py
 msgid "Pagos"
 msgstr "Payments"
+
+#: usuarios/context_processors.py
+msgid "Paquetes"
+msgstr "Packages"
+
+#: usuarios/context_processors.py
+msgid "Parqueadero visitantes"
+msgstr "Visitor parking"
 
 #: usuarios/context_processors.py
 msgid "Portería"
@@ -1684,10 +2286,6 @@ msgid "Recaudado este mes"
 msgstr "Collected this month"
 
 #: usuarios/templates/usuarios/dashboard_admin.html
-msgid "Registrar vehículo"
-msgstr "Add vehicle"
-
-#: usuarios/templates/usuarios/dashboard_admin.html
 msgid "Reportes abiertos"
 msgstr "Open reports"
 
@@ -1738,6 +2336,13 @@ msgstr "Latest damage reports"
 
 #: usuarios/templates/usuarios/dashboard_residente.html
 #, python-format
+msgid "%(n)s paquete en portería"
+msgid_plural "%(n)s paquetes en portería"
+msgstr[0] "%(n)s package at the front desk"
+msgstr[1] "%(n)s packages at the front desk"
+
+#: usuarios/templates/usuarios/dashboard_residente.html
+#, python-format
 msgid "%(n)s vehículo"
 msgid_plural "%(n)s vehículos"
 msgstr[0] "%(n)s vehicle"
@@ -1761,8 +2366,21 @@ msgid "Estás al día"
 msgstr "You are up to date"
 
 #: usuarios/templates/usuarios/dashboard_residente.html
+msgid "Historial"
+msgstr "History"
+
+#: usuarios/templates/usuarios/dashboard_residente.html
+#, python-format
+msgid "Llegó %(fecha)s"
+msgstr "Arrived %(fecha)s"
+
+#: usuarios/templates/usuarios/dashboard_residente.html
 msgid "Mi panel"
 msgstr "My dashboard"
+
+#: usuarios/templates/usuarios/dashboard_residente.html
+msgid "Mis paquetes en recepción"
+msgstr "My packages at the front desk"
 
 #: usuarios/templates/usuarios/dashboard_residente.html
 msgid "Mis próximas reservas"
@@ -1773,12 +2391,28 @@ msgid "Mis últimos reportes"
 msgstr "My latest reports"
 
 #: usuarios/templates/usuarios/dashboard_residente.html
+msgid "No tienes paquetes en portería"
+msgstr "You have no packages at the front desk"
+
+#: usuarios/templates/usuarios/dashboard_residente.html
+msgid "No tienes paquetes pendientes"
+msgstr "You have no pending packages"
+
+#: usuarios/templates/usuarios/dashboard_residente.html
 msgid "No tienes reservas próximas"
 msgstr "You have no upcoming bookings"
 
 #: usuarios/templates/usuarios/dashboard_residente.html
 msgid "Pagar ahora"
 msgstr "Pay now"
+
+#: usuarios/templates/usuarios/dashboard_residente.html
+msgid "Paquetes en recepción"
+msgstr "Packages at the front desk"
+
+#: usuarios/templates/usuarios/dashboard_residente.html
+msgid "Pasa por portería a recogerlos"
+msgstr "Stop by the front desk to pick them up"
 
 #: usuarios/templates/usuarios/dashboard_residente.html
 #, python-format
@@ -1843,20 +2477,33 @@ msgid "Cuando registres un ingreso aparecerá aquí hasta que marques su salida.
 msgstr "When you record an entry, it will appear here until you record the exit."
 
 #: usuarios/templates/usuarios/dashboard_seguridad.html
-msgid "Historial"
-msgstr "History"
-
-#: usuarios/templates/usuarios/dashboard_seguridad.html
 msgid "Ingresos hoy"
 msgstr "Entries today"
+
+#: usuarios/templates/usuarios/dashboard_seguridad.html
+msgid "No hay paquetes pendientes"
+msgstr "No pending packages"
 
 #: usuarios/templates/usuarios/dashboard_seguridad.html
 msgid "No hay visitantes dentro"
 msgstr "There are no visitors inside"
 
 #: usuarios/templates/usuarios/dashboard_seguridad.html
-msgid "Registra cada ingreso y marca la salida cuando el visitante se vaya."
-msgstr "Record every entry and mark the exit when the visitor leaves."
+msgid "Pendientes por entregar"
+msgstr "Waiting to be delivered"
+
+#: usuarios/templates/usuarios/dashboard_seguridad.html
+#, python-format
+msgid "Recaudado hoy: %(valor)s"
+msgstr "Collected today: %(valor)s"
+
+#: usuarios/templates/usuarios/dashboard_seguridad.html
+msgid "Registra cada ingreso, los vehículos de visitantes y los paquetes que lleguen."
+msgstr "Log every entry, visitor vehicles and incoming packages."
+
+#: usuarios/templates/usuarios/dashboard_seguridad.html
+msgid "Registrar el vehículo de este visitante"
+msgstr "Log this visitor's vehicle"
 
 #: usuarios/templates/usuarios/dashboard_seguridad.html
 msgid "Registrar salida"
@@ -1867,12 +2514,24 @@ msgid "Registrar visitante"
 msgstr "Record visitor"
 
 #: usuarios/templates/usuarios/dashboard_seguridad.html
-msgid "Salidas hoy"
-msgstr "Exits today"
+msgid "Vehículo"
+msgstr "Vehicle"
+
+#: usuarios/templates/usuarios/dashboard_seguridad.html
+msgid "Vehículo visitante"
+msgstr "Visitor vehicle"
+
+#: usuarios/templates/usuarios/dashboard_seguridad.html
+msgid "Vehículos de visitantes en el parqueadero"
+msgstr "Visitor vehicles in the parking lot"
 
 #: usuarios/templates/usuarios/dashboard_seguridad.html
 msgid "Vehículos registrados"
 msgstr "Registered vehicles"
+
+#: usuarios/templates/usuarios/dashboard_seguridad.html
+msgid "Vehículos visitantes"
+msgstr "Visitor vehicles"
 
 #: usuarios/templates/usuarios/dashboard_seguridad.html
 msgid "Visitante"
@@ -1959,10 +2618,6 @@ msgid "Usuario"
 msgstr "Username"
 
 #: usuarios/templates/usuarios/lista_guardias.html
-msgid "Vigilante"
-msgstr "Guard"
-
-#: usuarios/templates/usuarios/lista_guardias.html
 msgid "Vigilantes de portería y las credenciales con las que entran al sistema."
 msgstr "Front desk guards and the credentials they use to sign in."
 
@@ -1994,6 +2649,10 @@ msgstr "Sign in"
 #: usuarios/templates/usuarios/login.html
 msgid "Iniciar sesión"
 msgstr "Sign in"
+
+#: usuarios/templates/usuarios/login.html
+msgid "Madrid, Cundinamarca"
+msgstr "Madrid, Cundinamarca"
 
 #: usuarios/templates/usuarios/login.html
 msgid "Paga la administración en línea"
@@ -2100,10 +2759,6 @@ msgid "Administrador"
 msgstr "Administrator"
 
 #: usuarios/textos_db.py
-msgid "Carro"
-msgstr "Car"
-
-#: usuarios/textos_db.py
 msgid "Cerrado"
 msgstr "Closed"
 
@@ -2120,16 +2775,20 @@ msgid "En proceso"
 msgstr "In progress"
 
 #: usuarios/textos_db.py
+msgid "En recepción"
+msgstr "At front desk"
+
+#: usuarios/textos_db.py
+msgid "Entregado"
+msgstr "Delivered"
+
+#: usuarios/textos_db.py
 msgid "Estructural"
 msgstr "Structural"
 
 #: usuarios/textos_db.py
 msgid "Inactivo"
 msgstr "Inactive"
-
-#: usuarios/textos_db.py
-msgid "Moto"
-msgstr "Motorcycle"
 
 #: usuarios/textos_db.py
 msgid "Pagado"
@@ -2161,8 +2820,8 @@ msgstr "Overdue"
 
 #: usuarios/views.py
 #, python-format
-msgid "%(nombre)s tiene visitas registradas, así que se desactivó su cuenta en lugar de borrarla."
-msgstr "%(nombre)s has recorded visits, so their account was deactivated instead of deleted."
+msgid "%(nombre)s tiene registros en portería, así que se desactivó su cuenta en lugar de borrarla."
+msgstr "%(nombre)s has front desk records, so their account was deactivated instead of deleted."
 
 #: usuarios/views.py
 msgid "Buenas noches"
@@ -2205,10 +2864,6 @@ msgstr "Welcome! Your account \"%(usuario)s\" is ready."
 msgid "Este campo solo permite letras."
 msgstr "This field only allows letters."
 
-#: validadores.py
-msgid "Este campo solo permite números."
-msgstr "This field only allows numbers."
-
 #: vehiculos/forms.py
 msgid "Color"
 msgstr "Color"
@@ -2222,24 +2877,8 @@ msgid "Modelo"
 msgstr "Model"
 
 #: vehiculos/forms.py
-msgid "Placa"
-msgstr "Plate"
-
-#: vehiculos/forms.py
-msgid "Placa de carro inválida. Formato: 3 letras + 3 números (ej: ABC123)."
-msgstr "Invalid car plate. Format: 3 letters + 3 numbers (e.g. ABC123)."
-
-#: vehiculos/forms.py
-msgid "Placa de moto inválida. Formato: 3 letras + 2 números + 1 letra (ej: ASD12G)."
-msgstr "Invalid motorcycle plate. Format: 3 letters + 2 numbers + 1 letter (e.g. ASD12G)."
-
-#: vehiculos/forms.py
 msgid "Propietario"
 msgstr "Owner"
-
-#: vehiculos/forms.py
-msgid "Tipo de vehículo"
-msgstr "Vehicle type"
 
 #: vehiculos/forms.py
 msgid "Ya hay un vehículo registrado con esta placa."
@@ -2256,11 +2895,6 @@ msgstr "Car: 3 letters and 3 numbers"
 #: vehiculos/templates/vehiculos/form_vehiculo.html
 msgid "Editar vehículo"
 msgstr "Edit vehicle"
-
-#: vehiculos/templates/vehiculos/form_vehiculo.html
-#, python-format
-msgid "Editar vehículo %(placa)s"
-msgstr "Edit vehicle %(placa)s"
 
 #: vehiculos/templates/vehiculos/form_vehiculo.html
 msgid "El vehículo queda registrado a tu nombre."
@@ -2307,10 +2941,6 @@ msgid "Motos"
 msgstr "Motorcycles"
 
 #: vehiculos/templates/vehiculos/lista_vehiculos.html
-msgid "No hay vehículos con ese filtro"
-msgstr "No vehicles match that filter"
-
-#: vehiculos/templates/vehiculos/lista_vehiculos.html
 msgid "No hay vehículos registrados"
 msgstr "There are no registered vehicles"
 
@@ -2323,20 +2953,12 @@ msgid "Registra los carros y motos para que portería los reconozca."
 msgstr "Register cars and motorcycles so the front desk recognizes them."
 
 #: vehiculos/templates/vehiculos/lista_vehiculos.html
-msgid "Revisa la placa: debe ser como ABC123 (carro) o ABC12D (moto)."
-msgstr "Check the plate: it should look like ABC123 (car) or ABC12D (motorcycle)."
-
-#: vehiculos/templates/vehiculos/lista_vehiculos.html
 msgid "Sin propietario"
 msgstr "No owner"
 
 #: vehiculos/templates/vehiculos/lista_vehiculos.html
 msgid "Todavía no se ha registrado ningún vehículo."
 msgstr "No vehicle has been registered yet."
-
-#: vehiculos/templates/vehiculos/lista_vehiculos.html
-msgid "Vehículo"
-msgstr "Vehicle"
 
 #: vehiculos/templates/vehiculos/lista_vehiculos.html
 #, python-format
@@ -2423,14 +3045,6 @@ msgstr "Entry recorded by <strong>@%(usuario)s</strong>."
 msgid "La hora de ingreso se llena sola con la hora actual."
 msgstr "The entry time is filled in automatically with the current time."
 
-#: visitantes/templates/visitantes/form_visitante.html
-msgid "Nuevo ingreso"
-msgstr "New entry"
-
-#: visitantes/templates/visitantes/form_visitante.html
-msgid "Registrar ingreso"
-msgstr "Record entry"
-
 #: visitantes/templates/visitantes/lista_visitantes.html
 #, python-format
 msgid "%(n)s ingreso hoy"
@@ -2468,15 +3082,6 @@ msgstr "Record everyone who enters the community to know who is inside."
 #: visitantes/templates/visitantes/lista_visitantes.html
 msgid "Registro de visitantes"
 msgstr "Visitor log"
-
-#: visitantes/templates/visitantes/lista_visitantes.html
-msgid "Ya salieron"
-msgstr "Already left"
-
-#: visitantes/templates/visitantes/lista_visitantes.html
-#, python-format
-msgid "por @%(usuario)s"
-msgstr "by @%(usuario)s"
 
 #: visitantes/views.py
 #, python-format

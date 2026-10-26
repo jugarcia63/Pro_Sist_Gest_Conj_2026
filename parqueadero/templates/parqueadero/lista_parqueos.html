@@ -1,0 +1,95 @@
+{% extends "app.html" %}
+{% load i18n ui %}
+{% block title %}{% translate "Parqueadero de visitantes" %}{% endblock %}
+{% block miga %}{% icono "derecha" %}<strong>{% translate "Parqueadero de visitantes" %}</strong>{% endblock %}
+{% block eyebrow %}<span class="encabezado__eyebrow">{% icono "escudo" %} {% translate "Portería" %}</span>{% endblock %}
+{% block titulo_pagina %}{% translate "Parqueadero de visitantes" %}{% endblock %}
+{% block subtitulo %}<p>{% blocktranslate with valor=tarifa.valor_hora|pesos count n=tarifa.horas_gratis %}Tarifa: {{ valor }} por hora después de {{ n }} hora gratis.{% plural %}Tarifa: {{ valor }} por hora después de {{ n }} horas gratis.{% endblocktranslate %}</p>{% endblock %}
+{% block acciones %}
+    <a href="{% url 'dashboard' %}" class="btn btn-secundario">{% icono "volver" %} {% translate "Volver" %}</a>
+    {% if user.rol == 'admin' %}<a href="{% url 'editar_tarifa' %}" class="btn btn-secundario">{% icono "billetera" %} {% translate "Tarifa" %}</a>{% endif %}
+    <a href="{% url 'crear_parqueo' %}" class="btn btn-primario">{% icono "mas" %} {% translate "Registrar vehículo" %}</a>
+{% endblock %}
+{% block contenido %}
+<div class="grid-stats">
+    <div class="stat stat--cielo">
+        <span class="stat__icono">{% icono "parqueadero" %}</span>
+        <span class="stat__etiqueta">{% translate "Vehículos dentro" %}</span>
+        <span class="stat__valor">{{ total_dentro }}</span>
+    </div>
+    <div class="stat stat--menta">
+        <span class="stat__icono">{% icono "salir" %}</span>
+        <span class="stat__etiqueta">{% translate "Salidas hoy" %}</span>
+        <span class="stat__valor">{{ salidas_hoy }}</span>
+    </div>
+    <div class="stat stat--ambar">
+        <span class="stat__icono">{% icono "billetera" %}</span>
+        <span class="stat__etiqueta">{% translate "Recaudado hoy" %}</span>
+        <span class="stat__valor">{{ recaudado_hoy|pesos }}</span>
+    </div>
+</div>
+
+<section class="panel">
+    <div class="toolbar">
+        <form method="get" role="search">
+            <div class="buscador">{% icono "buscar" %}<input type="search" name="buscar" value="{{ buscar }}" placeholder="{% translate 'Placa o conductor' %}" aria-label="{% translate 'Buscar' %}"></div>
+            {% if estado %}<input type="hidden" name="estado" value="{{ estado }}">{% endif %}
+            <button type="submit" class="btn btn-secundario">{% translate "Buscar" %}</button>
+        </form>
+        <nav class="segmentos" aria-label="{% translate 'Filtrar por estado' %}">
+            <a href="?{% if buscar %}buscar={{ buscar|urlencode }}{% endif %}" class="{% if not estado %}activo{% endif %}">{% translate "Todos" %}</a>
+            <a href="?estado=Dentro{% if buscar %}&buscar={{ buscar|urlencode }}{% endif %}" class="{% if estado == 'Dentro' %}activo{% endif %}">{% translate "Dentro" %} <span class="cuenta">{{ total_dentro }}</span></a>
+            <a href="?estado=Salió{% if buscar %}&buscar={{ buscar|urlencode }}{% endif %}" class="{% if estado == 'Salió' %}activo{% endif %}">{% translate "Ya salieron" %}</a>
+        </nav>
+    </div>
+
+    {% if parqueos %}
+        <div class="tabla-contenedor">
+            <table>
+                <thead><tr><th>{% translate "Placa" %}</th><th>{% translate "Visita a" %}</th><th>{% translate "Ingreso" %}</th><th>{% translate "Tiempo" %}</th><th>{% translate "Valor" %}</th><th>{% translate "Estado" %}</th><th class="derecha">{% translate "Acciones" %}</th></tr></thead>
+                <tbody>
+                {% for p in parqueos %}
+                    <tr>
+                        <td><div class="celda-principal"><span class="avatar avatar--cielo">{% if p.tipo_vehiculo == 'Moto' %}{% icono "moto" %}{% else %}{% icono "carro" %}{% endif %}</span><div><span class="placa">{{ p.placa }}</span><small>{% if p.conductor %}{{ p.conductor }}{% else %}{{ p.tipo_vehiculo|traducir }}{% endif %}</small></div></div></td>
+                        <td>{{ p.id_unidad_fk }}{% if p.visitante %}<small class="texto-suave" style="display:block">{{ p.visitante }}</small>{% endif %}</td>
+                        <td class="num">{{ p.fecha_ingreso|date:"d M, H:i" }}{% if p.registrado_por %}<small class="texto-suave" style="display:block">{% blocktranslate with usuario=p.registrado_por.username %}por @{{ usuario }}{% endblocktranslate %}</small>{% endif %}</td>
+                        {% if p.dentro %}
+                            {% include "parqueadero/partials/contador.html" %}
+                        {% else %}
+                            {% with cobro=p.cobro_actual %}
+                            <td class="num">{{ cobro.tiempo }}<small class="texto-suave" style="display:block">{% blocktranslate with hora=p.fecha_salida|date:"H:i" %}salió {{ hora }}{% endblocktranslate %}</small></td>
+                            <td class="num"><strong>{{ p.valor_cobrado|pesos }}</strong><small class="texto-suave" style="display:block">{% blocktranslate count n=p.horas_cobradas %}{{ n }} hora cobrada{% plural %}{{ n }} horas cobradas{% endblocktranslate %}</small></td>
+                            {% endwith %}
+                        {% endif %}
+                        <td><span class="badge badge-{{ p.estado|color_estado }}">{{ p.estado|traducir }}</span></td>
+                        <td class="derecha">
+                            <div class="acciones" style="justify-content:flex-end">
+                                {% if p.dentro %}
+                                    <a href="{% url 'salida_parqueo' p.pk %}?next={{ request.get_full_path|urlencode }}" class="btn btn-secundario btn-sm">{% icono "salir" %} {% translate "Salida" %}</a>
+                                    <a href="{% url 'editar_parqueo' p.pk %}" class="btn btn-fantasma btn-sm btn-icono" title="{% translate 'Editar' %}" aria-label="{% translate 'Editar' %}">{% icono "editar" %}</a>
+                                {% else %}
+                                    <a href="{% url 'salida_parqueo' p.pk %}" class="btn btn-fantasma btn-sm">{% icono "factura" %} {% translate "Ver cobro" %}</a>
+                                {% endif %}
+                            </div>
+                        </td>
+                    </tr>
+                {% endfor %}
+                </tbody>
+            </table>
+        </div>
+        {% include "partials/paginacion.html" %}
+    {% else %}
+        <div class="vacio">
+            <div class="vacio__icono">{% icono "parqueadero" %}</div>
+            {% if buscar or estado %}
+                <h3>{% translate "No hay vehículos con ese filtro" %}</h3>
+                <p>{% translate "Revisa la placa: debe ser como ABC123 (carro) o ABC12D (moto)." %}</p>
+            {% else %}
+                <h3>{% translate "No hay vehículos de visitantes" %}</h3>
+                <p>{% translate "Registra la placa cuando un visitante entre en carro o moto; el tiempo empieza a contar solo." %}</p>
+                <a href="{% url 'crear_parqueo' %}" class="btn btn-primario btn-sm">{% icono "mas" %} {% translate "Registrar vehículo" %}</a>
+            {% endif %}
+        </div>
+    {% endif %}
+</section>
+{% endblock %}

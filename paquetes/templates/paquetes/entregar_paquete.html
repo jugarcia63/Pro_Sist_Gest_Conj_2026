@@ -1,0 +1,46 @@
+{% extends "app.html" %}
+{% load i18n ui %}
+{% block title %}{% translate "Entregar paquete" %}{% endblock %}
+{% block miga %}{% icono "derecha" %}<a href="{% url 'lista_paquetes' %}">{% translate "Paquetes" %}</a>{% icono "derecha" %}<strong>{{ paquete.numero_guia }}</strong>{% endblock %}
+{% block eyebrow %}<span class="encabezado__eyebrow">{% icono "paquete" %} {% translate "Portería" %}</span>{% endblock %}
+{% block titulo_pagina %}{% if form %}{% blocktranslate with guia=paquete.numero_guia %}Entregar paquete {{ guia }}{% endblocktranslate %}{% else %}{% blocktranslate with guia=paquete.numero_guia %}Paquete {{ guia }}{% endblocktranslate %}{% endif %}{% endblock %}
+{% block subtitulo %}<p>{% if form %}{% translate "La hora de entrega se guarda sola al confirmar." %}{% else %}{% translate "Este paquete ya fue entregado." %}{% endif %}</p>{% endblock %}
+{% block acciones %}<a href="{% url 'lista_paquetes' %}" class="btn btn-secundario" id="enlace-volver">{% icono "volver" %} {% translate "Volver" %}</a>{% endblock %}
+{% block contenido %}
+<div class="grid-3-1">
+    <div class="columna">
+        <section class="panel">
+            <div class="panel__cuerpo">
+                <div class="resumen-pago">
+                    <div class="resumen-pago__fila"><span>{% translate "Guía" %}</span><strong>{{ paquete.numero_guia }}</strong></div>
+                    {% if paquete.empresa %}<div class="resumen-pago__fila"><span>{% translate "Transportadora" %}</span><strong>{{ paquete.empresa }}</strong></div>{% endif %}
+                    <div class="resumen-pago__fila"><span>{% translate "Destinatario" %}</span><strong>{{ paquete.destinatario }}</strong></div>
+                    <div class="resumen-pago__fila"><span>{% translate "Unidad" %}</span><strong>{{ paquete.id_unidad_fk }}</strong></div>
+                    {% if paquete.descripcion %}<div class="resumen-pago__fila"><span>{% translate "Descripción" %}</span><strong>{{ paquete.descripcion }}</strong></div>{% endif %}
+                    <div class="resumen-pago__fila"><span>{% translate "Recibido" %}</span><strong>{{ paquete.fecha_recepcion|date:"d M, H:i" }}{% if paquete.recibido_por %} · @{{ paquete.recibido_por.username }}{% endif %}</strong></div>
+                    {% if not form %}
+                        <div class="resumen-pago__fila"><span>{% translate "Entregado" %}</span><strong>{{ paquete.fecha_entrega|date:"d M, H:i" }}</strong></div>
+                        <div class="resumen-pago__fila"><span>{% translate "Entregado a" %}</span><strong>{{ paquete.entregado_a }}{% if paquete.documento_entrega %} · {{ paquete.documento_entrega }}{% endif %}</strong></div>
+                        {% if paquete.entregado_por %}<div class="resumen-pago__fila"><span>{% translate "Vigilante" %}</span><strong>@{{ paquete.entregado_por.username }}</strong></div>{% endif %}
+                    {% endif %}
+                </div>
+                {% if form %}
+                    <form method="post" novalidate style="margin-top:1.25rem">
+                        {% csrf_token %}<input type="hidden" name="next" value="{{ next }}">
+                        {% include "partials/form_campos.html" %}
+                        <div class="form-acciones">
+                            <a href="{% url 'lista_paquetes' %}" class="btn btn-fantasma" data-igual-que="enlace-volver">{% translate "Cancelar" %}</a>
+                            <button type="submit" class="btn btn-primario">{% icono "check" %} {% translate "Confirmar entrega" %}</button>
+                        </div>
+                    </form>
+                {% endif %}
+            </div>
+        </section>
+    </div>
+    <div class="columna">
+        <section class="panel">
+            <div class="panel__cuerpo"><p>{% translate "Si lo recoge otra persona de la unidad, escribe su nombre en lugar del destinatario." %}</p></div>
+        </section>
+    </div>
+</div>
+{% endblock %}

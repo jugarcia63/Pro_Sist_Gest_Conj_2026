@@ -115,13 +115,20 @@ class EditarGuardia(GuardiaFormMixin, RolRequeridoMixin, UpdateView):
 def eliminar_guardia(request, pk):
     guardia = get_object_or_404(Usuario, pk=pk, rol='seguridad')
     if request.method == 'POST':
+        from paquetes.models import Paquete
+        from parqueadero.models import ParqueoVisitante
         from visitantes.models import Visitantes
         nombre = guardia.get_full_name() or guardia.username
-        if Visitantes.objects.filter(autorizado_por=guardia).exists():
+        tiene_historial = (
+            Visitantes.objects.filter(autorizado_por=guardia).exists()
+            or ParqueoVisitante.objects.filter(Q(registrado_por=guardia) | Q(salida_por=guardia)).exists()
+            or Paquete.objects.filter(Q(recibido_por=guardia) | Q(entregado_por=guardia)).exists()
+        )
+        if tiene_historial:
             # Tiene ingresos registrados a su nombre: se conserva el historial y solo se le quita el acceso
             guardia.is_active = False
             guardia.save(update_fields=['is_active'])
-            messages.warning(request, _('%(nombre)s tiene visitas registradas, así que se desactivó su cuenta '
+            messages.warning(request, _('%(nombre)s tiene registros en portería, así que se desactivó su cuenta '
                                         'en lugar de borrarla.') % {'nombre': nombre})
         else:
             guardia.delete()
@@ -190,6 +197,8 @@ def _contexto_residente(usuario):
     from reservas.models import Reservas
     from vehiculos.models import Vehiculos
 
+    from paquetes.views import paquetes_del_residente
+
     residente = residente_de(usuario)
     if not residente:
         return {'residente': None}
@@ -201,6 +210,9 @@ def _contexto_residente(usuario):
                     .filter(id_unidad_fk=residente.id_unidad_fk, fecha_inicio__gte=timezone.now())
                     .exclude(estado__in=('Cancelada', 'Rechazada')).order_by('fecha_inicio'))
 
+    paquetes_en_recepcion = (paquetes_del_residente(usuario).filter(estado='En recepción')
+                             .order_by('-fecha_recepcion'))
+
     return {
         'residente': residente,
         'pagos_pendientes': pendientes.count(),
@@ -211,21 +223,34 @@ def _contexto_residente(usuario):
         'reportes_abiertos': ReporteDano.objects.filter(id_residente_fk=residente).exclude(estado='Cerrado').count(),
         'ultimos_reportes': ReporteDano.objects.filter(id_residente_fk=residente).order_by('-fecha_reporte')[:3],
         'total_vehiculos': Vehiculos.objects.filter(id_residente_fk=residente).count(),
+        'paquetes_recepcion': paquetes_en_recepcion,
+        'total_paquetes': paquetes_en_recepcion.count(),
     }
 
 
 def _contexto_seguridad():
+    from paquetes.models import Paquete
+    from parqueadero.models import ParqueoVisitante
+    from parqueadero.views import recaudado_hoy
     from vehiculos.models import Vehiculos
     from visitantes.models import Visitantes
 
     hoy = timezone.localdate()
     dentro = Visitantes.objects.select_related('id_residente_fk__id_unidad_fk').filter(estado='Dentro')
+    parqueos = (ParqueoVisitante.objects.select_related('id_unidad_fk', 'visitante')
+                .filter(estado='Dentro').order_by('fecha_ingreso'))
+    paquetes = Paquete.objects.select_related('id_unidad_fk').filter(estado='En recepción').order_by('-fecha_recepcion')
     return {
         'visitantes_dentro': dentro.order_by('-fecha_ingreso'),
         'total_dentro': dentro.count(),
         'ingresos_hoy': Visitantes.objects.filter(fecha_ingreso__date=hoy).count(),
         'salidas_hoy': Visitantes.objects.filter(fecha_salida__date=hoy).count(),
         'total_vehiculos': Vehiculos.objects.count(),
+        'parqueos_dentro': parqueos,
+        'total_parqueos': parqueos.count(),
+        'recaudado_hoy': recaudado_hoy(),
+        'paquetes_recepcion': paquetes[:8],
+        'total_paquetes': paquetes.count(),
     }
 
 

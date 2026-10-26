@@ -1,6 +1,6 @@
 """Llena la base con datos de ejemplo que tienen sentido entre sí:
 torres y apartamentos, zonas comunes, residentes con su cuenta, personal de seguridad,
-vehículos, visitas, reservas, facturas y reportes de daños.
+vehículos, visitas, vehículos de visitantes, paquetes, reservas, facturas y reportes de daños.
 
     python manage.py poblar_datos
 
@@ -14,6 +14,8 @@ from django.db import transaction
 from django.utils import timezone
 
 from pagos.models import Pago
+from paquetes.models import Paquete
+from parqueadero.models import ParqueoVisitante, TarifaParqueadero, calcular_cobro
 from reportes.models import ReporteDano
 from reservas.models import Reservas, ZonasComunes
 from residentes.models import Residentes, Unidades
@@ -107,6 +109,8 @@ class Command(BaseCommand):
             guardias = self._crear_guardias()
             self._crear_vehiculos(residentes)
             self._crear_visitantes(residentes, guardias)
+            self._crear_parqueos(unidades, guardias)
+            self._crear_paquetes(unidades, guardias)
             reservas = self._crear_reservas(zonas, residentes)
             self._crear_pagos(residentes, reservas)
             self._crear_reportes(residentes)
@@ -214,6 +218,57 @@ class Command(BaseCommand):
                 fecha_salida=ingreso + timedelta(minutes=minutos) if minutos else None,
                 estado='Salió' if minutos else 'Dentro', autorizado_por=guardias[i % len(guardias)],
             )
+
+    def _crear_parqueos(self, unidades, guardias):
+        ahora = timezone.now()
+        tarifa = TarifaParqueadero.vigente()
+        carlos = Visitantes.objects.filter(num_documento='79451230').first()
+        # (placa, tipo, torre, apto, conductor, visitante, horas atrás que entró, minutos que se quedó o None si sigue)
+        datos = [
+            ('DFG234', 'Carro', 'A', '101', 'Carlos Díaz Molina', carlos, 2, None),
+            ('KLM78E', 'Moto', 'B', '402', 'Martha Lucía Pérez', None, 3.5, None),
+            ('TUV561', 'Carro', 'A', '202', 'Jorge Ríos Castaño', None, 6, 90),
+            ('NBV902', 'Carro', 'A', '301', 'Sofía Navarro León', None, 26, 200),
+            ('WER33H', 'Moto', 'C', '202', 'Gloria Patiño Vera', None, 50, 240),
+        ]
+        for i, (placa, tipo, torre, apto, conductor, visitante, horas, minutos) in enumerate(datos):
+            ingreso = ahora - timedelta(hours=horas)
+            parqueo = ParqueoVisitante(
+                placa=placa, tipo_vehiculo=tipo, id_unidad_fk=unidades[(torre, apto)], conductor=conductor,
+                visitante=visitante, fecha_ingreso=ingreso, valor_hora=tarifa.valor_hora,
+                horas_gratis=tarifa.horas_gratis, registrado_por=guardias[i % len(guardias)],
+            )
+            if minutos:
+                parqueo.fecha_salida = ingreso + timedelta(minutes=minutos)
+                _, parqueo.horas_cobradas, parqueo.valor_cobrado = calcular_cobro(
+                    ingreso, parqueo.fecha_salida, tarifa.valor_hora, tarifa.horas_gratis)
+                parqueo.estado = 'Salió'
+                parqueo.salida_por = guardias[(i + 1) % len(guardias)]
+            parqueo.save()
+
+    def _crear_paquetes(self, unidades, guardias):
+        ahora = timezone.now()
+        # (guía, transportadora, destinatario, torre, apto, descripción, horas atrás que llegó, entregado a o None)
+        datos = [
+            ('700045123987', 'Servientrega', 'Laura Gómez Restrepo', 'A', '101', 'Caja mediana', 3, None),
+            ('MLC2026118843', 'Mercado Libre', 'Laura Gómez', 'A', '101', 'Sobre', 20, None),
+            ('240198776', 'Coordinadora', 'Valentina Rojas', 'B', '102', 'Caja grande', 5, None),
+            ('TCC88120045', 'TCC', 'Mateo Herrera Quintero', 'B', '201', '', 1, None),
+            ('INT5523001', 'Interrapidísimo', 'Andrés Pardo', 'A', '202', 'Bolsa', 30, 'Andrés Pardo Salazar'),
+            ('AMZ114477', 'Amazon', 'Natalia Vargas', 'C', '101', 'Caja pequeña', 52, 'Carolina Vargas'),
+        ]
+        for i, (guia, empresa, destinatario, torre, apto, descripcion, horas, entregado_a) in enumerate(datos):
+            recepcion = ahora - timedelta(hours=horas)
+            paquete = Paquete(
+                numero_guia=guia, empresa=empresa, destinatario=destinatario, id_unidad_fk=unidades[(torre, apto)],
+                descripcion=descripcion, fecha_recepcion=recepcion, recibido_por=guardias[i % len(guardias)],
+            )
+            if entregado_a:
+                paquete.estado = 'Entregado'
+                paquete.fecha_entrega = recepcion + timedelta(hours=4)
+                paquete.entregado_a = entregado_a
+                paquete.entregado_por = guardias[(i + 1) % len(guardias)]
+            paquete.save()
 
     def _crear_reservas(self, zonas, residentes):
         hoy = timezone.localdate()
