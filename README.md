@@ -11,7 +11,7 @@ Proyecto de Ingeniería de Software desarrollado en Django, para la administraci
 
 - Python 3.14
 - Django 5.2
-- MySQL 8.0
+- PostGreSQL
 - HTML / CSS
 
 ## Roles del sistema
