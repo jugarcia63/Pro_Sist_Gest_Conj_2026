@@ -40,6 +40,88 @@ Proyecto de Ingeniería de Software desarrollado en Django, para la administraci
 - Correos de aviso opcionales con la API de Brevo (Render gratis bloquea SMTP): se activan con las variables `BREVO_API_KEY` y `CORREO_REMITENTE`; al crear la cuenta de un residente se le puede enviar su usuario y contraseña temporal
 - Reportes de daños
 
+## Valores y tarifas
+
+Estos son los valores con los que arranca el sistema. Los que dicen *editable* los cambia el administrador desde la página; un cambio no afecta lo que ya se cobró o reservó (la tarifa se copia en el momento del ingreso o de la reserva).
+
+### Zonas comunes
+
+Se cobran las **horas reservadas** y cada hora iniciada cuenta completa (2 h 10 min = 3 horas), sin horas gratis. La factura se genera cuando el administrador aprueba la reserva.
+
+| Zona | Capacidad | Valor por hora | Servicio de limpieza (opcional) |
+|---|---|---|---|
+| Salón social | 60 personas | $25.000 | $40.000 |
+| Zona BBQ | 20 personas | $15.000 | $30.000 |
+| Piscina | 30 personas | Gratis | No aplica |
+| Gimnasio | 12 personas | Gratis | No aplica |
+| Cancha múltiple | 14 personas | Gratis | No aplica |
+| Parque infantil | 25 personas | Gratis | No aplica |
+| Salón de juegos | 15 personas | Gratis | No aplica |
+
+*Editable en Zonas comunes → Editar.* Una reserva dura como máximo **12 horas** y no puede cruzarse con otra de la misma zona.
+
+**Ejemplo:** Zona BBQ de 12:00 a 16:00 con limpieza = 4 × $15.000 + $30.000 = **$90.000**.
+
+### Inventario y multas por la entrega
+
+Al terminar la reserva, portería recibe la zona y cuenta los implementos. Lo que falte o llegue dañado se cobra por su **valor de reposición**. Si el residente no tomó el servicio de limpieza y deja la zona sucia, se le cobra el valor de la limpieza. La multa se genera sola y vence a los **15 días**.
+
+| Zona | Implemento | Cantidad | Valor de reposición c/u |
+|---|---|---|---|
+| Salón social | Mesas plegables | 10 | $180.000 |
+| | Sillas | 60 | $45.000 |
+| | Manteles | 10 | $35.000 |
+| | Equipo de sonido con 2 parlantes | 1 | $900.000 |
+| | Micrófono inalámbrico | 1 | $150.000 |
+| | Cafetera grande | 1 | $250.000 |
+| Zona BBQ | Parrilla a gas | 1 | $1.500.000 |
+| | Pinzas para asar | 2 | $25.000 |
+| | Espátulas | 2 | $20.000 |
+| | Cepillo para parrilla | 1 | $30.000 |
+| | Bandejas | 4 | $20.000 |
+| | Mesas | 4 | $180.000 |
+| | Sillas | 16 | $45.000 |
+| Piscina | Sillas asoleadoras | 8 | $250.000 |
+| | Sombrillas | 4 | $180.000 |
+| | Flotadores | 6 | $30.000 |
+| Gimnasio | Colchonetas | 8 | $60.000 |
+| | Mancuernas (par) | 10 | $80.000 |
+| | Balones de pilates | 4 | $70.000 |
+| Cancha múltiple | Balón de microfútbol | 2 | $90.000 |
+| | Balón de baloncesto | 2 | $110.000 |
+| | Petos | 12 | $15.000 |
+| Salón de juegos | Tacos de billar | 4 | $70.000 |
+| | Juego de bolas de billar | 1 | $250.000 |
+| | Raquetas de ping-pong | 4 | $40.000 |
+| | Pelotas de ping-pong | 6 | $3.000 |
+| | Juegos de mesa | 6 | $80.000 |
+
+*Editable en Zonas comunes → Editar → Inventario.* El parque infantil no presta implementos.
+
+**Ejemplo:** en la BBQ falta 1 pinza, llegan 2 sillas dañadas y la zona quedó sucia = $25.000 + 2 × $45.000 + $30.000 = **$145.000**.
+
+### Parqueadero de visitantes
+
+| Concepto | Valor |
+|---|---|
+| Horas gratis | 2 |
+| Valor por hora después de las gratis | $2.000 |
+| Forma de cobro | Cada hora iniciada cuenta completa |
+
+*Editable en Parqueadero visitantes → Tarifa.* Se cobra en portería al registrar la salida.
+
+**Ejemplos:** 1 h 30 min = $0 · 2 h 10 min = 1 hora = $2.000 · 3 h 30 min = 2 horas = $4.000.
+
+### Pagos de los residentes (datos de ejemplo)
+
+| Concepto | Valor | Fecha límite |
+|---|---|---|
+| Cuota de administración, apartamento de más de 60 m² | $340.000 al mes | día 10 de cada mes |
+| Cuota de administración, apartamento de 60 m² o menos | $285.000 al mes | día 10 de cada mes |
+| Parqueadero de residentes (carro) | $85.000 al mes | según la factura |
+
+Estas facturas las genera el administrador en *Pagos → Generar factura*, con el valor que defina. Los montos de la tabla son los de los datos de ejemplo que carga el sistema.
+
 ## Instalación
 
 ### 1. Clonar el repositorio
