@@ -302,18 +302,29 @@ class PagosTests(BaseConjunto):
 
 
 class VisitantesYReportesTests(BaseConjunto):
-    def test_registro_de_visitante_y_salida(self):
+    def test_registro_de_visitante_solo_con_datos_basicos(self):
         self.entrar(self.vigilante)
+        formulario = self.client.get(reverse('crear_visitante')).context['form']
+        self.assertEqual(list(formulario.fields), ['nombre', 'apellidos', 'num_documento', 'fecha_ingreso', 'id_unidad_fk'])
         self.client.post(reverse('crear_visitante'), {
-            'nombre': 'Carlos', 'apellidos': 'Díaz', 'tipo_documento': 'CC', 'num_documento': '111',
-            'id_residente_fk': self.residente.pk, 'motivo': 'Visita familiar, 2 personas.',
-            'fecha_ingreso': timezone.localtime().strftime('%Y-%m-%dT%H:%M'), 'estado': 'Dentro'})
+            'nombre': 'Carlos', 'apellidos': 'Díaz', 'num_documento': '111', 'id_unidad_fk': self.unidad.pk,
+            'fecha_ingreso': timezone.localtime().strftime('%Y-%m-%dT%H:%M')})
         visitante = Visitantes.objects.get()
         self.assertEqual(visitante.autorizado_por, self.vigilante)
-        self.client.post(reverse('registrar_salida', args=[visitante.pk]))
-        visitante.refresh_from_db()
-        self.assertEqual(visitante.estado, 'Salió')
-        self.assertIsNotNone(visitante.fecha_salida)
+        self.assertEqual((visitante.unidad_visitada, visitante.tipo_documento), (self.unidad, 'CC'))
+        self.assertIsNone(visitante.fecha_salida)
+        # Ya no existe el registro de salida de personas
+        self.assertEqual(self.client.post(f'/visitantes/salida/{visitante.pk}/').status_code, 404)
+        self.assertContains(self.client.get(reverse('dashboard')), 'Carlos Díaz')
+
+    def test_hora_de_entrada_no_puede_ser_futura(self):
+        self.entrar(self.vigilante)
+        futura = (timezone.localtime() + timedelta(hours=2)).strftime('%Y-%m-%dT%H:%M')
+        respuesta = self.client.post(reverse('crear_visitante'), {
+            'nombre': 'Ana', 'apellidos': 'Ruiz', 'num_documento': '222', 'id_unidad_fk': self.unidad.pk,
+            'fecha_ingreso': futura})
+        self.assertContains(respuesta, 'no puede estar en el futuro')
+        self.assertFalse(Visitantes.objects.exists())
 
     def test_reporte_y_cambio_de_estado(self):
         self.entrar(self.usuario_res)

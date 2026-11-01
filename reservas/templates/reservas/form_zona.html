@@ -7,12 +7,35 @@
 {% block subtitulo %}<p>{% translate "Las zonas marcadas como disponibles aparecen para reservar." %}</p>{% endblock %}
 {% block url_volver %}{% url 'lista_zonas' %}{% endblock %}
 {% block texto_boton %}{% if object %}{% translate "Guardar cambios" %}{% else %}{% translate "Crear zona" %}{% endif %}{% endblock %}
-{% block campos %}{% with anchos="descripcion" %}{% include "partials/form_campos.html" %}{% endwith %}{% endblock %}
+{% block campos %}
+{% with anchos="descripcion" %}{% include "partials/form_campos.html" %}{% endwith %}
+<h3 style="margin:1.75rem 0 .35rem">{% translate "Inventario que se presta con la zona" %}</h3>
+<p class="texto-suave" style="margin-bottom:.9rem">{% translate "Al recibir la zona, portería revisa estos implementos. Lo que falte o llegue dañado se cobra por su valor de reposición." %}</p>
+{{ inventario.management_form }}
+{% if inventario.non_form_errors %}<div class="form-errores" role="alert">{% icono "alerta" %}<div>{{ inventario.non_form_errors }}</div></div>{% endif %}
+<div class="tabla-contenedor">
+    <table class="inventario-tabla">
+        <thead><tr><th>{% translate "Implemento" %}</th><th class="col-num">{% translate "Cantidad" %}</th><th class="col-num">{% translate "Reposición (COP)" %}</th><th class="col-borrar">{% translate "Quitar" %}</th></tr></thead>
+        <tbody>
+        {% for f in inventario %}
+            <tr>
+                <td>{% for h in f.hidden_fields %}{{ h }}{% endfor %}{{ f.nombre }}{% for e in f.nombre.errors %}<div class="campo__error">{{ e }}</div>{% endfor %}</td>
+                <td class="col-num">{{ f.cantidad }}{% for e in f.cantidad.errors %}<div class="campo__error">{{ e }}</div>{% endfor %}</td>
+                <td class="col-num">{{ f.valor_reposicion }}{% for e in f.valor_reposicion.errors %}<div class="campo__error">{{ e }}</div>{% endfor %}</td>
+                <td class="col-borrar">{% if f.instance.pk %}<label title="{% translate 'Quitar del inventario' %}">{{ f.DELETE }}<span class="sr-only">{% translate "Quitar" %}</span></label>{% endif %}</td>
+            </tr>
+        {% endfor %}
+        </tbody>
+    </table>
+</div>
+<p class="texto-suave" style="margin-top:.6rem;font-size:.82rem">{% translate "Hay dos filas vacías para agregar implementos; guarda y vuelve a entrar si necesitas más." %}</p>
+{% endblock %}
 {% block lateral %}
 <section class="panel">
     <div class="panel__cabecera"><h2>{% icono "info" %} {% translate "Ideas de zonas" %}</h2></div>
     <div class="panel__cuerpo" style="display:grid;gap:.6rem">
         <p>{% translate "Salón social, zona BBQ, piscina, gimnasio, cancha múltiple, sala de juegos." %}</p>
+        <p>{% translate "Cobra por hora solo las zonas que lo ameritan (salón social, BBQ). Las demás pueden quedar en 0." %}</p>
         <p>{% translate "En reglas escribe horarios, aforo y lo que no está permitido: los residentes las ven antes de reservar." %}</p>
     </div>
 </section>

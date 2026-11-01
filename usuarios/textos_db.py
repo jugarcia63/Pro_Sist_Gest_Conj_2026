@@ -12,6 +12,8 @@ VALORES_GUARDADOS = [
     N_('Activo'), N_('Inactivo'),
     # Estados de paquetes
     N_('En recepción'), N_('Entregado'),
+    # Reserva cuya zona ya fue recibida
+    N_('Finalizada'),
     # Tipos de vehículo
     N_('Carro'), N_('Moto'),
     # Categorías de reportes

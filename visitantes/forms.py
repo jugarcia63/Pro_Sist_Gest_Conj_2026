@@ -1,58 +1,50 @@
+from datetime import timedelta
+
 from django import forms
 from django.utils import timezone
 from django.utils.translation import gettext_lazy as _
 
-from residentes.forms import TIPOS_DOCUMENTO, ResidenteChoiceField
+from residentes.models import Unidades
 from validadores import ValidacionLetrasNumerosMixin
 from .models import Visitantes
 
-ESTADOS_VISITANTE = [('Dentro', _('Dentro del conjunto')), ('Salió', _('Ya salió'))]
-
 
 class VisitanteForm(ValidacionLetrasNumerosMixin, forms.ModelForm):
+    """Registro de ingreso de una persona: solo los datos indispensables.
+    No se piden teléfono ni motivo, y no hay hora de salida."""
     campos_solo_letras = ['nombre', 'apellidos']
-    campos_solo_numeros = ['num_documento', 'telefono']
+    campos_solo_numeros = ['num_documento']
 
-    tipo_documento = forms.ChoiceField(choices=TIPOS_DOCUMENTO, label=_('Tipo de documento'))
-    id_residente_fk = ResidenteChoiceField(label=_('Visita a'))
-    estado = forms.ChoiceField(choices=ESTADOS_VISITANTE, initial='Dentro', label=_('Estado'))
+    id_unidad_fk = forms.ModelChoiceField(
+        queryset=Unidades.objects.order_by('torre', 'piso', 'apto'), label=_('Unidad que visita'),
+        empty_label=_('Selecciona la torre y el apartamento'),
+    )
 
     class Meta:
         model = Visitantes
-        fields = ['nombre', 'apellidos', 'tipo_documento', 'num_documento', 'telefono',
-                  'id_residente_fk', 'motivo', 'fecha_ingreso', 'fecha_salida', 'estado']
+        fields = ['nombre', 'apellidos', 'num_documento', 'fecha_ingreso', 'id_unidad_fk']
         labels = {
-            'nombre': _('Nombre'),
+            'nombre': _('Nombres'),
             'apellidos': _('Apellidos'),
-            'num_documento': _('Número de documento'),
-            'telefono': _('Teléfono'),
-            'motivo': _('Motivo'),
-            'fecha_ingreso': _('Ingreso'),
-            'fecha_salida': _('Salida'),
+            'num_documento': _('Cédula'),
+            'fecha_ingreso': _('Hora de entrada'),
         }
         widgets = {
+            'num_documento': forms.TextInput(attrs={'inputmode': 'numeric', 'autocomplete': 'off'}),
             'fecha_ingreso': forms.DateTimeInput(attrs={'type': 'datetime-local'}, format='%Y-%m-%dT%H:%M'),
-            'fecha_salida': forms.DateTimeInput(attrs={'type': 'datetime-local'}, format='%Y-%m-%dT%H:%M'),
-            'motivo': forms.TextInput(attrs={'placeholder': _('Ej: visita familiar, domicilio, mantenimiento')}),
         }
 
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
-        for campo in ('nombre', 'apellidos', 'num_documento', 'fecha_ingreso'):
+        for campo in self.fields:
             self.fields[campo].required = True
+        if self.instance.pk and not self.instance.id_unidad_fk_id:
+            self.initial['id_unidad_fk'] = getattr(self.instance.unidad_visitada, 'pk', None)
         if not self.instance.pk:
             self.initial.setdefault('fecha_ingreso', timezone.localtime().strftime('%Y-%m-%dT%H:%M'))
 
-    def clean(self):
-        cleaned_data = super().clean()
-        ingreso = cleaned_data.get('fecha_ingreso')
-        salida = cleaned_data.get('fecha_salida')
-        estado = cleaned_data.get('estado')
-
-        if ingreso and salida and salida <= ingreso:
-            self.add_error('fecha_salida', _('La salida debe ser posterior al ingreso.'))
-        if estado == 'Salió' and not salida:
-            cleaned_data['fecha_salida'] = timezone.now()
-        if estado == 'Dentro' and salida:
-            self.add_error('estado', _('Si ya tiene hora de salida, el estado debe ser "Ya salió".'))
-        return cleaned_data
+    def clean_fecha_ingreso(self):
+        ingreso = self.cleaned_data.get('fecha_ingreso')
+        if ingreso and ingreso > timezone.now() + timedelta(minutes=5):
+            raise forms.ValidationError(_('La hora de entrada no puede estar en el futuro.'))
+        return ingreso

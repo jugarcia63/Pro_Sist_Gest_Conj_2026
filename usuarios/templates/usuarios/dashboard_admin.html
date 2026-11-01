@@ -12,7 +12,7 @@
             <span class="banner__chip">{% icono "residentes" %} {% blocktranslate count n=total_residentes %}{{ n }} residente{% plural %}{{ n }} residentes{% endblocktranslate %}</span>
             <span class="banner__chip">{% icono "edificio" %} {% blocktranslate count n=total_unidades %}{{ n }} unidad{% plural %}{{ n }} unidades{% endblocktranslate %}</span>
             <span class="banner__chip">{% icono "escudo" %} {% blocktranslate count n=total_guardias %}{{ n }} vigilante{% plural %}{{ n }} vigilantes{% endblocktranslate %}</span>
-            <span class="banner__chip">{% icono "visitante" %} {% blocktranslate count n=visitantes_dentro %}{{ n }} visitante dentro{% plural %}{{ n }} visitantes dentro{% endblocktranslate %}</span>
+            <span class="banner__chip">{% icono "visitante" %} {% blocktranslate count n=visitantes_hoy %}{{ n }} visitante hoy{% plural %}{{ n }} visitantes hoy{% endblocktranslate %}</span>
         </div>
         <div class="banner__acciones">
             <a href="{% url 'crear_residente' %}" class="btn btn-claro">{% icono "mas" %} {% translate "Nuevo residente" %}</a>

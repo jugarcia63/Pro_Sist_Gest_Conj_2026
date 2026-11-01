@@ -26,10 +26,13 @@ Proyecto de Ingeniería de Software desarrollado en Django, para la administraci
 
 - Gestión de residentes y unidades habitacionales
 - Gestión de vehículos (carros y motos, con validación de formato de placa)
-- Registro de visitantes
+- Registro de visitantes: solo nombres, apellidos, cédula, hora de entrada y la unidad que visita (no se registra salida)
 - Parqueadero de visitantes: placa asociada a una unidad, contador de tiempo en vivo y cobro al salir (horas gratis + cada hora iniciada; tarifa editable por el administrador)
 - Paquetes en portería: registro por número de guía y destinatario, entrega con hora, quién lo recoge y qué vigilante lo entregó; el residente ve en su panel los paquetes de su unidad
 - Reservas de zonas comunes (con validación de horarios y solapamiento)
+  - Cobro por hora en las zonas que lo ameritan (cada hora iniciada se cobra completa, sin horas gratis) y servicio de limpieza opcional; la factura se genera al aprobar la reserva
+  - Inventario de implementos por zona; al terminar, portería recibe la zona, revisa faltantes, daños y aseo, y se genera la multa automáticamente
+  - Comprobante de la reserva descargable en PDF
 - Pagos con pasarela simulada
 - Reportes de daños
 

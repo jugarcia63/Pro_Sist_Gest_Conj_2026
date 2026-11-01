@@ -186,7 +186,7 @@ def _contexto_admin():
         'recaudado_mes': _total(pagados_mes),
         'reportes_abiertos': ReporteDano.objects.filter(estado='Abierto').count(),
         'reservas_pendientes': Reservas.objects.filter(estado='Pendiente').count(),
-        'visitantes_dentro': Visitantes.objects.filter(estado='Dentro').count(),
+        'visitantes_hoy': Visitantes.objects.filter(fecha_ingreso__date=hoy).count(),
         'ultimos_reportes': ReporteDano.objects.select_related('id_residente_fk').order_by('-fecha_reporte')[:5],
         'proximas_reservas': Reservas.objects.select_related('id_zona_fk', 'id_unidad_fk')
             .filter(fecha_inicio__gte=ahora).exclude(estado__in=('Cancelada', 'Rechazada'))
@@ -233,6 +233,11 @@ def _contexto_residente(usuario):
     }
 
 
+def _zonas_por_recibir():
+    from usuarios.context_processors import _zonas_por_recibir as contar
+    return contar()
+
+
 def _contexto_seguridad():
     from paquetes.models import Paquete
     from parqueadero.models import ParqueoVisitante
@@ -241,19 +246,19 @@ def _contexto_seguridad():
     from visitantes.models import Visitantes
 
     hoy = timezone.localdate()
-    dentro = Visitantes.objects.select_related('id_residente_fk__id_unidad_fk').filter(estado='Dentro')
+    visitas_hoy = (Visitantes.objects.select_related('id_unidad_fk', 'id_residente_fk__id_unidad_fk')
+                   .filter(fecha_ingreso__date=hoy))
     parqueos = (ParqueoVisitante.objects.select_related('id_unidad_fk', 'visitante')
                 .filter(estado='Dentro').order_by('fecha_ingreso'))
     paquetes = Paquete.objects.select_related('id_unidad_fk').filter(estado='En recepción').order_by('-fecha_recepcion')
     return {
-        'visitantes_dentro': dentro.order_by('-fecha_ingreso'),
-        'total_dentro': dentro.count(),
-        'ingresos_hoy': Visitantes.objects.filter(fecha_ingreso__date=hoy).count(),
-        'salidas_hoy': Visitantes.objects.filter(fecha_salida__date=hoy).count(),
+        'visitantes_hoy': visitas_hoy.order_by('-fecha_ingreso')[:10],
+        'ingresos_hoy': visitas_hoy.count(),
         'total_vehiculos': Vehiculos.objects.count(),
         'parqueos_dentro': parqueos,
         'total_parqueos': parqueos.count(),
         'recaudado_hoy': recaudado_hoy(),
+        'zonas_por_recibir': _zonas_por_recibir(),
         'paquetes_recepcion': paquetes[:8],
         'total_paquetes': paquetes.count(),
     }

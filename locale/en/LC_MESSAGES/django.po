@@ -223,10 +223,6 @@ msgid "Todos"
 msgstr "All"
 
 #: pagos/templates/pagos/lista_pagos_admin.html
-msgid "Valor"
-msgstr "Amount"
-
-#: pagos/templates/pagos/lista_pagos_admin.html
 msgid "Vencidos"
 msgstr "Overdue"
 
@@ -441,10 +437,6 @@ msgid "Destinatario"
 msgstr "Recipient"
 
 #: paquetes/templates/paquetes/_tabla.html
-msgid "Detalle"
-msgstr "Details"
-
-#: paquetes/templates/paquetes/_tabla.html
 msgid "Editar"
 msgstr "Edit"
 
@@ -503,10 +495,6 @@ msgstr "Package %(guia)s"
 #: paquetes/templates/paquetes/entregar_paquete.html
 msgid "Si lo recoge otra persona de la unidad, escribe su nombre en lugar del destinatario."
 msgstr "If someone else from the unit picks it up, enter their name instead of the recipient's."
-
-#: paquetes/templates/paquetes/entregar_paquete.html
-msgid "Unidad"
-msgstr "Unit"
 
 #: paquetes/templates/paquetes/entregar_paquete.html
 msgid "Vigilante"
@@ -635,6 +623,10 @@ msgid "Paquete con guía %(guia)s registrado para %(unidad)s."
 msgstr "Package %(guia)s logged for %(unidad)s."
 
 #: parqueadero/forms.py
+msgid "Aparecen las personas que entraron en las últimas 12 horas."
+msgstr "People who came in during the last 12 hours are listed."
+
+#: parqueadero/forms.py
 msgid "Carro"
 msgstr "Car"
 
@@ -709,10 +701,6 @@ msgstr "If you pick the visitor, the unit they are visiting is used."
 #: parqueadero/forms.py
 msgid "Sin vincular a un visitante"
 msgstr "Not linked to a visitor"
-
-#: parqueadero/forms.py
-msgid "Solo aparecen los visitantes que están dentro del conjunto."
-msgstr "Only visitors currently inside the complex are listed."
 
 #: parqueadero/forms.py
 msgid "Tiempo inicial sin costo. Pon 0 si se cobra desde el primer minuto."
@@ -815,6 +803,10 @@ msgstr[0] "%(n)s hour charged"
 msgstr[1] "%(n)s hours charged"
 
 #: parqueadero/templates/parqueadero/lista_parqueos.html
+msgid "Ingreso"
+msgstr "Entry"
+
+#: parqueadero/templates/parqueadero/lista_parqueos.html
 msgid "No hay vehículos con ese filtro"
 msgstr "No vehicles match that filter"
 
@@ -843,6 +835,10 @@ msgid "Revisa la placa: debe ser como ABC123 (carro) o ABC12D (moto)."
 msgstr "Check the plate: it should look like ABC123 (car) or ABC12D (motorcycle)."
 
 #: parqueadero/templates/parqueadero/lista_parqueos.html
+msgid "Salida"
+msgstr "Exit"
+
+#: parqueadero/templates/parqueadero/lista_parqueos.html
 msgid "Salidas hoy"
 msgstr "Exits today"
 
@@ -864,6 +860,10 @@ msgstr "Vehicles inside"
 #: parqueadero/templates/parqueadero/lista_parqueos.html
 msgid "Ver cobro"
 msgstr "View charge"
+
+#: parqueadero/templates/parqueadero/lista_parqueos.html
+msgid "Visita a"
+msgstr "Visiting"
 
 #: parqueadero/templates/parqueadero/lista_parqueos.html
 msgid "Ya salieron"
@@ -1201,10 +1201,216 @@ msgstr "Report sent. Management will review it soon."
 msgid "Tu usuario no está vinculado a un residente. Pide al administrador que lo vincule."
 msgstr "Your user is not linked to a resident. Ask the administrator to link it."
 
+#: reservas/cobros.py
+msgid "No se generó la factura: la unidad no tiene residentes registrados."
+msgstr "No invoice was created: the unit has no registered residents."
+
+#: reservas/cobros.py
+msgid "Se anuló la factura pendiente de esta reserva."
+msgstr "The pending invoice for this reservation was voided."
+
+#: reservas/cobros.py
+#, python-format
+msgid "Se generó la factura de %(valor)s por el uso de la zona."
+msgstr "An invoice for %(valor)s was created for the use of the area."
+
+#: reservas/comprobante.py
+#, python-format
+msgid "%(h)s hora(s) × %(v)s (cada hora iniciada se cobra completa)"
+msgstr "%(h)s hour(s) × %(v)s (each started hour is charged in full)"
+
+#: reservas/comprobante.py
+msgid "A cargo del conjunto (servicio incluido)"
+msgstr "Handled by the complex (service included)"
+
+#: reservas/comprobante.py
+msgid "Al terminar, portería revisa que se devuelva todo. Lo que falte o llegue dañado se cobra por su valor de reposición."
+msgstr "At the end, the front desk checks that everything is returned. Anything missing or damaged is charged at its replacement value."
+
+#: reservas/comprobante.py
+msgid "Bien"
+msgstr "OK"
+
+#: reservas/comprobante.py
+msgid "Cantidad"
+msgstr "Quantity"
+
+#: reservas/comprobante.py
+msgid "Cargo"
+msgstr "Charge"
+
+#: reservas/comprobante.py
+#, python-format
+msgid "Comprobante de reserva No. %(n)s"
+msgstr "Reservation receipt No. %(n)s"
+
+#: reservas/comprobante.py
+#, python-format
+msgid "Conjunto Reserva de Madrid · Comprobante generado el %(fecha)s"
+msgstr "Conjunto Reserva de Madrid · Receipt generated on %(fecha)s"
+
+#: reservas/comprobante.py
+msgid "Conjunto Reserva de Madrid · Madrid, Cundinamarca"
+msgstr "Conjunto Reserva de Madrid · Madrid, Cundinamarca"
+
+#: reservas/comprobante.py
+msgid "Datos de la reserva"
+msgstr "Reservation details"
+
+#: reservas/comprobante.py
+msgid "Dañados"
+msgstr "Damaged"
+
+#: reservas/comprobante.py
+msgid "Detalle"
+msgstr "Details"
+
+#: reservas/comprobante.py
+msgid "Entrega de la zona"
+msgstr "Area handover"
+
+#: reservas/comprobante.py
+msgid "Esta zona no tiene costo de uso."
+msgstr "This area is free to use."
+
+#: reservas/comprobante.py
+msgid "Esta zona no tiene implementos prestados."
+msgstr "This area has no lent items."
+
+#: reservas/comprobante.py
+msgid "Estado"
+msgstr "Status"
+
+#: reservas/comprobante.py
+msgid "Factura"
+msgstr "Invoice"
+
+#: reservas/comprobante.py
+msgid "Faltan"
+msgstr "Missing"
+
+#: reservas/comprobante.py
+msgid "Fecha de la solicitud"
+msgstr "Request date"
+
+#: reservas/comprobante.py
+msgid "Horario"
+msgstr "Time"
+
+#: reservas/comprobante.py
+msgid "Implemento"
+msgstr "Item"
+
+#: reservas/comprobante.py
+msgid "Implementos que presta el conjunto"
+msgstr "Items lent by the complex"
+
+#: reservas/comprobante.py
+msgid "Incluido"
+msgstr "Included"
+
+#: reservas/comprobante.py
+msgid "Multa por la entrega"
+msgstr "Handover fine"
+
+#: reservas/comprobante.py
+msgid "No"
+msgstr "No"
+
+#: reservas/comprobante.py
+msgid "No; la zona se entrega limpia"
+msgstr "No; the area must be returned clean"
+
+#: reservas/comprobante.py
+msgid "Prestados"
+msgstr "Lent"
+
+#: reservas/comprobante.py
+#, python-format
+msgid "Página %(n)s"
+msgstr "Page %(n)s"
+
+#: reservas/comprobante.py
+msgid "Recibida el"
+msgstr "Received on"
+
+#: reservas/comprobante.py
+msgid "Recibida por"
+msgstr "Received by"
+
+#: reservas/comprobante.py
+msgid "Reglas de la zona"
+msgstr "Area rules"
+
+#: reservas/comprobante.py
+#, python-format
+msgid "Reserva %(n)s"
+msgstr "Reservation %(n)s"
+
+#: reservas/comprobante.py
+msgid "Reservada por"
+msgstr "Reserved by"
+
+#: reservas/comprobante.py
+msgid "Servicio de limpieza"
+msgstr "Cleaning service"
+
+#: reservas/comprobante.py
+msgid "Sí"
+msgstr "Yes"
+
+#: reservas/comprobante.py
+msgid "Total"
+msgstr "Total"
+
+#: reservas/comprobante.py
+msgid "Unidad"
+msgstr "Unit"
+
+#: reservas/comprobante.py
+msgid "Uso de la zona"
+msgstr "Use of the area"
+
+#: reservas/comprobante.py
+msgid "Valor"
+msgstr "Amount"
+
+#: reservas/comprobante.py
+msgid "Valor de la reserva"
+msgstr "Reservation cost"
+
+#: reservas/comprobante.py
+msgid "Valor de reposición"
+msgstr "Replacement value"
+
+#: reservas/comprobante.py
+msgid "Valor fijo de la zona"
+msgstr "Fixed rate for the area"
+
+#: reservas/comprobante.py
+msgid "Vence"
+msgstr "Due"
+
+#: reservas/comprobante.py
+msgid "Zona común"
+msgstr "Common area"
+
+#: reservas/comprobante.py
+msgid "Zona entregada completa y en buen estado."
+msgstr "Area returned complete and in good condition."
+
+#: reservas/comprobante.py
+msgid "Zona limpia"
+msgstr "Area clean"
+
 #: reservas/forms.py
 #, python-format
 msgid "%(zona)s ya está reservada de %(inicio)s a %(fin)s. Elige otro horario."
 msgstr "%(zona)s is already booked from %(inicio)s to %(fin)s. Choose another time."
+
+#: reservas/forms.py
+msgid "0 = zona gratuita. Se cobra cada hora reservada; una hora empezada cuenta completa."
+msgstr "0 = free area. Each reserved hour is charged; a started hour counts in full."
 
 #: reservas/forms.py
 msgid "Aprobada"
@@ -1223,12 +1429,20 @@ msgid "Disponible"
 msgstr "Available"
 
 #: reservas/forms.py
+msgid "Ej: Parrilla a gas"
+msgstr "E.g. Gas grill"
+
+#: reservas/forms.py
 msgid "Ej: Salón con cocina y 10 mesas"
 msgstr "E.g. Hall with kitchen and 10 tables"
 
 #: reservas/forms.py
 msgid "Ej: cumpleaños, 20 invitados"
 msgstr "E.g. birthday, 20 guests"
+
+#: reservas/forms.py
+msgid "Ej: una silla con la pata floja; dejaron basura en la cocina"
+msgstr "E.g. a chair with a loose leg; trash left in the kitchen"
 
 #: reservas/forms.py
 msgid "El fin debe ser posterior al inicio."
@@ -1239,12 +1453,21 @@ msgid "Empieza"
 msgstr "Starts"
 
 #: reservas/forms.py
-msgid "Estado"
-msgstr "Status"
+#, python-format
+msgid "Entre faltantes y dañados no pueden pasar de %(n)s."
+msgstr "Missing plus damaged cannot exceed %(n)s."
+
+#: reservas/forms.py
+msgid "Escribe el valor del servicio de limpieza."
+msgstr "Enter the price of the cleaning service."
 
 #: reservas/forms.py
 msgid "Horarios, aforo, uso de música, aseo…"
 msgstr "Hours, capacity, music, cleaning…"
+
+#: reservas/forms.py
+msgid "Incluir servicio de limpieza (si no, la zona se entrega limpia)"
+msgstr "Include cleaning service (otherwise the area must be returned clean)"
 
 #: reservas/forms.py
 msgid "La capacidad debe ser mayor a cero."
@@ -1255,12 +1478,24 @@ msgid "La fecha de inicio no puede estar en el pasado."
 msgstr "The start date cannot be in the past."
 
 #: reservas/forms.py
+msgid "Mínimo 1."
+msgstr "Minimum 1."
+
+#: reservas/forms.py
 msgid "No disponible"
 msgstr "Unavailable"
 
 #: reservas/forms.py
+msgid "No, quedó sucia"
+msgstr "No, it was left dirty"
+
+#: reservas/forms.py
 msgid "Nombre"
 msgstr "Name"
+
+#: reservas/forms.py
+msgid "Ofrece servicio de limpieza"
+msgstr "Offers cleaning service"
 
 #: reservas/forms.py
 msgid "Pendiente"
@@ -1279,6 +1514,14 @@ msgid "Selecciona una zona"
 msgstr "Select an area"
 
 #: reservas/forms.py
+msgid "Si el residente no lo toma, debe entregar la zona limpia o se le cobra este valor."
+msgstr "If the resident doesn't take it, they must return the area clean or be charged this amount."
+
+#: reservas/forms.py
+msgid "Sí, quedó limpia"
+msgstr "Yes, it was left clean"
+
+#: reservas/forms.py
 msgid "Termina"
 msgstr "Ends"
 
@@ -1291,8 +1534,29 @@ msgid "Unidad que reserva"
 msgstr "Booking unit"
 
 #: reservas/forms.py
-msgid "Zona común"
-msgstr "Common area"
+msgid "Valor de la limpieza (COP)"
+msgstr "Cleaning price (COP)"
+
+#: reservas/forms.py
+msgid "Valor de reposición (COP)"
+msgstr "Replacement value (COP)"
+
+#: reservas/forms.py
+msgid "¿La zona quedó limpia?"
+msgstr "Was the area left clean?"
+
+#: reservas/templates/reservas/form_reserva.html
+#, python-format
+msgid "%(v)s/h"
+msgstr "%(v)s/h"
+
+#: reservas/templates/reservas/form_reserva.html
+msgid "Al terminar, portería recibe la zona y revisa los implementos prestados. Lo que falte o llegue dañado se cobra como multa."
+msgstr "At the end, the front desk receives the area and checks the lent items. Anything missing or damaged is charged as a fine."
+
+#: reservas/templates/reservas/form_reserva.html
+msgid "Cada hora iniciada se cobra completa. La factura aparece en Mis pagos cuando la administración aprueba la reserva."
+msgstr "Each started hour is charged in full. The invoice appears in My payments when the administration approves the reservation."
 
 #: reservas/templates/reservas/form_reserva.html
 msgid "Capacidad sin definir"
@@ -1313,6 +1577,10 @@ msgstr "Edit booking"
 #: reservas/templates/reservas/form_reserva.html
 msgid "Enviar solicitud"
 msgstr "Send request"
+
+#: reservas/templates/reservas/form_reserva.html
+msgid "Gratis"
+msgstr "Free"
 
 #: reservas/templates/reservas/form_reserva.html
 #, python-format
@@ -1348,6 +1616,10 @@ msgid "Si la zona ya está ocupada en ese horario, el sistema te avisará para q
 msgstr "If the area is already taken at that time, the system will tell you so you can choose another."
 
 #: reservas/templates/reservas/form_reserva.html
+msgid "Si no tomas el servicio de limpieza, la zona debe quedar limpia; si no, se cobra la limpieza."
+msgstr "If you don't take the cleaning service, the area must be left clean; otherwise cleaning is charged."
+
+#: reservas/templates/reservas/form_reserva.html
 msgid "Sin zonas habilitadas."
 msgstr "No areas enabled."
 
@@ -1360,12 +1632,29 @@ msgid "Una reserva puede durar máximo 12 horas."
 msgstr "A booking can last up to 12 hours."
 
 #: reservas/templates/reservas/form_reserva.html
+msgid "Valor estimado"
+msgstr "Estimated cost"
+
+#: reservas/templates/reservas/form_reserva.html
 msgid "Zonas disponibles"
 msgstr "Available areas"
 
 #: reservas/templates/reservas/form_reserva.html
 msgid "antes de registrar reservas."
 msgstr "before recording bookings."
+
+#: reservas/templates/reservas/form_reserva.html
+#, python-format
+msgid "limpieza %(v)s"
+msgstr "cleaning %(v)s"
+
+#: reservas/templates/reservas/form_zona.html
+msgid "Al recibir la zona, portería revisa estos implementos. Lo que falte o llegue dañado se cobra por su valor de reposición."
+msgstr "When receiving the area, the front desk checks these items. Anything missing or damaged is charged at its replacement value."
+
+#: reservas/templates/reservas/form_zona.html
+msgid "Cobra por hora solo las zonas que lo ameritan (salón social, BBQ). Las demás pueden quedar en 0."
+msgstr "Charge by the hour only where it makes sense (party room, BBQ). The rest can stay at 0."
 
 #: reservas/templates/reservas/form_zona.html
 msgid "Crear zona"
@@ -1385,8 +1674,16 @@ msgid "En reglas escribe horarios, aforo y lo que no está permitido: los reside
 msgstr "In rules, write hours, capacity and what is not allowed: residents see them before booking."
 
 #: reservas/templates/reservas/form_zona.html
+msgid "Hay dos filas vacías para agregar implementos; guarda y vuelve a entrar si necesitas más."
+msgstr "There are two empty rows to add items; save and come back if you need more."
+
+#: reservas/templates/reservas/form_zona.html
 msgid "Ideas de zonas"
 msgstr "Area ideas"
+
+#: reservas/templates/reservas/form_zona.html
+msgid "Inventario que se presta con la zona"
+msgstr "Items lent with the area"
 
 #: reservas/templates/reservas/form_zona.html
 msgid "Las zonas marcadas como disponibles aparecen para reservar."
@@ -1401,8 +1698,105 @@ msgid "Nueva zona común"
 msgstr "New common area"
 
 #: reservas/templates/reservas/form_zona.html
+msgid "Quitar"
+msgstr "Remove"
+
+#: reservas/templates/reservas/form_zona.html
+msgid "Quitar del inventario"
+msgstr "Remove from inventory"
+
+#: reservas/templates/reservas/form_zona.html
+msgid "Reposición (COP)"
+msgstr "Replacement (COP)"
+
+#: reservas/templates/reservas/form_zona.html
 msgid "Salón social, zona BBQ, piscina, gimnasio, cancha múltiple, sala de juegos."
 msgstr "Party hall, BBQ area, pool, gym, sports court, game room."
+
+#: reservas/templates/reservas/lista_entregas.html
+msgid "Aún no se ha recibido ninguna zona."
+msgstr "No area has been received yet."
+
+#: reservas/templates/reservas/lista_entregas.html
+msgid "Completa"
+msgstr "Complete"
+
+#: reservas/templates/reservas/lista_entregas.html
+msgid "Comprobante"
+msgstr "Receipt"
+
+#: reservas/templates/reservas/lista_entregas.html
+msgid "Cuando termine una reserva, recibe la zona y revisa los implementos prestados."
+msgstr "When a reservation ends, receive the area and check the lent items."
+
+#: reservas/templates/reservas/lista_entregas.html
+msgid "Entregas de zonas comunes"
+msgstr "Common area handovers"
+
+#: reservas/templates/reservas/lista_entregas.html
+msgid "Entrégales los implementos de la lista de la zona."
+msgstr "Hand them the items on the area's list."
+
+#: reservas/templates/reservas/lista_entregas.html
+msgid "Las reservas aprobadas aparecen aquí desde que empiezan hasta que alguien recibe la zona."
+msgstr "Approved reservations show up here from their start until someone receives the area."
+
+#: reservas/templates/reservas/lista_entregas.html
+#, python-format
+msgid "Multa %(v)s"
+msgstr "Fine %(v)s"
+
+#: reservas/templates/reservas/lista_entregas.html
+msgid "Más tarde, hoy"
+msgstr "Later today"
+
+#: reservas/templates/reservas/lista_entregas.html
+msgid "No hay zonas por recibir"
+msgstr "No areas to receive"
+
+#: reservas/templates/reservas/lista_entregas.html
+msgid "Por recibir"
+msgstr "To receive"
+
+#: reservas/templates/reservas/lista_entregas.html
+msgid "Recibida"
+msgstr "Received"
+
+#: reservas/templates/reservas/lista_entregas.html
+msgid "Recibidas"
+msgstr "Received"
+
+#: reservas/templates/reservas/lista_entregas.html
+msgid "Recibir zona"
+msgstr "Receive area"
+
+#: reservas/templates/reservas/lista_entregas.html
+msgid "Resultado"
+msgstr "Result"
+
+#: reservas/templates/reservas/lista_entregas.html
+msgid "Zona"
+msgstr "Area"
+
+#: reservas/templates/reservas/lista_entregas.html
+msgid "con limpieza"
+msgstr "with cleaning"
+
+#: reservas/templates/reservas/lista_entregas.html
+msgid "en uso"
+msgstr "in use"
+
+#: reservas/templates/reservas/lista_entregas.html
+#, python-format
+msgid "terminó hace %(t)s"
+msgstr "ended %(t)s ago"
+
+#: reservas/templates/reservas/lista_reservas.html
+#, python-format
+msgid "%(n)s hora"
+msgid_plural "%(n)s horas"
+msgstr[0] "%(n)s hour"
+msgstr[1] "%(n)s hours"
 
 #: reservas/templates/reservas/lista_reservas.html
 msgid "Aprobadas"
@@ -1423,6 +1817,22 @@ msgstr "Change"
 #: reservas/templates/reservas/lista_reservas.html
 msgid "Canceladas"
 msgstr "Cancelled"
+
+#: reservas/templates/reservas/lista_reservas.html
+msgid "Con limpieza"
+msgstr "With cleaning"
+
+#: reservas/templates/reservas/lista_reservas.html
+msgid "Descargar comprobante en PDF"
+msgstr "Download PDF receipt"
+
+#: reservas/templates/reservas/lista_reservas.html
+msgid "Entregada completa"
+msgstr "Returned complete"
+
+#: reservas/templates/reservas/lista_reservas.html
+msgid "Finalizadas"
+msgstr "Finished"
 
 #: reservas/templates/reservas/lista_reservas.html
 msgid "Mira las zonas comunes disponibles y separa la que necesites."
@@ -1473,6 +1883,10 @@ msgid "Reservas del conjunto"
 msgstr "Community bookings"
 
 #: reservas/templates/reservas/lista_reservas.html
+msgid "Sin costo"
+msgstr "Free"
+
+#: reservas/templates/reservas/lista_reservas.html
 msgid "Todas"
 msgstr "All"
 
@@ -1507,6 +1921,11 @@ msgid "%(n)s personas"
 msgstr "%(n)s people"
 
 #: reservas/templates/reservas/lista_zonas.html
+#, python-format
+msgid "%(v)s por hora"
+msgstr "%(v)s per hour"
+
+#: reservas/templates/reservas/lista_zonas.html
 msgid "Crea el salón social, la zona BBQ, la piscina o cualquier espacio que se pueda reservar."
 msgstr "Create the party hall, the BBQ area, the pool or any space that can be booked."
 
@@ -1523,12 +1942,21 @@ msgid "Espacios que los residentes pueden reservar."
 msgstr "Spaces residents can book."
 
 #: reservas/templates/reservas/lista_zonas.html
+#, python-format
+msgid "Limpieza opcional %(v)s"
+msgstr "Optional cleaning %(v)s"
+
+#: reservas/templates/reservas/lista_zonas.html
 msgid "No hay zonas comunes registradas"
 msgstr "There are no common areas yet"
 
 #: reservas/templates/reservas/lista_zonas.html
 msgid "Reservar"
 msgstr "Book"
+
+#: reservas/templates/reservas/lista_zonas.html
+msgid "Se presta:"
+msgstr "Lent:"
 
 #: reservas/templates/reservas/lista_zonas.html
 msgid "Sin descripción."
@@ -1539,10 +1967,69 @@ msgstr "No description."
 msgid "¿Eliminar la zona %(zona)s? Si tiene reservas, solo se marcará como no disponible."
 msgstr "Delete the area %(zona)s? If it has bookings, it will only be marked as unavailable."
 
+#: reservas/templates/reservas/recibir_zona.html
+msgid "Cómo revisar"
+msgstr "How to check"
+
+#: reservas/templates/reservas/recibir_zona.html
+msgid "Deja en 0 lo que está completo. Escribe cuántos faltan o llegaron dañados."
+msgstr "Leave complete items at 0. Enter how many are missing or damaged."
+
+#: reservas/templates/reservas/recibir_zona.html
+msgid "Esta reserva incluye el servicio de limpieza: el conjunto se encarga del aseo."
+msgstr "This reservation includes cleaning: the complex takes care of it."
+
+#: reservas/templates/reservas/recibir_zona.html
+msgid "Esta zona no tiene implementos en su inventario."
+msgstr "This area has no items in its inventory."
+
+#: reservas/templates/reservas/recibir_zona.html
+msgid "Implementos prestados"
+msgstr "Lent items"
+
+#: reservas/templates/reservas/recibir_zona.html
+msgid "La hora de entrega y tu usuario se guardan solos."
+msgstr "The handover time and your user are saved automatically."
+
+#: reservas/templates/reservas/recibir_zona.html
+msgid "Lo que falte o esté dañado se cobra al residente como multa, por su valor de reposición."
+msgstr "Anything missing or damaged is charged to the resident as a fine, at its replacement value."
+
+#: reservas/templates/reservas/recibir_zona.html
+#, python-format
+msgid "No tomaron el servicio de limpieza: si quedó sucia se cobran %(v)s."
+msgstr "They didn't take the cleaning service: if it was left dirty, %(v)s is charged."
+
+#: reservas/templates/reservas/recibir_zona.html
+msgid "Queda anotado en el comprobante."
+msgstr "It is noted on the receipt."
+
+#: reservas/templates/reservas/recibir_zona.html
+#, python-format
+msgid "Recibir %(zona)s"
+msgstr "Receive %(zona)s"
+
+#: reservas/templates/reservas/recibir_zona.html
+msgid "Reposición c/u"
+msgstr "Replacement each"
+
+#: reservas/templates/reservas/recibir_zona.html
+#, python-format
+msgid "Reserva de %(unidad)s, %(inicio)s – %(fin)s. Cuenta cada implemento antes de confirmar."
+msgstr "Reservation for %(unidad)s, %(inicio)s – %(fin)s. Count every item before confirming."
+
 #: reservas/views.py
 #, python-format
 msgid "\"%(zona)s\" tiene reservas, así que se marcó como no disponible en vez de borrarse."
 msgstr "\"%(zona)s\" has bookings, so it was marked as unavailable instead of being deleted."
+
+#: reservas/views.py
+msgid "Esta reserva ya terminó y la zona fue recibida."
+msgstr "This reservation is over and the area was received."
+
+#: reservas/views.py
+msgid "Esta zona ya fue recibida."
+msgstr "This area was already received."
 
 #: reservas/views.py
 msgid "No puedes poner la reserva en ese estado."
@@ -1574,6 +2061,10 @@ msgid "Solo se pueden cancelar reservas que todavía no han empezado."
 msgstr "Only bookings that have not started yet can be cancelled."
 
 #: reservas/views.py
+msgid "Solo se recibe una zona de una reserva aprobada que ya empezó."
+msgstr "Only an area from an approved reservation that has started can be received."
+
+#: reservas/views.py
 msgid "Ya hay otra reserva aprobada para esa zona en ese horario."
 msgstr "There is already another approved booking for that area at that time."
 
@@ -1586,6 +2077,15 @@ msgstr "Area \"%(nombre)s\" saved."
 #, python-format
 msgid "Zona \"%(zona)s\" eliminada."
 msgstr "Area \"%(zona)s\" deleted."
+
+#: reservas/views.py
+msgid "Zona recibida completa. ¡Todo en orden!"
+msgstr "Area received complete. All good!"
+
+#: reservas/views.py
+#, python-format
+msgid "Zona recibida con novedades: se generó una multa de %(valor)s."
+msgstr "Area received with issues: a fine of %(valor)s was created."
 
 #: residentes/forms.py
 msgid "Apartamento"
@@ -2004,6 +2504,10 @@ msgid "Cuenta"
 msgstr "Account"
 
 #: usuarios/context_processors.py
+msgid "Entregas de zonas"
+msgstr "Area handovers"
+
+#: usuarios/context_processors.py
 msgid "General"
 msgstr "General"
 
@@ -2200,10 +2704,10 @@ msgstr[1] "%(n)s guards"
 
 #: usuarios/templates/usuarios/dashboard_admin.html
 #, python-format
-msgid "%(n)s visitante dentro"
-msgid_plural "%(n)s visitantes dentro"
-msgstr[0] "%(n)s visitor inside"
-msgstr[1] "%(n)s visitors inside"
+msgid "%(n)s visitante hoy"
+msgid_plural "%(n)s visitantes hoy"
+msgstr[0] "%(n)s visitor today"
+msgstr[1] "%(n)s visitors today"
 
 #: usuarios/templates/usuarios/dashboard_admin.html
 msgid "Accesos rápidos"
@@ -2474,8 +2978,12 @@ msgid "Buscar placa"
 msgstr "Look up plate"
 
 #: usuarios/templates/usuarios/dashboard_seguridad.html
-msgid "Cuando registres un ingreso aparecerá aquí hasta que marques su salida."
-msgstr "When you record an entry, it will appear here until you record the exit."
+msgid "C.C."
+msgstr "ID"
+
+#: usuarios/templates/usuarios/dashboard_seguridad.html
+msgid "Hoy no ha entrado ningún visitante"
+msgstr "No visitors have come in today"
 
 #: usuarios/templates/usuarios/dashboard_seguridad.html
 msgid "Ingresos hoy"
@@ -2486,12 +2994,12 @@ msgid "No hay paquetes pendientes"
 msgstr "No pending packages"
 
 #: usuarios/templates/usuarios/dashboard_seguridad.html
-msgid "No hay visitantes dentro"
-msgstr "There are no visitors inside"
-
-#: usuarios/templates/usuarios/dashboard_seguridad.html
 msgid "Pendientes por entregar"
 msgstr "Waiting to be delivered"
+
+#: usuarios/templates/usuarios/dashboard_seguridad.html
+msgid "Personas registradas en portería"
+msgstr "People logged at the front desk"
 
 #: usuarios/templates/usuarios/dashboard_seguridad.html
 #, python-format
@@ -2501,6 +3009,10 @@ msgstr "Collected today: %(valor)s"
 #: usuarios/templates/usuarios/dashboard_seguridad.html
 msgid "Registra cada ingreso, los vehículos de visitantes y los paquetes que lleguen."
 msgstr "Log every entry, visitor vehicles and incoming packages."
+
+#: usuarios/templates/usuarios/dashboard_seguridad.html
+msgid "Registra cada persona que entra al conjunto con su nombre, cédula y la unidad que visita."
+msgstr "Log everyone who enters the complex with their name, ID number and the unit they visit."
 
 #: usuarios/templates/usuarios/dashboard_seguridad.html
 msgid "Registrar el vehículo de este visitante"
@@ -2513,6 +3025,10 @@ msgstr "Record exit"
 #: usuarios/templates/usuarios/dashboard_seguridad.html
 msgid "Registrar visitante"
 msgstr "Record visitor"
+
+#: usuarios/templates/usuarios/dashboard_seguridad.html
+msgid "Revisa el inventario al recibirlas"
+msgstr "Check the inventory when receiving them"
 
 #: usuarios/templates/usuarios/dashboard_seguridad.html
 msgid "Vehículo"
@@ -2539,12 +3055,12 @@ msgid "Visitante"
 msgstr "Visitor"
 
 #: usuarios/templates/usuarios/dashboard_seguridad.html
-msgid "Visitantes dentro"
-msgstr "Visitors inside"
+msgid "Visitantes de hoy"
+msgstr "Today's visitors"
 
 #: usuarios/templates/usuarios/dashboard_seguridad.html
-msgid "Visitantes dentro del conjunto"
-msgstr "Visitors inside the community"
+msgid "Zonas por recibir"
+msgstr "Areas to receive"
 
 #: usuarios/templates/usuarios/form_guardia.html
 msgid "Consultar las placas de los vehículos de los residentes."
@@ -2734,6 +3250,10 @@ msgstr "Delivered"
 #: usuarios/textos_db.py
 msgid "Estructural"
 msgstr "Structural"
+
+#: usuarios/textos_db.py
+msgid "Finalizada"
+msgstr "Finished"
 
 #: usuarios/textos_db.py
 msgid "Inactivo"
@@ -2930,52 +3450,32 @@ msgid "Vehículo %(placa)s guardado."
 msgstr "Vehicle %(placa)s saved."
 
 #: visitantes/forms.py
-msgid "Dentro del conjunto"
-msgstr "Inside the community"
+msgid "Cédula"
+msgstr "ID number"
 
 #: visitantes/forms.py
-msgid "Ej: visita familiar, domicilio, mantenimiento"
-msgstr "E.g. family visit, delivery, maintenance"
+msgid "Hora de entrada"
+msgstr "Entry time"
 
 #: visitantes/forms.py
-msgid "Ingreso"
-msgstr "Entry"
+msgid "La hora de entrada no puede estar en el futuro."
+msgstr "The entry time cannot be in the future."
 
 #: visitantes/forms.py
-msgid "La salida debe ser posterior al ingreso."
-msgstr "The exit must be after the entry."
-
-#: visitantes/forms.py
-msgid "Motivo"
-msgstr "Reason"
-
-#: visitantes/forms.py
-msgid "Salida"
-msgstr "Exit"
-
-#: visitantes/forms.py
-msgid "Si ya tiene hora de salida, el estado debe ser \"Ya salió\"."
-msgstr "If there is already an exit time, the status must be \"Has left\"."
-
-#: visitantes/forms.py
-msgid "Visita a"
-msgstr "Visiting"
-
-#: visitantes/forms.py
-msgid "Ya salió"
-msgstr "Has left"
+msgid "Selecciona la torre y el apartamento"
+msgstr "Choose the tower and apartment"
 
 #: visitantes/templates/visitantes/form_visitante.html
-msgid "1. Pide el documento de identidad del visitante."
-msgstr "1. Ask for the visitor’s ID."
+msgid "1. Pide la cédula del visitante."
+msgstr "1. Ask for the visitor's ID."
 
 #: visitantes/templates/visitantes/form_visitante.html
-msgid "2. Confirma por citófono con el residente que lo autoriza."
-msgstr "2. Confirm with the resident over the intercom."
+msgid "2. Confirma por citófono con la unidad que visita."
+msgstr "2. Confirm by intercom with the unit being visited."
 
 #: visitantes/templates/visitantes/form_visitante.html
-msgid "3. Al salir, usa el botón Salida en la lista de visitantes."
-msgstr "3. When they leave, use the Exit button in the visitor list."
+msgid "3. Si llega en carro o moto, regístralo también en el parqueadero de visitantes."
+msgstr "3. If they arrive by car or motorcycle, also log it in visitor parking."
 
 #: visitantes/templates/visitantes/form_visitante.html
 msgid "Antes de dejar entrar"
@@ -2996,8 +3496,8 @@ msgid "Ingreso registrado por <strong>@%(usuario)s</strong>."
 msgstr "Entry recorded by <strong>@%(usuario)s</strong>."
 
 #: visitantes/templates/visitantes/form_visitante.html
-msgid "La hora de ingreso se llena sola con la hora actual."
-msgstr "The entry time is filled in automatically with the current time."
+msgid "Solo se piden nombres, cédula, hora de entrada y la unidad que visita."
+msgstr "Only names, ID number, entry time and the unit visited are required."
 
 #: visitantes/templates/visitantes/lista_visitantes.html
 #, python-format
@@ -3007,40 +3507,28 @@ msgstr[0] "%(n)s entry today"
 msgstr[1] "%(n)s entries today"
 
 #: visitantes/templates/visitantes/lista_visitantes.html
-#, python-format
-msgid "%(n)s persona dentro del conjunto"
-msgid_plural "%(n)s personas dentro del conjunto"
-msgstr[0] "%(n)s person inside the community"
-msgstr[1] "%(n)s people inside the community"
-
-#: visitantes/templates/visitantes/lista_visitantes.html
 msgid "Aún no hay visitas registradas"
 msgstr "There are no recorded visits yet"
+
+#: visitantes/templates/visitantes/lista_visitantes.html
+msgid "Hoy"
+msgstr "Today"
 
 #: visitantes/templates/visitantes/lista_visitantes.html
 msgid "No hay visitantes con ese filtro"
 msgstr "No visitors match that filter"
 
 #: visitantes/templates/visitantes/lista_visitantes.html
-msgid "Nombre o documento"
+msgid "Nombre o cédula"
 msgstr "Name or ID number"
 
 #: visitantes/templates/visitantes/lista_visitantes.html
-msgid "Prueba buscando por número de documento."
+msgid "Prueba buscando por número de cédula."
 msgstr "Try searching by ID number."
-
-#: visitantes/templates/visitantes/lista_visitantes.html
-msgid "Registra cada persona que entra al conjunto para tener control de quién está adentro."
-msgstr "Record everyone who enters the community to know who is inside."
 
 #: visitantes/templates/visitantes/lista_visitantes.html
 msgid "Registro de visitantes"
 msgstr "Visitor log"
-
-#: visitantes/views.py
-#, python-format
-msgid "%(nombre)s ya tenía registrada su salida."
-msgstr "%(nombre)s already had their exit recorded."
 
 #: visitantes/views.py
 #, python-format
@@ -3050,8 +3538,3 @@ msgstr "Entry for %(nombre)s recorded."
 #: visitantes/views.py
 msgid "Registro de visitante actualizado."
 msgstr "Visitor record updated."
-
-#: visitantes/views.py
-#, python-format
-msgid "Salida de %(nombre)s registrada a las %(hora)s."
-msgstr "Exit for %(nombre)s recorded at %(hora)s."

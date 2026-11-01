@@ -19,21 +19,12 @@
 </section>
 
 <div class="grid-stats">
-    <div class="stat stat--cielo">
-        <span class="stat__icono">{% icono "visitante" %}</span>
-        <span class="stat__etiqueta">{% translate "Visitantes dentro" %}</span>
-        <span class="stat__valor">{{ total_dentro }}</span>
-    </div>
-    <div class="stat">
+    <a href="{% url 'lista_visitantes' %}?cuando=hoy" class="stat stat--menta">
         <span class="stat__icono">{% icono "puerta" %}</span>
         <span class="stat__etiqueta">{% translate "Ingresos hoy" %}</span>
         <span class="stat__valor">{{ ingresos_hoy }}</span>
-    </div>
-    <div class="stat stat--menta">
-        <span class="stat__icono">{% icono "salir" %}</span>
-        <span class="stat__etiqueta">{% translate "Salidas hoy" %}</span>
-        <span class="stat__valor">{{ salidas_hoy }}</span>
-    </div>
+        <span class="stat__nota">{% translate "Personas registradas en portería" %}</span>
+    </a>
     <a href="{% url 'lista_vehiculos' %}" class="stat stat--ambar">
         <span class="stat__icono">{% icono "carro" %}</span>
         <span class="stat__etiqueta">{% translate "Vehículos registrados" %}</span>
@@ -44,6 +35,12 @@
         <span class="stat__etiqueta">{% translate "Vehículos visitantes" %}</span>
         <span class="stat__valor">{{ total_parqueos }}</span>
         <span class="stat__nota">{% blocktranslate with valor=recaudado_hoy|pesos %}Recaudado hoy: {{ valor }}{% endblocktranslate %}</span>
+    </a>
+    <a href="{% url 'lista_entregas' %}" class="stat stat--menta{% if zonas_por_recibir %} stat--alerta{% endif %}">
+        <span class="stat__icono">{% icono "zona" %}</span>
+        <span class="stat__etiqueta">{% translate "Zonas por recibir" %}</span>
+        <span class="stat__valor">{{ zonas_por_recibir }}</span>
+        <span class="stat__nota">{% translate "Revisa el inventario al recibirlas" %}</span>
     </a>
     <a href="{% url 'lista_paquetes' %}?estado=En recepción" class="stat stat--coral">
         <span class="stat__icono">{% icono "paquete" %}</span>
@@ -115,29 +112,20 @@
 
 <section class="panel">
     <div class="panel__cabecera">
-        <h2>{% icono "visitante" %} {% translate "Visitantes dentro del conjunto" %}</h2>
+        <h2>{% icono "visitante" %} {% translate "Visitantes de hoy" %}</h2>
         <a href="{% url 'lista_visitantes' %}">{% translate "Historial" %} {% icono "derecha" %}</a>
     </div>
-    {% if visitantes_dentro %}
+    {% if visitantes_hoy %}
         <div class="tabla-contenedor">
             <table>
-                <thead><tr><th>{% translate "Visitante" %}</th><th>{% translate "Visita a" %}</th><th>{% translate "Motivo" %}</th><th>{% translate "Ingreso" %}</th><th class="derecha">{% translate "Acción" %}</th></tr></thead>
+                <thead><tr><th>{% translate "Visitante" %}</th><th>{% translate "Visita a" %}</th><th>{% translate "Hora de entrada" %}</th><th class="derecha">{% translate "Acción" %}</th></tr></thead>
                 <tbody>
-                {% for v in visitantes_dentro %}
+                {% for v in visitantes_hoy %}
                     <tr>
-                        <td><div class="celda-principal"><span class="avatar avatar--cielo">{{ v.nombre|default:""|first|upper }}{{ v.apellidos|default:""|first|upper }}</span><div><strong>{{ v.nombre }} {{ v.apellidos }}</strong><small>{{ v.tipo_documento }} {{ v.num_documento }}</small></div></div></td>
-                        <td>{{ v.id_residente_fk|default:"—" }}{% if v.id_residente_fk.id_unidad_fk %}<small class="texto-suave" style="display:block">{{ v.id_residente_fk.id_unidad_fk }}</small>{% endif %}</td>
-                        <td>{{ v.motivo|default:"—" }}</td>
-                        <td class="num">{{ v.fecha_ingreso|date:"H:i" }}<small class="texto-suave" style="display:block">{% blocktranslate with tiempo=v.fecha_ingreso|timesince %}hace {{ tiempo }}{% endblocktranslate %}</small></td>
-                        <td class="derecha">
-                            <div class="acciones" style="justify-content:flex-end">
-                                <a href="{% url 'crear_parqueo' %}?visitante={{ v.pk }}" class="btn btn-fantasma btn-sm" title="{% translate 'Registrar el vehículo de este visitante' %}">{% icono "parqueadero" %} {% translate "Vehículo" %}</a>
-                                <form method="post" action="{% url 'registrar_salida' v.pk %}">
-                                    {% csrf_token %}<input type="hidden" name="next" value="{{ request.path }}">
-                                    <button class="btn btn-secundario btn-sm">{% icono "salir" %} {% translate "Registrar salida" %}</button>
-                                </form>
-                            </div>
-                        </td>
+                        <td><div class="celda-principal"><span class="avatar avatar--cielo">{{ v.nombre|default:""|first|upper }}{{ v.apellidos|default:""|first|upper }}</span><div><strong>{{ v.nombre }} {{ v.apellidos }}</strong><small>{% translate "C.C." %} {{ v.num_documento }}</small></div></div></td>
+                        <td>{{ v.unidad_visitada|default:"—" }}</td>
+                        <td class="num">{{ v.fecha_ingreso|date:"H:i" }}</td>
+                        <td class="derecha"><a href="{% url 'crear_parqueo' %}?visitante={{ v.pk }}" class="btn btn-fantasma btn-sm" title="{% translate 'Registrar el vehículo de este visitante' %}">{% icono "parqueadero" %} {% translate "Vehículo" %}</a></td>
                     </tr>
                 {% endfor %}
                 </tbody>
@@ -146,8 +134,8 @@
     {% else %}
         <div class="vacio">
             <div class="vacio__icono">{% icono "escudo" %}</div>
-            <h3>{% translate "No hay visitantes dentro" %}</h3>
-            <p>{% translate "Cuando registres un ingreso aparecerá aquí hasta que marques su salida." %}</p>
+            <h3>{% translate "Hoy no ha entrado ningún visitante" %}</h3>
+            <p>{% translate "Registra cada persona que entra al conjunto con su nombre, cédula y la unidad que visita." %}</p>
             <a href="{% url 'crear_visitante' %}" class="btn btn-primario btn-sm">{% icono "mas" %} {% translate "Registrar visitante" %}</a>
         </div>
     {% endif %}

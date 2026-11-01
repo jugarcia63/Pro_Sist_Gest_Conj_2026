@@ -14,6 +14,14 @@
 {% endif %}
 {% endblock %}
 {% block lateral %}
+{{ tarifas_zonas|json_script:"tarifas-zonas" }}
+<section class="panel" id="panel-estimado" hidden>
+    <div class="panel__cabecera"><h2>{% icono "billetera" %} {% translate "Valor estimado" %}</h2></div>
+    <div class="panel__cuerpo" style="display:grid;gap:.5rem">
+        <div class="valor-estimado"><span data-estimado-detalle></span><strong data-estimado-total>$0</strong></div>
+        <p class="texto-suave" style="font-size:.82rem">{% translate "Cada hora iniciada se cobra completa. La factura aparece en Mis pagos cuando la administración aprueba la reserva." %}</p>
+    </div>
+</section>
 <section class="panel">
     <div class="panel__cabecera"><h2>{% icono "zona" %} {% translate "Zonas disponibles" %}</h2></div>
     {% if zonas %}
@@ -21,7 +29,8 @@
             {% for z in zonas %}
                 <div class="lista__item">
                     <span class="avatar avatar--menta">{% icono "zona" %}</span>
-                    <div class="lista__cuerpo"><strong>{{ z.nombre }}</strong><small>{% if z.capacidad %}{% blocktranslate with n=z.capacidad %}Hasta {{ n }} personas{% endblocktranslate %}{% else %}{% translate "Capacidad sin definir" %}{% endif %}</small></div>
+                    <div class="lista__cuerpo"><strong>{{ z.nombre }}</strong><small>{% if z.capacidad %}{% blocktranslate with n=z.capacidad %}Hasta {{ n }} personas{% endblocktranslate %}{% else %}{% translate "Capacidad sin definir" %}{% endif %}{% if z.ofrece_limpieza %} · {% blocktranslate with v=z.valor_limpieza|pesos %}limpieza {{ v }}{% endblocktranslate %}{% endif %}</small></div>
+                    <span class="badge {% if z.es_paga %}badge-aviso{% else %}badge-neutro{% endif %}">{% if z.es_paga %}{% blocktranslate with v=z.valor_hora|pesos %}{{ v }}/h{% endblocktranslate %}{% else %}{% translate "Gratis" %}{% endif %}</span>
                 </div>
             {% endfor %}
         </div>
@@ -34,6 +43,8 @@
     <div class="panel__cuerpo" style="display:grid;gap:.6rem">
         <p>{% translate "Una reserva puede durar máximo 12 horas." %}</p>
         <p>{% translate "Si la zona ya está ocupada en ese horario, el sistema te avisará para que elijas otro." %}</p>
+        <p>{% translate "Al terminar, portería recibe la zona y revisa los implementos prestados. Lo que falte o llegue dañado se cobra como multa." %}</p>
+        <p>{% translate "Si no tomas el servicio de limpieza, la zona debe quedar limpia; si no, se cobra la limpieza." %}</p>
     </div>
 </section>
 {% endblock %}
