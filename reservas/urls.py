@@ -11,6 +11,7 @@ urlpatterns = [
     path('entregas/recibir/<int:id_reservas>/', views.recibir_zona, name='recibir_zona'),
 
     path('zonas/', views.ListaZonas.as_view(), name='lista_zonas'),
+    path('zonas/<int:id_zona>/calendario/', views.calendario_zona, name='calendario_zona'),
     path('zonas/nueva/', views.CrearZona.as_view(), name='crear_zona'),
     path('zonas/editar/<int:id_zona>/', views.EditarZona.as_view(), name='editar_zona'),
     path('zonas/eliminar/<int:id_zona>/', views.eliminar_zona, name='eliminar_zona'),

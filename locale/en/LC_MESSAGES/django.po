@@ -6,6 +6,42 @@ msgstr ""
 "Language: en\n"
 "Plural-Forms: nplurals=2; plural=(n != 1);\n"
 
+#: avisos/templates/avisos/_aviso.html
+#, python-format
+msgid "hace %(t)s"
+msgstr "%(t)s ago"
+
+#: avisos/templates/avisos/lista_avisos.html
+msgid "Aquí te contaremos cuando llegue un paquete, cambie una reserva o tengas una factura nueva."
+msgstr "We'll let you know here when a package arrives, a reservation changes or you have a new invoice."
+
+#: avisos/templates/avisos/lista_avisos.html
+msgid "Avisos"
+msgstr "Notifications"
+
+#: avisos/templates/avisos/lista_avisos.html
+msgid "Estás al día."
+msgstr "You're all caught up."
+
+#: avisos/templates/avisos/lista_avisos.html
+msgid "No tienes avisos"
+msgstr "You have no notifications"
+
+#: avisos/templates/avisos/lista_avisos.html
+msgid "Notificaciones"
+msgstr "Notifications"
+
+#: avisos/templates/avisos/lista_avisos.html
+#, python-format
+msgid "Tienes %(n)s aviso nuevo."
+msgid_plural "Tienes %(n)s avisos nuevos."
+msgstr[0] "You have %(n)s new notification."
+msgstr[1] "You have %(n)s new notifications."
+
+#: avisos/templates/avisos/lista_avisos.html
+msgid "Volver"
+msgstr "Back"
+
 #: pagos/forms.py
 msgid "CVV"
 msgstr "CVV"
@@ -110,6 +146,46 @@ msgstr "Amount (COP)"
 msgid "Vencimiento (MM/AA)"
 msgstr "Expiry (MM/YY)"
 
+#: pagos/recaudo.py
+#, python-format
+msgid "Conjunto Reserva de Madrid · generado el %(fecha)s"
+msgstr "Conjunto Reserva de Madrid · generated on %(fecha)s"
+
+#: pagos/recaudo.py
+msgid "De eso, vencido"
+msgstr "Of which overdue"
+
+#: pagos/recaudo.py
+msgid "Mes"
+msgstr "Month"
+
+#: pagos/recaudo.py
+msgid "Por cobrar hoy"
+msgstr "Outstanding today"
+
+#: pagos/recaudo.py
+#, python-format
+msgid "Por cobrar hoy: <b>%(pendiente)s</b> (de eso, vencido: %(vencido)s). Las facturas cuentan en el mes en que se pagaron; el parqueadero de visitantes, en el mes en que salió el vehículo."
+msgstr "Outstanding today: <b>%(pendiente)s</b> (of which overdue: %(vencido)s). Invoices count in the month they were paid; visitor parking, in the month the vehicle left."
+
+#: pagos/recaudo.py
+#, python-format
+msgid "Recaudo %(anio)s"
+msgstr "Collections %(anio)s"
+
+#: pagos/recaudo.py
+#, python-format
+msgid "Recaudo %(anio)s · Conjunto Reserva de Madrid"
+msgstr "Collections %(anio)s · Conjunto Reserva de Madrid"
+
+#: pagos/recaudo.py
+msgid "Reporte de recaudo"
+msgstr "Collections report"
+
+#: pagos/recaudo.py
+msgid "Total"
+msgstr "Total"
+
 #: pagos/templates/pagos/form_pago.html
 msgid "El valor va en pesos colombianos, sin puntos. Ej: 320000."
 msgstr "Enter the amount in Colombian pesos, without dots. E.g. 320000."
@@ -182,10 +258,6 @@ msgid "Genera la cuota de administración u otros cobros para los residentes."
 msgstr "Create the maintenance fee or other charges for residents."
 
 #: pagos/templates/pagos/lista_pagos_admin.html
-msgid "Mes"
-msgstr "Month"
-
-#: pagos/templates/pagos/lista_pagos_admin.html
 msgid "No hay facturas"
 msgstr "There are no invoices"
 
@@ -225,10 +297,6 @@ msgstr "All"
 #: pagos/templates/pagos/lista_pagos_admin.html
 msgid "Vencidos"
 msgstr "Overdue"
-
-#: pagos/templates/pagos/lista_pagos_admin.html
-msgid "Volver"
-msgstr "Back"
 
 #: pagos/templates/pagos/lista_pagos_admin.html
 #, python-format
@@ -333,6 +401,23 @@ msgstr "To test, use card 4111 1111 1111 1111 with any future date."
 #: pagos/templates/pagos/pasarela_pago.html
 msgid "Total a pagar"
 msgstr "Total to pay"
+
+#: pagos/templates/pagos/reporte_recaudo.html
+msgid "Año"
+msgstr "Year"
+
+#: pagos/templates/pagos/reporte_recaudo.html
+msgid "Finanzas"
+msgstr "Finance"
+
+#: pagos/templates/pagos/reporte_recaudo.html
+msgid "Lo que entró por mes y concepto. Las facturas cuentan en el mes en que se pagaron; el parqueadero de visitantes, en el mes en que salió el vehículo."
+msgstr "What came in by month and concept. Invoices count in the month they were paid; visitor parking, in the month the vehicle left."
+
+#: pagos/templates/pagos/reporte_recaudo.html
+#, python-format
+msgid "Recaudado en %(anio)s"
+msgstr "Collected in %(anio)s"
 
 #: pagos/views.py
 msgid "Este pago ya fue realizado."
@@ -1360,10 +1445,6 @@ msgid "Sí"
 msgstr "Yes"
 
 #: reservas/comprobante.py
-msgid "Total"
-msgstr "Total"
-
-#: reservas/comprobante.py
 msgid "Unidad"
 msgstr "Unit"
 
@@ -1545,6 +1626,86 @@ msgstr "Replacement value (COP)"
 msgid "¿La zona quedó limpia?"
 msgstr "Was the area left clean?"
 
+#: reservas/templates/reservas/calendario_zona.html
+#, python-format
+msgid "%(v)s por hora"
+msgstr "%(v)s per hour"
+
+#: reservas/templates/reservas/calendario_zona.html
+msgid "Anterior"
+msgstr "Previous"
+
+#: reservas/templates/reservas/calendario_zona.html
+#, python-format
+msgid "Del %(desde)s al %(hasta)s."
+msgstr "From %(desde)s to %(hasta)s."
+
+#: reservas/templates/reservas/calendario_zona.html
+msgid "Disponibilidad"
+msgstr "Availability"
+
+#: reservas/templates/reservas/calendario_zona.html
+#, python-format
+msgid "Disponibilidad · %(zona)s"
+msgstr "Availability · %(zona)s"
+
+#: reservas/templates/reservas/calendario_zona.html
+msgid "Libre"
+msgstr "Free"
+
+#: reservas/templates/reservas/calendario_zona.html
+msgid "Ocupado"
+msgstr "Taken"
+
+#: reservas/templates/reservas/calendario_zona.html
+msgid "Otras zonas"
+msgstr "Other areas"
+
+#: reservas/templates/reservas/calendario_zona.html
+msgid "Pendiente de aprobación"
+msgstr "Awaiting approval"
+
+#: reservas/templates/reservas/calendario_zona.html
+msgid "Próximos 7 días"
+msgstr "Next 7 days"
+
+#: reservas/templates/reservas/calendario_zona.html
+msgid "Reservada"
+msgstr "Reserved"
+
+#: reservas/templates/reservas/calendario_zona.html
+msgid "Reservar"
+msgstr "Book"
+
+#: reservas/templates/reservas/calendario_zona.html
+#, python-format
+msgid "Reservar desde las %(hora)s:00"
+msgstr "Book from %(hora)s:00"
+
+#: reservas/templates/reservas/calendario_zona.html
+msgid "Semana"
+msgstr "Week"
+
+#: reservas/templates/reservas/calendario_zona.html
+msgid "Siguiente"
+msgstr "Next"
+
+#: reservas/templates/reservas/calendario_zona.html
+msgid "Toca una hora libre para reservarla."
+msgstr "Tap a free hour to book it."
+
+#: reservas/templates/reservas/calendario_zona.html
+msgid "Tu reserva"
+msgstr "Your reservation"
+
+#: reservas/templates/reservas/calendario_zona.html
+msgid "Tu unidad"
+msgstr "Your unit"
+
+#: reservas/templates/reservas/calendario_zona.html
+msgid "Zonas"
+msgstr "Areas"
+
 #: reservas/templates/reservas/form_reserva.html
 #, python-format
 msgid "%(v)s/h"
@@ -1634,6 +1795,10 @@ msgstr "A booking can last up to 12 hours."
 #: reservas/templates/reservas/form_reserva.html
 msgid "Valor estimado"
 msgstr "Estimated cost"
+
+#: reservas/templates/reservas/form_reserva.html
+msgid "Ver horarios libres"
+msgstr "See free times"
 
 #: reservas/templates/reservas/form_reserva.html
 msgid "Zonas disponibles"
@@ -1921,11 +2086,6 @@ msgid "%(n)s personas"
 msgstr "%(n)s people"
 
 #: reservas/templates/reservas/lista_zonas.html
-#, python-format
-msgid "%(v)s por hora"
-msgstr "%(v)s per hour"
-
-#: reservas/templates/reservas/lista_zonas.html
 msgid "Crea el salón social, la zona BBQ, la piscina o cualquier espacio que se pueda reservar."
 msgstr "Create the party hall, the BBQ area, the pool or any space that can be booked."
 
@@ -1949,10 +2109,6 @@ msgstr "Optional cleaning %(v)s"
 #: reservas/templates/reservas/lista_zonas.html
 msgid "No hay zonas comunes registradas"
 msgstr "There are no common areas yet"
-
-#: reservas/templates/reservas/lista_zonas.html
-msgid "Reservar"
-msgstr "Book"
 
 #: reservas/templates/reservas/lista_zonas.html
 msgid "Se presta:"
@@ -2438,6 +2594,13 @@ msgid "Página no encontrada"
 msgstr "Page not found"
 
 #: templates/app.html
+#, python-format
+msgid "%(n)s aviso sin leer"
+msgid_plural "%(n)s avisos sin leer"
+msgstr[0] "%(n)s unread notification"
+msgstr[1] "%(n)s unread notifications"
+
+#: templates/app.html
 msgid "Abrir menú"
 msgstr "Open menu"
 
@@ -2474,10 +2637,6 @@ msgid "Idioma"
 msgstr "Language"
 
 #: templates/partials/paginacion.html
-msgid "Anterior"
-msgstr "Previous"
-
-#: templates/partials/paginacion.html
 #, python-format
 msgid "Mostrando %(inicio)s–%(fin)s de %(total)s"
 msgstr "Showing %(inicio)s–%(fin)s of %(total)s"
@@ -2486,10 +2645,6 @@ msgstr "Showing %(inicio)s–%(fin)s of %(total)s"
 #, python-format
 msgid "Página %(actual)s de %(total)s"
 msgstr "Page %(actual)s of %(total)s"
-
-#: templates/partials/paginacion.html
-msgid "Siguiente"
-msgstr "Next"
 
 #: usuarios/context_processors.py
 msgid "Cambiar contraseña"
@@ -2556,6 +2711,10 @@ msgid "Portería"
 msgstr "Front desk"
 
 #: usuarios/context_processors.py
+msgid "Recaudo"
+msgstr "Collections"
+
+#: usuarios/context_processors.py
 msgid "Reportes"
 msgstr "Reports"
 
@@ -2612,6 +2771,10 @@ msgid "Entrégasela al residente en persona. Al entrar, el sistema le pedirá ca
 msgstr "Give it to the resident in person. When they sign in, the system will ask them to change it."
 
 #: usuarios/forms.py
+msgid "Enviarle por correo su usuario y la contraseña temporal"
+msgstr "Email them their username and temporary password"
+
+#: usuarios/forms.py
 msgid "Ese nombre de usuario ya está en uso. Elige otro."
 msgstr "That username is already taken. Choose another one."
 
@@ -2630,6 +2793,11 @@ msgstr "Ask them to change it the next time they sign in"
 #: usuarios/forms.py
 msgid "Repite la contraseña"
 msgstr "Repeat the password"
+
+#: usuarios/forms.py
+#, python-format
+msgid "Se envía a %(correo)s. Al entrar deberá cambiar la contraseña."
+msgstr "Sent to %(correo)s. They must change the password when they sign in."
 
 #: usuarios/templates/usuarios/asignar_password.html
 msgid "Cuentas"
@@ -3212,6 +3380,10 @@ msgid "Abierto"
 msgstr "Open"
 
 #: usuarios/textos_db.py
+msgid "Abril"
+msgstr "April"
+
+#: usuarios/textos_db.py
 msgid "Activo"
 msgstr "Active"
 
@@ -3224,12 +3396,20 @@ msgid "Administrador"
 msgstr "Administrator"
 
 #: usuarios/textos_db.py
+msgid "Agosto"
+msgstr "August"
+
+#: usuarios/textos_db.py
 msgid "Cerrado"
 msgstr "Closed"
 
 #: usuarios/textos_db.py
 msgid "Dentro"
 msgstr "Inside"
+
+#: usuarios/textos_db.py
+msgid "Diciembre"
+msgstr "December"
 
 #: usuarios/textos_db.py
 msgid "Eléctrico"
@@ -3244,12 +3424,20 @@ msgid "En recepción"
 msgstr "At front desk"
 
 #: usuarios/textos_db.py
+msgid "Enero"
+msgstr "January"
+
+#: usuarios/textos_db.py
 msgid "Entregado"
 msgstr "Delivered"
 
 #: usuarios/textos_db.py
 msgid "Estructural"
 msgstr "Structural"
+
+#: usuarios/textos_db.py
+msgid "Febrero"
+msgstr "February"
 
 #: usuarios/textos_db.py
 msgid "Finalizada"
@@ -3260,8 +3448,48 @@ msgid "Inactivo"
 msgstr "Inactive"
 
 #: usuarios/textos_db.py
+msgid "Julio"
+msgstr "July"
+
+#: usuarios/textos_db.py
+msgid "Junio"
+msgstr "June"
+
+#: usuarios/textos_db.py
+msgid "Marzo"
+msgstr "March"
+
+#: usuarios/textos_db.py
+msgid "Mayo"
+msgstr "May"
+
+#: usuarios/textos_db.py
+msgid "Multas"
+msgstr "Fines"
+
+#: usuarios/textos_db.py
+msgid "Noviembre"
+msgstr "November"
+
+#: usuarios/textos_db.py
+msgid "Octubre"
+msgstr "October"
+
+#: usuarios/textos_db.py
+msgid "Otros"
+msgstr "Other"
+
+#: usuarios/textos_db.py
 msgid "Pagado"
 msgstr "Paid"
+
+#: usuarios/textos_db.py
+msgid "Parq. residentes"
+msgstr "Resident parking"
+
+#: usuarios/textos_db.py
+msgid "Parq. visitantes"
+msgstr "Visitor parking"
 
 #: usuarios/textos_db.py
 msgid "Plomería"
@@ -3274,6 +3502,10 @@ msgstr "Booking"
 #: usuarios/textos_db.py
 msgid "Salió"
 msgstr "Left"
+
+#: usuarios/textos_db.py
+msgid "Septiembre"
+msgstr "September"
 
 #: usuarios/textos_db.py
 msgid "Sin categoría"
@@ -3318,6 +3550,11 @@ msgstr "Password for \"%(usuario)s\" updated."
 #, python-format
 msgid "Cuenta @%(usuario)s creada para %(nombre)s. Entrégale la contraseña temporal; al entrar deberá cambiarla."
 msgstr "Account @%(usuario)s created for %(nombre)s. Give them the temporary password; they must change it when they sign in."
+
+#: usuarios/views.py
+#, python-format
+msgid "Cuenta @%(usuario)s creada para %(nombre)s. Le enviamos el usuario y la contraseña temporal a %(correo)s."
+msgstr "Account @%(usuario)s created for %(nombre)s. We emailed the username and temporary password to %(correo)s."
 
 #: usuarios/views.py
 #, python-format

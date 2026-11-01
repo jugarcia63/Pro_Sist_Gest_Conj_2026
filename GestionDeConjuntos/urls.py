@@ -13,4 +13,5 @@ urlpatterns = [
     path('reportes/', include('reportes.urls')),
     path('parqueadero/', include('parqueadero.urls')),
     path('paquetes/', include('paquetes.urls')),
+    path('avisos/', include('avisos.urls')),
 ]

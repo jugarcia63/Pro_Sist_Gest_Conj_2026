@@ -1,0 +1,53 @@
+{% extends "app.html" %}
+{% load i18n ui %}
+{% block title %}{% translate "Recaudo" %}{% endblock %}
+{% block miga %}{% icono "derecha" %}<strong>{% translate "Recaudo" %}</strong>{% endblock %}
+{% block eyebrow %}<span class="encabezado__eyebrow">{% icono "grafica" %} {% translate "Finanzas" %}</span>{% endblock %}
+{% block titulo_pagina %}{% blocktranslate %}Recaudo {{ anio }}{% endblocktranslate %}{% endblock %}
+{% block subtitulo %}<p>{% translate "Lo que entró por mes y concepto. Las facturas cuentan en el mes en que se pagaron; el parqueadero de visitantes, en el mes en que salió el vehículo." %}</p>{% endblock %}
+{% block acciones %}
+    <a href="?anio={{ anio }}&formato=csv" class="btn btn-secundario">{% icono "descarga" %} Excel</a>
+    <a href="?anio={{ anio }}&formato=pdf" class="btn btn-primario">{% icono "descarga" %} PDF</a>
+{% endblock %}
+{% block contenido %}
+<div class="grid-stats">
+    <div class="stat stat--menta">
+        <span class="stat__icono">{% icono "billetera" %}</span>
+        <span class="stat__etiqueta">{% blocktranslate %}Recaudado en {{ anio }}{% endblocktranslate %}</span>
+        <span class="stat__valor">{{ total|pesos }}</span>
+    </div>
+    <a href="{% url 'lista_pagos_admin' %}?estado=pendiente" class="stat stat--ambar">
+        <span class="stat__icono">{% icono "factura" %}</span>
+        <span class="stat__etiqueta">{% translate "Por cobrar hoy" %}</span>
+        <span class="stat__valor">{{ por_cobrar|pesos }}</span>
+    </a>
+    <a href="{% url 'lista_pagos_admin' %}?estado=vencido" class="stat stat--coral{% if vencido %} stat--alerta{% endif %}">
+        <span class="stat__icono">{% icono "alerta" %}</span>
+        <span class="stat__etiqueta">{% translate "De eso, vencido" %}</span>
+        <span class="stat__valor">{{ vencido|pesos }}</span>
+    </a>
+</div>
+
+<section class="panel">
+    <div class="toolbar">
+        <nav class="segmentos" aria-label="{% translate 'Año' %}">
+            {% for a in anios %}<a href="?anio={{ a }}" class="{% if a == anio %}activo{% endif %}">{{ a }}</a>{% endfor %}
+        </nav>
+    </div>
+    <div class="tabla-contenedor">
+        <table class="tabla-recaudo">
+            <thead><tr><th>{% translate "Mes" %}</th>{% for c in conceptos %}<th class="num">{{ c }}</th>{% endfor %}<th class="num">{% translate "Total" %}</th></tr></thead>
+            <tbody>
+            {% for f in filas %}
+                <tr{% if f.mes == mes_actual %} class="fila-actual"{% endif %}>
+                    <td><strong>{{ f.nombre }}</strong></td>
+                    {% for v in f.valores %}<td class="num">{% if v %}{{ v|pesos }}{% else %}<span class="texto-tenue">—</span>{% endif %}</td>{% endfor %}
+                    <td class="num celda-total"><strong>{{ f.total|pesos }}</strong><span class="barra" style="width: {{ f.ancho|stringformat:'s' }}%"></span></td>
+                </tr>
+            {% endfor %}
+            </tbody>
+            <tfoot><tr><td><strong>{% translate "Total" %}</strong></td>{% for v in totales %}<td class="num"><strong>{{ v|pesos }}</strong></td>{% endfor %}<td class="num"><strong>{{ total|pesos }}</strong></td></tr></tfoot>
+        </table>
+    </div>
+</section>
+{% endblock %}

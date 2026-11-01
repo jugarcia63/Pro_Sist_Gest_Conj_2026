@@ -33,7 +33,11 @@ Proyecto de Ingeniería de Software desarrollado en Django, para la administraci
   - Cobro por hora en las zonas que lo ameritan (cada hora iniciada se cobra completa, sin horas gratis) y servicio de limpieza opcional; la factura se genera al aprobar la reserva
   - Inventario de implementos por zona; al terminar, portería recibe la zona, revisa faltantes, daños y aseo, y se genera la multa automáticamente
   - Comprobante de la reserva descargable en PDF
+  - Calendario de disponibilidad por zona (próximos 7 días); un clic en una hora libre abre la reserva
 - Pagos con pasarela simulada
+  - Reporte de recaudo por mes y concepto (administración, reservas, multas, parqueadero), descargable en Excel (CSV) y PDF
+- Avisos dentro de la app (campana): paquete en portería, reserva aprobada o rechazada, multa y factura nueva
+- Correos de aviso opcionales con la API de Brevo (Render gratis bloquea SMTP): se activan con las variables `BREVO_API_KEY` y `CORREO_REMITENTE`; al crear la cuenta de un residente se le puede enviar su usuario y contraseña temporal
 - Reportes de daños
 
 ## Instalación

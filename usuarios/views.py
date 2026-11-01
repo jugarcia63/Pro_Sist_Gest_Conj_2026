@@ -3,11 +3,12 @@ from django.contrib.auth.decorators import login_required
 from django.contrib.auth.views import LoginView, PasswordChangeView
 from django.db.models import Q, Sum
 from django.shortcuts import get_object_or_404, redirect, render
-from django.urls import reverse_lazy
+from django.urls import reverse, reverse_lazy
 from django.utils import timezone
 from django.utils.translation import gettext as _
 from django.views.generic import CreateView, ListView, UpdateView
 
+from avisos.servicio import avisar, enviar_correo, url_absoluta
 from .forms import AsignarPasswordForm, CuentaResidenteForm, GuardiaForm, usuario_sugerido
 from .models import Usuario
 from .permisos import RolRequeridoMixin, residente_de, rol_requerido
@@ -118,6 +119,21 @@ def eliminar_guardia(request, pk):
     return redirect('lista_guardias')
 
 
+def enviar_bienvenida(usuario, residente, password_temporal):
+    texto = (
+        f'Hola {residente.nombres or usuario.username},\n\n'
+        f'La administración del Conjunto Reserva de Madrid creó tu cuenta en la plataforma del conjunto'
+        f'{" para " + str(residente.id_unidad_fk) if residente.id_unidad_fk else ""}.\n\n'
+        f'Usuario: {usuario.username}\n'
+        f'Contraseña temporal: {password_temporal}\n\n'
+        f'Entra en {url_absoluta(reverse("login"))}. La primera vez el sistema te pedirá cambiar la contraseña '
+        f'por una que solo tú conozcas.\n\n'
+        f'Desde allí verás tus pagos, reservas de zonas comunes, paquetes en portería y avisos.\n\n'
+        f'— Administración, Conjunto Reserva de Madrid'
+    )
+    enviar_correo([residente.email], 'Tu cuenta del Conjunto Reserva de Madrid', texto)
+
+
 @rol_requerido('admin')
 def crear_cuenta_residente(request, id_residente):
     """Solo la administración crea cuentas: aquí le da usuario y contraseña temporal a un residente."""
@@ -132,8 +148,16 @@ def crear_cuenta_residente(request, id_residente):
         form = CuentaResidenteForm(residente, request.POST)
         if form.is_valid():
             usuario = form.save()
-            messages.success(request, _('Cuenta @%(usuario)s creada para %(nombre)s. Entrégale la contraseña temporal; '
-                                        'al entrar deberá cambiarla.') % {'usuario': usuario.username, 'nombre': residente})
+            if form.cleaned_data.get('enviar_correo'):
+                enviar_bienvenida(usuario, residente, form.cleaned_data['password1'])
+                messages.success(request, _('Cuenta @%(usuario)s creada para %(nombre)s. Le enviamos el usuario y la '
+                                            'contraseña temporal a %(correo)s.') % {'usuario': usuario.username,
+                                                                                  'nombre': residente, 'correo': residente.email})
+            else:
+                messages.success(request, _('Cuenta @%(usuario)s creada para %(nombre)s. Entrégale la contraseña temporal; '
+                                            'al entrar deberá cambiarla.') % {'usuario': usuario.username, 'nombre': residente})
+            avisar([usuario], 'cuenta', 'Bienvenido al Conjunto Reserva de Madrid',
+                   'Desde aquí ves tus pagos, reservas, paquetes y avisos.', url=reverse('dashboard'), correo=False)
             return redirect('lista_residentes')
     else:
         form = CuentaResidenteForm(residente, initial={'username': usuario_sugerido(residente)})

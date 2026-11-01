@@ -2,12 +2,14 @@ from django.contrib import messages
 from django.contrib.auth.decorators import login_required
 from django.db.models import Q, Sum
 from django.shortcuts import get_object_or_404, redirect, render
-from django.urls import reverse_lazy
+from django.urls import reverse, reverse_lazy
 from django.utils import timezone
 from django.views.decorators.debug import sensitive_post_parameters
 from django.views.generic import CreateView, ListView
 
+from avisos.servicio import avisar
 from usuarios.permisos import RolRequeridoMixin, rol_requerido
+from usuarios.templatetags.ui import pesos
 from .forms import PagoForm, PasarelaPagoForm
 from .models import Pago
 from django.utils.translation import gettext as _
@@ -105,7 +107,14 @@ class CrearPago(RolRequeridoMixin, CreateView):
     def form_valid(self, form):
         form.instance.estado = 'Pendiente'
         messages.success(self.request, _('Factura generada para %(residente)s.') % {'residente': form.instance.id_residente_fk})
-        return super().form_valid(form)
+        respuesta = super().form_valid(form)
+        pago = self.object
+        es_multa = pago.tipo_pago == 'Multa'
+        avisar([pago.id_residente_fk.usuario], 'multa' if es_multa else 'factura',
+               'Tienes una multa' if es_multa else 'Tienes una nueva factura',
+               f'{pago.tipo_pago} por {pesos(pago.valor)}. Fecha límite: {pago.fecha_vencimiento:%d/%m/%Y}.',
+               url=reverse('lista_pagos_residente'))
+        return respuesta
 
 
 @rol_requerido('admin')
@@ -149,3 +158,29 @@ def pasarela_pago(request, pk):
         'form': form, 'pago': pago, 'concepto': _(pago.tipo_pago),
         'vencido': pago.fecha_vencimiento < timezone.localdate(),
     })
+
+
+@rol_requerido('admin')
+def reporte_recaudo(request):
+    """Recaudo por mes y concepto; ?formato=csv o ?formato=pdf para descargarlo."""
+    from django.http import HttpResponse
+    from .recaudo import a_csv, a_pdf, anios_disponibles, calcular
+
+    anios = anios_disponibles()
+    try:
+        anio = int(request.GET.get('anio', anios[0]))
+    except ValueError:
+        anio = anios[0]
+    datos = calcular(anio)
+    formato = request.GET.get('formato')
+    if formato == 'csv':
+        respuesta = HttpResponse(a_csv(datos), content_type='text/csv; charset=utf-8')
+        respuesta['Content-Disposition'] = f'attachment; filename="recaudo-{anio}.csv"'
+        return respuesta
+    if formato == 'pdf':
+        respuesta = HttpResponse(a_pdf(datos), content_type='application/pdf')
+        respuesta['Content-Disposition'] = f'attachment; filename="recaudo-{anio}.pdf"'
+        return respuesta
+    mes_actual = timezone.localdate().month if anio == timezone.localdate().year else None
+    return render(request, 'pagos/reporte_recaudo.html', {**datos, 'anios': anios, 'mes_actual': mes_actual})
+

@@ -49,6 +49,7 @@
                 {% block miga %}{% endblock %}
             </nav>
             <div class="topbar__lado">
+                <a href="{% url 'lista_avisos' %}" class="topbar__avisos{% if avisos_sin_leer %} topbar__avisos--nuevos{% endif %}" title="{% translate 'Avisos' %}" aria-label="{% if avisos_sin_leer %}{% blocktranslate count n=avisos_sin_leer %}{{ n }} aviso sin leer{% plural %}{{ n }} avisos sin leer{% endblocktranslate %}{% else %}{% translate 'Avisos' %}{% endif %}">{% icono "campana" %}{% if avisos_sin_leer %}<span class="topbar__avisos-cuenta">{{ avisos_sin_leer }}</span>{% endif %}</a>
                 {% include "partials/idioma.html" %}
                 <div class="topbar__fecha">{% icono "calendario" %}<span>{% now "DATE_FORMAT" %}</span></div>
             </div>

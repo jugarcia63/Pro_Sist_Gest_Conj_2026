@@ -1,11 +1,12 @@
 from django.contrib import messages
 from django.db.models import Q
 from django.shortcuts import get_object_or_404, render
-from django.urls import reverse_lazy
+from django.urls import reverse, reverse_lazy
 from django.utils import timezone
 from django.utils.translation import gettext as _
 from django.views.generic import CreateView, ListView, UpdateView
 
+from avisos.servicio import avisar, usuarios_de_unidad
 from usuarios.permisos import RolRequeridoMixin, redirigir_a_siguiente, residente_de, rol_requerido
 from .forms import EMPRESAS_SUGERIDAS, EntregaPaqueteForm, PaqueteForm
 from .models import Paquete
@@ -95,7 +96,12 @@ class CrearPaquete(PaqueteFormMixin, RolRequeridoMixin, CreateView):
         form.instance.estado = 'En recepción'
         messages.success(self.request, _('Paquete con guía %(guia)s registrado para %(unidad)s.')
                          % {'guia': form.instance.numero_guia, 'unidad': form.instance.id_unidad_fk})
-        return super().form_valid(form)
+        respuesta = super().form_valid(form)
+        paquete = self.object
+        avisar(usuarios_de_unidad(paquete.id_unidad_fk), 'paquete', 'Llegó un paquete a portería',
+               f'Para {paquete.destinatario}' + (f' · {paquete.empresa}' if paquete.empresa else '')
+               + f' · guía {paquete.numero_guia}. Recógelo en portería.', url=reverse('mis_paquetes'))
+        return respuesta
 
 
 class EditarPaquete(PaqueteFormMixin, RolRequeridoMixin, UpdateView):

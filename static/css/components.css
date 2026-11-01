@@ -496,3 +496,37 @@ a.lista__item:hover { background: var(--color-superficie-2); color: inherit; }
 .chips-zona { display: flex; gap: .4rem; flex-wrap: wrap; }
 .inventario-tabla input[type=checkbox] { width: 18px; height: 18px; padding: 0; accent-color: var(--color-error); }
 .etiqueta--alerta { background: var(--color-error-fondo); color: var(--color-error); }
+
+/* ---------- Calendario de disponibilidad ---------- */
+.calendario-leyenda { display: flex; flex-wrap: wrap; gap: .5rem 1.1rem; align-items: center; padding: .8rem 1.35rem; border-bottom: 1px solid var(--color-borde); font-size: .82rem; color: var(--color-texto-suave); }
+.calendario-leyenda span { display: inline-flex; align-items: center; gap: .4rem; }
+.muestra { width: 14px; height: 14px; border-radius: 4px; display: inline-block; border: 1px solid var(--color-borde-fuerte); }
+.muestra--libre { background: var(--color-superficie); }
+.muestra--aprobada { background: var(--color-primario); border-color: var(--color-primario); }
+.muestra--pendiente { background: var(--color-aviso-fondo); border-color: var(--color-aviso); border-style: dashed; }
+.muestra--mia { background: var(--color-menta); border-color: var(--color-menta); }
+.calendario { --alto-hora: 40px; display: grid; grid-template-columns: 56px repeat(7, minmax(92px, 1fr)); min-width: 760px; padding: 0 1rem 1rem 0; }
+.calendario__cabecera { height: 54px; display: grid; place-content: center; text-align: center; border-bottom: 1px solid var(--color-borde); }
+.calendario__cabecera small { font-size: .7rem; text-transform: uppercase; letter-spacing: .06em; color: var(--color-texto-suave); }
+.calendario__cabecera strong { font-family: var(--fuente-display); font-size: 1.15rem; }
+.calendario__dia--hoy .calendario__cabecera strong { color: #fff; background: var(--color-primario); border-radius: 50%; width: 30px; height: 30px; display: grid; place-items: center; margin: 0 auto; }
+.calendario__cuerpo { position: relative; height: calc(var(--horas) * var(--alto-hora)); }
+.calendario__eje .calendario__cuerpo span { position: absolute; right: 8px; transform: translateY(-50%); font-size: .7rem; color: var(--color-texto-tenue); }
+.calendario__dia .calendario__cuerpo { border-left: 1px solid var(--color-borde); }
+.calendario__hora { height: var(--alto-hora); border-bottom: 1px solid var(--color-borde); display: block; }
+.calendario__hora--pasada { background: repeating-linear-gradient(135deg, transparent 0 6px, var(--color-superficie-2) 6px 8px); }
+.calendario__hora--libre span { display: none; font-size: .72rem; font-weight: 600; color: var(--color-primario-oscuro); padding: .55rem; }
+.calendario__hora--libre:hover { background: var(--color-primario-suave); }
+.calendario__hora--libre:hover span { display: block; }
+.calendario__bloque { position: absolute; left: 3px; right: 3px; border-radius: 8px; padding: .3rem .45rem; overflow: hidden; font-size: .72rem; line-height: 1.25; background: var(--color-primario); color: #fff; box-shadow: var(--sombra-sm); pointer-events: none; }
+.calendario__bloque strong { display: block; font-weight: 700; }
+.calendario__bloque--pendiente { background: var(--color-aviso-fondo); color: var(--color-aviso); border: 1.5px dashed var(--color-aviso); }
+.calendario__bloque--mia { background: var(--color-menta); }
+
+/* ---------- Reporte de recaudo ---------- */
+.tabla-recaudo td, .tabla-recaudo th { padding: .55rem .7rem; white-space: nowrap; font-size: .86rem; }
+.celda-total { min-width: 130px; }
+.celda-total .barra { margin: .3rem 0 0 auto; }
+.tabla-recaudo tfoot td { border-top: 2px solid var(--color-borde-fuerte); background: var(--color-superficie-2); }
+.tabla-recaudo .fila-actual td { background: var(--color-primario-suave); }
+.barra { display: block; height: 8px; border-radius: 99px; background: var(--color-primario); min-width: 0; }
