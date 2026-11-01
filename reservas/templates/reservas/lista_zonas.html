@@ -30,6 +30,7 @@
                 </div>
                 <div class="zona__pie">
                     {% if z.estado != 0 %}<a href="{% url 'crear_reserva' %}?zona={{ z.pk }}" class="btn btn-primario btn-sm">{% icono "calendario" %} {% translate "Reservar" %}</a>{% endif %}
+                    <a href="{% url 'calendario_zona' z.pk %}" class="btn btn-secundario btn-sm">{% icono "reloj" %} {% translate "Disponibilidad" %}</a>
                     {% if user.rol == 'admin' %}
                         <a href="{% url 'editar_zona' z.pk %}" class="btn btn-secundario btn-sm">{% icono "editar" %} {% translate "Editar" %}</a>
                         <form method="post" action="{% url 'eliminar_zona' z.pk %}" data-confirmar="{% blocktranslate with zona=z.nombre %}¿Eliminar la zona {{ zona }}? Si tiene reservas, solo se marcará como no disponible.{% endblocktranslate %}">

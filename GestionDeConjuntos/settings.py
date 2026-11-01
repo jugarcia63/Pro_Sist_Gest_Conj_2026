@@ -50,6 +50,7 @@ INSTALLED_APPS = [
     'reportes',
     'parqueadero',
     'paquetes',
+    'avisos',
 ]
 
 MIDDLEWARE = [
@@ -164,9 +165,20 @@ if 'test' in sys.argv:
     STORAGES['staticfiles']['BACKEND'] = 'django.contrib.staticfiles.storage.StaticFilesStorage'
 
 
-# Email
-
-EMAIL_BACKEND = config('EMAIL_BACKEND', default='django.core.mail.backends.console.EmailBackend')
+# Correo
+# Render (plan gratis) bloquea SMTP, así que en producción se envía con la API HTTPS de Brevo.
+# Sin BREVO_API_KEY los correos están apagados (los avisos dentro de la app funcionan igual).
+BREVO_API_KEY = config('BREVO_API_KEY', default='')
+CORREO_REMITENTE = config('CORREO_REMITENTE', default='')
+CORREO_NOMBRE = config('CORREO_NOMBRE', default='Conjunto Reserva de Madrid')
+DEFAULT_FROM_EMAIL = CORREO_REMITENTE or 'no-responder@localhost'
+CORREOS_ACTIVOS = config('CORREOS_ACTIVOS', default=bool(BREVO_API_KEY and CORREO_REMITENTE), cast=bool)
+EMAIL_BACKEND = config(
+    'EMAIL_BACKEND',
+    default='avisos.correo_brevo.BrevoEmailBackend' if BREVO_API_KEY else 'django.core.mail.backends.console.EmailBackend',
+)
+# Dirección pública para los enlaces de los correos
+SITIO_URL = config('SITIO_URL', default=f'https://{RENDER_EXTERNAL_HOSTNAME}' if RENDER_EXTERNAL_HOSTNAME else 'http://127.0.0.1:8000')
 
 AUTH_USER_MODEL = 'usuarios.Usuario'
 

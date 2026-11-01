@@ -318,3 +318,22 @@
   .encabezado__acciones { width: 100%; }
   .encabezado__acciones .btn { flex: 1; }
 }
+
+/* Campana de avisos */
+.topbar__avisos {
+  position: relative; display: grid; place-items: center;
+  width: 38px; height: 38px; border-radius: 50%;
+  background: var(--color-superficie); border: 1px solid var(--color-borde); color: var(--color-texto-suave);
+}
+.topbar__avisos:hover { color: var(--color-primario); border-color: var(--color-primario-medio); }
+.topbar__avisos .ico { width: 18px; height: 18px; }
+.topbar__avisos--nuevos { color: var(--color-primario); }
+.topbar__avisos-cuenta {
+  position: absolute; top: -4px; right: -4px; min-width: 18px; height: 18px; padding: 0 5px;
+  border-radius: 99px; background: var(--color-coral); color: #fff; font-size: .68rem; font-weight: 700;
+  display: grid; place-items: center; border: 2px solid var(--color-fondo, #fff);
+}
+.aviso-item { color: inherit; text-decoration: none; }
+.aviso-item:hover { background: var(--color-superficie-2); }
+.aviso-item--nuevo { background: var(--color-primario-suave); }
+.aviso-item--nuevo strong::after { content: ""; display: inline-block; width: 7px; height: 7px; margin-left: .4rem; border-radius: 50%; background: var(--color-primario); vertical-align: middle; }

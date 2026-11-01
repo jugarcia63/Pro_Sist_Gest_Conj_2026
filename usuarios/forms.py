@@ -61,9 +61,18 @@ class CuentaResidenteForm(CamposUsuarioMixin, forms.Form):
                                 _('Entrégasela al residente en persona. Al entrar, el sistema le pedirá cambiarla.'))
     password2 = _campo_password(_('Repite la contraseña'))
 
+    enviar_correo = forms.BooleanField(
+        label=_('Enviarle por correo su usuario y la contraseña temporal'), required=False, initial=True,
+    )
+
     def __init__(self, residente, *args, **kwargs):
         super().__init__(*args, **kwargs)
         self.residente = residente
+        from avisos.servicio import correos_activos
+        if not (correos_activos() and residente.email):
+            del self.fields['enviar_correo']
+        else:
+            self.fields['enviar_correo'].help_text = _('Se envía a %(correo)s. Al entrar deberá cambiar la contraseña.') % {'correo': residente.email}
 
     def clean(self):
         cleaned_data = super().clean()

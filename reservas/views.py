@@ -1,3 +1,4 @@
+from datetime import date, datetime, time, timedelta
 from decimal import Decimal
 
 from django.contrib import messages
@@ -10,7 +11,7 @@ from django.utils.translation import gettext as _
 from django.views.generic import CreateView, ListView, UpdateView
 
 from usuarios.permisos import RolRequeridoMixin, redirigir_a_siguiente, residente_de, rol_requerido
-from .cobros import crear_multa, sincronizar_factura
+from .cobros import avisar_cambio_de_reserva, crear_multa, sincronizar_factura
 from .forms import EntregaZonaForm, InventarioFormSet, ReservaForm, ZonaForm
 from .models import ItemEntregado, Reservas, ZonasComunes
 
@@ -179,6 +180,14 @@ class CrearReserva(ReservaFormMixin, RolRequeridoMixin, CreateView):
         zona = self.request.GET.get('zona')
         if zona and zona.isdigit():
             initial['id_zona_fk'] = int(zona)
+        # Desde el calendario: ?inicio=2026-11-20T14:00 (se proponen 2 horas)
+        try:
+            inicio = datetime.strptime(self.request.GET.get('inicio', ''), '%Y-%m-%dT%H:%M')
+        except ValueError:
+            inicio = None
+        if inicio:
+            initial['fecha_inicio'] = inicio.strftime('%Y-%m-%dT%H:%M')
+            initial['fecha_fin'] = (inicio + timedelta(hours=2)).strftime('%Y-%m-%dT%H:%M')
         return initial
 
     def form_valid(self, form):
@@ -233,7 +242,74 @@ def cambiar_estado_reserva(request, id_reservas):
         aviso = sincronizar_factura(reserva)
         if aviso:
             messages.info(request, aviso)
+        if request.user.rol == 'admin' and nuevo in ('Aprobada', 'Rechazada'):
+            avisar_cambio_de_reserva(reserva)
     return redirigir_a_siguiente(request, 'lista_reservas')
+
+
+# ---------- Calendario de disponibilidad ----------
+
+HORA_APERTURA, HORA_CIERRE = 6, 23  # franja que muestra el calendario
+
+
+@rol_requerido('admin', 'residente')
+def calendario_zona(request, id_zona):
+    """Semana de una zona: horarios ocupados (pendientes y aprobados) y huecos libres para reservar."""
+    zonas = ZonasComunes.objects.order_by('nombre')
+    if request.user.rol == 'residente':
+        zonas = zonas.filter(estado=1)
+    zona = get_object_or_404(zonas, pk=id_zona)
+
+    hoy = timezone.localdate()
+    try:
+        semana = date.fromisoformat(request.GET.get('semana', ''))
+    except ValueError:
+        semana = hoy
+    lunes = semana  # 7 días desde la fecha pedida (por defecto, desde hoy)
+    tz = timezone.get_current_timezone()
+    inicio_semana = timezone.make_aware(datetime.combine(lunes, time(0)), tz)
+    fin_semana = inicio_semana + timedelta(days=7)
+    ahora = timezone.now()
+    franja = (HORA_CIERRE - HORA_APERTURA) * 60
+
+    ocupadas = (Reservas.objects.select_related('id_unidad_fk')
+                .filter(id_zona_fk=zona, fecha_inicio__lt=fin_semana, fecha_fin__gt=inicio_semana)
+                .exclude(estado__in=('Rechazada', 'Cancelada')).order_by('fecha_inicio'))
+    residente = residente_de(request.user) if request.user.rol == 'residente' else None
+    mi_unidad = residente.id_unidad_fk_id if residente else None
+
+    dias = []
+    for i in range(7):
+        dia = lunes + timedelta(days=i)
+        abre = timezone.make_aware(datetime.combine(dia, time(HORA_APERTURA)), tz)
+        cierra = timezone.make_aware(datetime.combine(dia, time(HORA_CIERRE)), tz)
+        bloques = []
+        for r in ocupadas:
+            desde, hasta = max(r.fecha_inicio, abre), min(r.fecha_fin, cierra)
+            if hasta <= desde:
+                continue
+            bloques.append({
+                'reserva': r,
+                'top': round((desde - abre).total_seconds() / 60 / franja * 100, 3),
+                'alto': round((hasta - desde).total_seconds() / 60 / franja * 100, 3),
+                'mia': mi_unidad is not None and r.id_unidad_fk_id == mi_unidad,
+                'desde': timezone.localtime(desde), 'hasta': timezone.localtime(hasta),
+            })
+        horas = []
+        for h in range(HORA_APERTURA, HORA_CIERRE):
+            comienzo = timezone.make_aware(datetime.combine(dia, time(h)), tz)
+            libre = comienzo >= ahora and not any(
+                r.fecha_inicio < comienzo + timedelta(hours=1) and r.fecha_fin > comienzo for r in ocupadas)
+            horas.append({'hora': h, 'libre': libre, 'valor': f'{dia.isoformat()}T{h:02d}:00'})
+        dias.append({'fecha': dia, 'hoy': dia == hoy, 'bloques': bloques, 'horas': horas})
+
+    return render(request, 'reservas/calendario_zona.html', {
+        'zona': zona, 'zonas': zonas, 'dias': dias, 'lunes': lunes, 'domingo': lunes + timedelta(days=6),
+        'anterior': (lunes - timedelta(days=7)).isoformat(), 'siguiente': (lunes + timedelta(days=7)).isoformat(),
+        'es_esta_semana': lunes == hoy,
+        'horas_eje': list(range(HORA_APERTURA, HORA_CIERRE + 1)),
+        'puede_reservar': zona.estado == 1 and (request.user.rol == 'admin' or mi_unidad is not None),
+    })
 
 
 # ---------- Entrega de la zona y comprobante ----------

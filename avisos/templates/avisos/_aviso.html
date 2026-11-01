@@ -1,0 +1,8 @@
+{% load i18n ui %}<a href="{% url 'abrir_aviso' a.pk %}" class="lista__item aviso-item{% if not a.leido %} aviso-item--nuevo{% endif %}">
+    <span class="avatar {% if a.tipo == 'multa' %}avatar--coral{% elif a.tipo == 'paquete' %}avatar--ambar{% elif a.tipo == 'reserva' %}avatar--menta{% else %}avatar--cielo{% endif %}">{% if a.tipo == 'paquete' %}{% icono "paquete" %}{% elif a.tipo == 'reserva' %}{% icono "calendario" %}{% elif a.tipo == 'multa' %}{% icono "alerta" %}{% elif a.tipo == 'factura' %}{% icono "factura" %}{% else %}{% icono "llave" %}{% endif %}</span>
+    <div class="lista__cuerpo">
+        <strong>{{ a.titulo }}</strong>
+        {% if a.mensaje %}<small>{{ a.mensaje }}</small>{% endif %}
+    </div>
+    <small class="texto-suave" style="white-space:nowrap">{% blocktranslate with t=a.creado|timesince %}hace {{ t }}{% endblocktranslate %}</small>
+</a>

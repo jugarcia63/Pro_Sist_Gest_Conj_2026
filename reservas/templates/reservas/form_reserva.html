@@ -29,7 +29,7 @@
             {% for z in zonas %}
                 <div class="lista__item">
                     <span class="avatar avatar--menta">{% icono "zona" %}</span>
-                    <div class="lista__cuerpo"><strong>{{ z.nombre }}</strong><small>{% if z.capacidad %}{% blocktranslate with n=z.capacidad %}Hasta {{ n }} personas{% endblocktranslate %}{% else %}{% translate "Capacidad sin definir" %}{% endif %}{% if z.ofrece_limpieza %} · {% blocktranslate with v=z.valor_limpieza|pesos %}limpieza {{ v }}{% endblocktranslate %}{% endif %}</small></div>
+                    <div class="lista__cuerpo"><strong><a href="{% url 'calendario_zona' z.pk %}" title="{% translate 'Ver horarios libres' %}">{{ z.nombre }}</a></strong><small>{% if z.capacidad %}{% blocktranslate with n=z.capacidad %}Hasta {{ n }} personas{% endblocktranslate %}{% else %}{% translate "Capacidad sin definir" %}{% endif %}{% if z.ofrece_limpieza %} · {% blocktranslate with v=z.valor_limpieza|pesos %}limpieza {{ v }}{% endblocktranslate %}{% endif %}</small></div>
                     <span class="badge {% if z.es_paga %}badge-aviso{% else %}badge-neutro{% endif %}">{% if z.es_paga %}{% blocktranslate with v=z.valor_hora|pesos %}{{ v }}/h{% endblocktranslate %}{% else %}{% translate "Gratis" %}{% endif %}</span>
                 </div>
             {% endfor %}

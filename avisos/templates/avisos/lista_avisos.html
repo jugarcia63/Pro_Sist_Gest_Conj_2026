@@ -1,0 +1,25 @@
+{% extends "app.html" %}
+{% load i18n ui %}
+{% block title %}{% translate "Avisos" %}{% endblock %}
+{% block miga %}{% icono "derecha" %}<strong>{% translate "Avisos" %}</strong>{% endblock %}
+{% block eyebrow %}<span class="encabezado__eyebrow">{% icono "campana" %} {% translate "Notificaciones" %}</span>{% endblock %}
+{% block titulo_pagina %}{% translate "Avisos" %}{% endblock %}
+{% block subtitulo %}<p>{% if nuevos %}{% blocktranslate count n=nuevos|length %}Tienes {{ n }} aviso nuevo.{% plural %}Tienes {{ n }} avisos nuevos.{% endblocktranslate %}{% else %}{% translate "Estás al día." %}{% endif %}</p>{% endblock %}
+{% block acciones %}<a href="{% url 'dashboard' %}" class="btn btn-secundario">{% icono "volver" %} {% translate "Volver" %}</a>{% endblock %}
+{% block contenido %}
+<section class="panel">
+    {% if avisos %}
+        <div class="lista">
+            {% for a in avisos %}
+                {% include "avisos/_aviso.html" %}
+            {% endfor %}
+        </div>
+    {% else %}
+        <div class="vacio">
+            <div class="vacio__icono">{% icono "campana" %}</div>
+            <h3>{% translate "No tienes avisos" %}</h3>
+            <p>{% translate "Aquí te contaremos cuando llegue un paquete, cambie una reserva o tengas una factura nueva." %}</p>
+        </div>
+    {% endif %}
+</section>
+{% endblock %}

@@ -28,3 +28,9 @@ services:
       # La contraseña no va en el repositorio: Render la pide al crear el Blueprint
       - key: ADMIN_PASSWORD
         sync: false
+      # Correos de aviso (opcional): clave de API de Brevo y el remitente verificado en Brevo.
+      # Si se dejan vacías, la app funciona igual y solo muestra los avisos dentro de la plataforma.
+      - key: BREVO_API_KEY
+        sync: false
+      - key: CORREO_REMITENTE
+        sync: false

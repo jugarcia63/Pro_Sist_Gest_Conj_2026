@@ -1,0 +1,60 @@
+{% extends "app.html" %}
+{% load i18n ui %}
+{% block title %}{% blocktranslate with zona=zona.nombre %}Disponibilidad · {{ zona }}{% endblocktranslate %}{% endblock %}
+{% block miga %}{% icono "derecha" %}<a href="{% url 'lista_zonas' %}">{% translate "Zonas comunes" %}</a>{% icono "derecha" %}<strong>{{ zona.nombre }}</strong>{% endblock %}
+{% block eyebrow %}<span class="encabezado__eyebrow">{% icono "calendario" %} {% translate "Disponibilidad" %}</span>{% endblock %}
+{% block titulo_pagina %}{{ zona.nombre }}{% endblock %}
+{% block subtitulo %}<p>{% blocktranslate with desde=lunes|date:"j \d\e F" hasta=domingo|date:"j \d\e F" %}Del {{ desde }} al {{ hasta }}.{% endblocktranslate %} {% if puede_reservar %}{% translate "Toca una hora libre para reservarla." %}{% endif %}</p>{% endblock %}
+{% block acciones %}
+    <a href="{% url 'lista_zonas' %}" class="btn btn-secundario">{% icono "volver" %} {% translate "Zonas" %}</a>
+    {% if puede_reservar %}<a href="{% url 'crear_reserva' %}?zona={{ zona.pk }}" class="btn btn-primario">{% icono "mas" %} {% translate "Reservar" %}</a>{% endif %}
+{% endblock %}
+{% block contenido %}
+<section class="panel">
+    <div class="toolbar">
+        <nav class="segmentos" aria-label="{% translate 'Semana' %}">
+            <a href="?semana={{ anterior }}">{% icono "volver" %} {% translate "Anterior" %}</a>
+            <a href="?" class="{% if es_esta_semana %}activo{% endif %}">{% translate "Próximos 7 días" %}</a>
+            <a href="?semana={{ siguiente }}">{% translate "Siguiente" %} {% icono "adelante" %}</a>
+        </nav>
+        <div class="chips-zona" aria-label="{% translate 'Otras zonas' %}">
+            {% for z in zonas %}<a href="{% url 'calendario_zona' z.pk %}?semana={{ lunes|date:'Y-m-d' }}" class="etiqueta{% if z.pk != zona.pk %} etiqueta--cielo{% endif %}">{{ z.nombre }}</a>{% endfor %}
+        </div>
+    </div>
+    <div class="calendario-leyenda">
+        <span><i class="muestra muestra--libre"></i> {% translate "Libre" %}</span>
+        <span><i class="muestra muestra--aprobada"></i> {% translate "Reservada" %}</span>
+        <span><i class="muestra muestra--pendiente"></i> {% translate "Pendiente de aprobación" %}</span>
+        {% if user.rol == 'residente' %}<span><i class="muestra muestra--mia"></i> {% translate "Tu unidad" %}</span>{% endif %}
+        {% if zona.es_paga %}<span class="etiqueta">{% icono "billetera" %} {% blocktranslate with v=zona.valor_hora|pesos %}{{ v }} por hora{% endblocktranslate %}</span>{% endif %}
+    </div>
+    <div class="tabla-contenedor">
+        <div class="calendario" style="--horas: {{ horas_eje|length|add:'-1' }}">
+            <div class="calendario__eje">
+                <div class="calendario__cabecera"></div>
+                <div class="calendario__cuerpo">{% for h in horas_eje %}<span style="top: calc({{ forloop.counter0 }} * var(--alto-hora))">{{ h|stringformat:"02d" }}:00</span>{% endfor %}</div>
+            </div>
+            {% for d in dias %}
+                <div class="calendario__dia{% if d.hoy %} calendario__dia--hoy{% endif %}">
+                    <div class="calendario__cabecera"><small>{{ d.fecha|date:"D" }}</small><strong>{{ d.fecha|date:"j" }}</strong></div>
+                    <div class="calendario__cuerpo">
+                        {% for h in d.horas %}
+                            {% if h.libre and puede_reservar %}
+                                <a class="calendario__hora calendario__hora--libre" href="{% url 'crear_reserva' %}?zona={{ zona.pk }}&inicio={{ h.valor }}" title="{% blocktranslate with hora=h.hora|stringformat:'02d' %}Reservar desde las {{ hora }}:00{% endblocktranslate %}"><span>{{ h.hora|stringformat:"02d" }}:00</span></a>
+                            {% else %}
+                                <div class="calendario__hora{% if not h.libre %} calendario__hora--pasada{% endif %}"></div>
+                            {% endif %}
+                        {% endfor %}
+                        {% for b in d.bloques %}
+                            <div class="calendario__bloque calendario__bloque--{% if b.mia %}mia{% elif b.reserva.estado == 'Pendiente' %}pendiente{% else %}aprobada{% endif %}" style="top: {{ b.top|stringformat:'s' }}%; height: {{ b.alto|stringformat:'s' }}%">
+                                <strong>{{ b.desde|date:"H:i" }}–{{ b.hasta|date:"H:i" }}</strong>
+                                <small>{% if user.rol == 'admin' %}{{ b.reserva.id_unidad_fk|default:"—" }}{% elif b.mia %}{% translate "Tu reserva" %}{% elif b.reserva.estado == 'Pendiente' %}{% translate "Pendiente" %}{% else %}{% translate "Ocupado" %}{% endif %}</small>
+                            </div>
+                        {% endfor %}
+                    </div>
+                </div>
+            {% endfor %}
+        </div>
+    </div>
+</section>
+{% endblock %}

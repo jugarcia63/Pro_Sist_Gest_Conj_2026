@@ -43,6 +43,7 @@ def _menu_admin():
             _item(_('Entregas de zonas'), 'lista_entregas', 'check', ('recibir_zona',), _zonas_por_recibir()),
             _item(_('Pagos'), 'lista_pagos_admin', 'tarjeta', ('crear_pago',),
                   Pago.objects.filter(estado='Pendiente', fecha_vencimiento__lt=hoy).count()),
+            _item(_('Recaudo'), 'reporte_recaudo', 'grafica'),
             _item(_('Reportes'), 'lista_reportes_admin', 'alerta', (),
                   ReporteDano.objects.filter(estado='Abierto').count()),
         ]),
@@ -122,6 +123,7 @@ def navegacion(request):
         or usuario.get_full_name() or usuario.username
 
     return {
+        'avisos_sin_leer': usuario.avisos.filter(leido=False).count(),
         'menu': secciones,
         'nombre_visible': nombre,
         'iniciales': ''.join(p[0] for p in nombre.split()[:2]).upper() or usuario.username[:2].upper(),

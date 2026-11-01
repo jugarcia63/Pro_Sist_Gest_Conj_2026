@@ -4,6 +4,9 @@ from datetime import timedelta
 from django.utils import timezone
 from django.utils.translation import gettext as _
 
+from django.urls import reverse
+
+from avisos.servicio import avisar, usuarios_de_unidad
 from pagos.models import Pago
 from residentes.models import Residentes
 
@@ -66,11 +69,30 @@ def crear_multa(reserva):
     if residente is None:
         return None
     hoy = timezone.localdate()
-    return Pago.objects.create(
+    multa = Pago.objects.create(
         id_residente_fk=residente, id_reserva_fk=reserva, tipo_pago='Multa', estado='Pendiente',
         valor=reserva.valor_multa, mes_ano=timezone.localtime().replace(day=1, hour=0, minute=0, second=0, microsecond=0),
         fecha_vencimiento=hoy + timedelta(days=DIAS_PARA_PAGAR_MULTA),
     )
+    avisar([residente.usuario], 'multa', 'Tienes una multa',
+           f'{_pesos(multa.valor)} por la entrega de {reserva.id_zona_fk}: implementos faltantes o dañados'
+           f'{" y aseo" if reserva.zona_limpia is False else ""}. Vence el {multa.fecha_vencimiento:%d/%m/%Y}.',
+           url=reverse('lista_pagos_residente'))
+    return multa
+
+
+def avisar_cambio_de_reserva(reserva):
+    """Avisa a quien reservó (o a la unidad si la hizo el admin) que su reserva fue aprobada o rechazada."""
+    usuario = reserva.reservado_por
+    destinatarios = [usuario] if usuario is not None and usuario.rol == 'residente' else list(usuarios_de_unidad(reserva.id_unidad_fk))
+    inicio = timezone.localtime(reserva.fecha_inicio)
+    cuando = f'{reserva.id_zona_fk} el {inicio:%d/%m/%Y} de {inicio:%H:%M} a {timezone.localtime(reserva.fecha_fin):%H:%M}'
+    if reserva.estado == 'Aprobada':
+        extra = f' Valor: {_pesos(reserva.valor_total)}; la factura está en Mis pagos.' if reserva.valor_total else ''
+        avisar(destinatarios, 'reserva', 'Tu reserva fue aprobada', cuando + '.' + extra, url=reverse('lista_reservas'))
+    elif reserva.estado == 'Rechazada':
+        avisar(destinatarios, 'reserva', 'Tu reserva fue rechazada',
+               cuando + '. Puedes elegir otro horario o hablar con la administración.', url=reverse('lista_reservas'))
 
 
 def _pesos(valor):

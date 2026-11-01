@@ -20,6 +20,11 @@ VALORES_GUARDADOS = [
     N_('Plomería'), N_('Eléctrico'), N_('Estructural'), N_('Ascensor'), N_('Zonas comunes'), N_('Seguridad'), N_('Otro'),
     # Conceptos de pago
     N_('Administración'), N_('Reserva'), N_('Multa'), N_('Parqueadero'),
+    # Meses (reporte de recaudo)
+    N_('Enero'), N_('Febrero'), N_('Marzo'), N_('Abril'), N_('Mayo'), N_('Junio'), N_('Julio'), N_('Agosto'),
+    N_('Septiembre'), N_('Octubre'), N_('Noviembre'), N_('Diciembre'),
+    # Columnas del reporte de recaudo
+    N_('Reservas'), N_('Multas'), N_('Parq. residentes'), N_('Parq. visitantes'), N_('Otros'),
     # Roles
     N_('Residente'), N_('Administrador'),
     # Textos por defecto en plantillas
