@@ -40,6 +40,7 @@ def _menu_admin():
             _item(_('Zonas comunes'), 'lista_zonas', 'zona', ('crear_zona', 'editar_zona')),
             _item(_('Reservas'), 'lista_reservas', 'calendario', ('crear_reserva', 'editar_reserva'),
                   Reservas.objects.filter(estado='Pendiente').count()),
+            _item(_('Entregas de zonas'), 'lista_entregas', 'check', ('recibir_zona',), _zonas_por_recibir()),
             _item(_('Pagos'), 'lista_pagos_admin', 'tarjeta', ('crear_pago',),
                   Pago.objects.filter(estado='Pendiente', fecha_vencimiento__lt=hoy).count()),
             _item(_('Reportes'), 'lista_reportes_admin', 'alerta', (),
@@ -69,23 +70,29 @@ def _menu_residente(usuario):
     ]
 
 
+def _zonas_por_recibir():
+    from reservas.models import Reservas
+    return Reservas.objects.filter(estado='Aprobada', fecha_entrega__isnull=True,
+                                   fecha_inicio__lte=timezone.now()).count()
+
+
 def _menu_seguridad():
     from paquetes.models import Paquete
     from parqueadero.models import ParqueoVisitante
     from visitantes.models import Visitantes
 
-    dentro = Visitantes.objects.filter(estado='Dentro').count()
     return [
         (_('General'), [
             _item(_('Inicio'), 'dashboard', 'inicio'),
         ]),
         (_('Portería'), [
-            _item(_('Visitantes'), 'lista_visitantes', 'visitante', ('crear_visitante', 'editar_visitante'), dentro),
+            _item(_('Visitantes'), 'lista_visitantes', 'visitante', ('crear_visitante', 'editar_visitante')),
             _item(_('Parqueadero visitantes'), 'lista_parqueos', 'parqueadero',
                   ('crear_parqueo', 'editar_parqueo', 'salida_parqueo'),
                   ParqueoVisitante.objects.filter(estado='Dentro').count()),
             _item(_('Paquetes'), 'lista_paquetes', 'paquete', ('crear_paquete', 'editar_paquete', 'entregar_paquete'),
                   Paquete.objects.filter(estado='En recepción').count()),
+            _item(_('Entregas de zonas'), 'lista_entregas', 'check', ('recibir_zona',), _zonas_por_recibir()),
             _item(_('Vehículos'), 'lista_vehiculos', 'carro'),
         ]),
     ]

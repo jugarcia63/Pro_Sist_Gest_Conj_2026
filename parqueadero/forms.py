@@ -1,4 +1,7 @@
+from datetime import timedelta
+
 from django import forms
+from django.utils import timezone
 from django.utils.translation import gettext_lazy as _
 
 from residentes.models import Unidades
@@ -17,11 +20,11 @@ class UnidadChoiceField(forms.ModelChoiceField):
         super().__init__(*args, **kwargs)
 
 
-class VisitanteDentroChoiceField(forms.ModelChoiceField):
+class VisitanteRecienteChoiceField(forms.ModelChoiceField):
     def label_from_instance(self, visitante):
-        destino = visitante.id_residente_fk
-        unidad = destino.id_unidad_fk if destino else None
-        return f"{visitante} · {visitante.num_documento or '—'}" + (f" · {unidad}" if unidad else '')
+        unidad = visitante.unidad_visitada
+        hora = f'{timezone.localtime(visitante.fecha_ingreso):%H:%M}' if visitante.fecha_ingreso else '—'
+        return f"{visitante} · {hora}" + (f" · {unidad}" if unidad else '')
 
 
 class ParqueoForm(forms.ModelForm):
@@ -30,10 +33,10 @@ class ParqueoForm(forms.ModelForm):
         label=_('Unidad que visita'), required=False,
         help_text=_('Si eliges el visitante, se toma la unidad a la que va.'),
     )
-    visitante = VisitanteDentroChoiceField(
+    visitante = VisitanteRecienteChoiceField(
         queryset=Visitantes.objects.none(), required=False, label=_('Visitante (opcional)'),
         empty_label=_('Sin vincular a un visitante'),
-        help_text=_('Solo aparecen los visitantes que están dentro del conjunto.'),
+        help_text=_('Aparecen las personas que entraron en las últimas 12 horas.'),
     )
 
     class Meta:
@@ -49,7 +52,8 @@ class ParqueoForm(forms.ModelForm):
 
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
-        visitantes = Visitantes.objects.select_related('id_residente_fk__id_unidad_fk').filter(estado='Dentro')
+        visitantes = (Visitantes.objects.select_related('id_unidad_fk', 'id_residente_fk__id_unidad_fk')
+                      .filter(fecha_ingreso__gte=timezone.now() - timedelta(hours=12)))
         if self.instance.visitante_id:
             visitantes = visitantes | Visitantes.objects.filter(pk=self.instance.visitante_id)
         self.fields['visitante'].queryset = visitantes.order_by('-fecha_ingreso')
@@ -73,8 +77,8 @@ class ParqueoForm(forms.ModelForm):
                 self.add_error('placa', _('Esta placa es de un vehículo de residente; no se cobra como visitante.'))
 
         # Si no eligieron unidad, se toma la del residente al que va el visitante
-        if not cleaned_data.get('id_unidad_fk') and visitante and visitante.id_residente_fk:
-            cleaned_data['id_unidad_fk'] = visitante.id_residente_fk.id_unidad_fk
+        if not cleaned_data.get('id_unidad_fk') and visitante:
+            cleaned_data['id_unidad_fk'] = visitante.unidad_visitada
         if not cleaned_data.get('id_unidad_fk'):
             self.add_error('id_unidad_fk', _('Indica a qué unidad va el vehículo.'))
 

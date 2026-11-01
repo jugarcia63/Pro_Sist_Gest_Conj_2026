@@ -1,0 +1,72 @@
+{% extends "app.html" %}
+{% load i18n ui %}
+{% block title %}{% translate "Entregas de zonas" %}{% endblock %}
+{% block miga %}{% icono "derecha" %}<strong>{% translate "Entregas de zonas" %}</strong>{% endblock %}
+{% block eyebrow %}<span class="encabezado__eyebrow">{% icono "zona" %} {% translate "Zonas comunes" %}</span>{% endblock %}
+{% block titulo_pagina %}{% translate "Entregas de zonas comunes" %}{% endblock %}
+{% block subtitulo %}<p>{% translate "Cuando termine una reserva, recibe la zona y revisa los implementos prestados." %}</p>{% endblock %}
+{% block acciones %}<a href="{% url 'dashboard' %}" class="btn btn-secundario">{% icono "volver" %} {% translate "Volver" %}</a>{% endblock %}
+{% block contenido %}
+<section class="panel">
+    <div class="panel__cabecera"><h2>{% icono "alerta" %} {% translate "Por recibir" %}</h2></div>
+    {% if por_recibir %}
+        <div class="lista">
+            {% for r in por_recibir %}
+                <div class="lista__item">
+                    <div class="dia"><span>{{ r.fecha_inicio|date:"M" }}</span><strong>{{ r.fecha_inicio|date:"j" }}</strong></div>
+                    <div class="lista__cuerpo">
+                        <strong>{{ r.id_zona_fk }} · {{ r.id_unidad_fk|default:"—" }}</strong>
+                        <small>{% icono "reloj" %} {{ r.fecha_inicio|date:"H:i" }} – {{ r.fecha_fin|date:"H:i" }}{% if r.fecha_fin < ahora %} · {% blocktranslate with t=r.fecha_fin|timesince %}terminó hace {{ t }}{% endblocktranslate %}{% else %} · {% translate "en uso" %}{% endif %}{% if r.incluye_limpieza %} · {% translate "con limpieza" %}{% endif %}</small>
+                    </div>
+                    <a href="{% url 'recibir_zona' r.pk %}" class="btn btn-exito btn-sm">{% icono "check" %} {% translate "Recibir zona" %}</a>
+                </div>
+            {% endfor %}
+        </div>
+    {% else %}
+        <div class="vacio">
+            <div class="vacio__icono">{% icono "check" %}</div>
+            <h3>{% translate "No hay zonas por recibir" %}</h3>
+            <p>{% translate "Las reservas aprobadas aparecen aquí desde que empiezan hasta que alguien recibe la zona." %}</p>
+        </div>
+    {% endif %}
+</section>
+
+{% if en_uso_pronto %}
+<section class="panel">
+    <div class="panel__cabecera"><h2>{% icono "calendario" %} {% translate "Más tarde, hoy" %}</h2></div>
+    <div class="lista">
+        {% for r in en_uso_pronto %}
+            <div class="lista__item">
+                <span class="avatar avatar--menta">{% icono "zona" %}</span>
+                <div class="lista__cuerpo"><strong>{{ r.id_zona_fk }} · {{ r.id_unidad_fk|default:"—" }}</strong><small>{{ r.fecha_inicio|date:"H:i" }} – {{ r.fecha_fin|date:"H:i" }} · {% translate "Entrégales los implementos de la lista de la zona." %}</small></div>
+            </div>
+        {% endfor %}
+    </div>
+</section>
+{% endif %}
+
+<section class="panel">
+    <div class="panel__cabecera"><h2>{% icono "check" %} {% translate "Recibidas" %}</h2></div>
+    {% if recibidas %}
+        <div class="tabla-contenedor">
+            <table>
+                <thead><tr><th>{% translate "Zona" %}</th><th>{% translate "Unidad" %}</th><th>{% translate "Recibida" %}</th><th>{% translate "Resultado" %}</th><th class="derecha">{% translate "Comprobante" %}</th></tr></thead>
+                <tbody>
+                {% for r in recibidas %}
+                    <tr>
+                        <td><strong>{{ r.id_zona_fk }}</strong><small class="texto-suave" style="display:block">{{ r.fecha_inicio|date:"d M, H:i" }} – {{ r.fecha_fin|date:"H:i" }}</small></td>
+                        <td>{{ r.id_unidad_fk|default:"—" }}</td>
+                        <td class="num">{{ r.fecha_entrega|date:"d M, H:i" }}{% if r.recibida_por %}<small class="texto-suave" style="display:block">@{{ r.recibida_por.username }}</small>{% endif %}</td>
+                        <td>{% if r.valor_multa %}<span class="badge badge-error">{% blocktranslate with v=r.valor_multa|pesos %}Multa {{ v }}{% endblocktranslate %}</span>{% else %}<span class="badge badge-exito">{% translate "Completa" %}</span>{% endif %}</td>
+                        <td class="derecha"><a href="{% url 'comprobante_reserva' r.pk %}" class="btn btn-fantasma btn-sm">{% icono "factura" %} PDF</a></td>
+                    </tr>
+                {% endfor %}
+                </tbody>
+            </table>
+        </div>
+        {% include "partials/paginacion.html" %}
+    {% else %}
+        <div class="panel__cuerpo"><p class="texto-suave">{% translate "Aún no se ha recibido ninguna zona." %}</p></div>
+    {% endif %}
+</section>
+{% endblock %}

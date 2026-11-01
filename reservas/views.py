@@ -1,13 +1,18 @@
+from decimal import Decimal
+
 from django.contrib import messages
-from django.shortcuts import get_object_or_404, redirect
+from django.db import transaction
+from django.http import HttpResponse
+from django.shortcuts import get_object_or_404, redirect, render
 from django.urls import reverse_lazy
 from django.utils import timezone
+from django.utils.translation import gettext as _
 from django.views.generic import CreateView, ListView, UpdateView
 
 from usuarios.permisos import RolRequeridoMixin, redirigir_a_siguiente, residente_de, rol_requerido
-from .forms import ReservaForm, ZonaForm
-from .models import Reservas, ZonasComunes
-from django.utils.translation import gettext as _
+from .cobros import crear_multa, sincronizar_factura
+from .forms import EntregaZonaForm, InventarioFormSet, ReservaForm, ZonaForm
+from .models import ItemEntregado, Reservas, ZonasComunes
 
 
 def _reservas_visibles(usuario):
@@ -29,7 +34,7 @@ class ListaZonas(RolRequeridoMixin, ListView):
     context_object_name = 'zonas'
 
     def get_queryset(self):
-        zonas = ZonasComunes.objects.order_by('nombre')
+        zonas = ZonasComunes.objects.prefetch_related('inventario').order_by('nombre')
         if self.request.user.rol == 'residente':
             zonas = zonas.filter(estado=1)
         return zonas
@@ -42,9 +47,24 @@ class ZonaFormMixin:
     template_name = 'reservas/form_zona.html'
     success_url = reverse_lazy('lista_zonas')
 
-    def form_valid(self, form):
-        messages.success(self.request, _('Zona "%(nombre)s" guardada.') % {'nombre': form.instance.nombre})
-        return super().form_valid(form)
+    def get_context_data(self, **kwargs):
+        contexto = super().get_context_data(**kwargs)
+        if 'inventario' not in contexto:
+            contexto['inventario'] = InventarioFormSet(instance=self.object or ZonasComunes(), prefix='inventario')
+        return contexto
+
+    def post(self, request, *args, **kwargs):
+        self.object = self.get_object() if 'id_zona' in kwargs else None
+        form = self.get_form()
+        inventario = InventarioFormSet(request.POST, instance=self.object or ZonasComunes(), prefix='inventario')
+        if form.is_valid() and inventario.is_valid():
+            with transaction.atomic():
+                self.object = form.save()
+                inventario.instance = self.object
+                inventario.save()
+            messages.success(request, _('Zona "%(nombre)s" guardada.') % {'nombre': self.object.nombre})
+            return redirect(self.success_url)
+        return self.render_to_response(self.get_context_data(form=form, inventario=inventario))
 
 
 class CrearZona(ZonaFormMixin, RolRequeridoMixin, CreateView):
@@ -131,11 +151,24 @@ class ReservaFormMixin:
             form.instance.id_unidad_fk = residente_de(self.request.user).id_unidad_fk
             # Cualquier cambio del residente vuelve a quedar pendiente de aprobación
             form.instance.estado = 'Pendiente'
-        return super().form_valid(form)
+        if not form.instance.pk:
+            form.instance.reservado_por = self.request.user
+        form.instance.calcular_cobro()
+        respuesta = super().form_valid(form)
+        aviso = sincronizar_factura(self.object)
+        if aviso:
+            messages.info(self.request, aviso)
+        return respuesta
 
     def get_context_data(self, **kwargs):
         contexto = super().get_context_data(**kwargs)
-        contexto['zonas'] = ZonasComunes.objects.filter(estado=1).order_by('nombre')
+        zonas = ZonasComunes.objects.filter(estado=1).order_by('nombre')
+        contexto['zonas'] = zonas
+        # Para el cálculo del valor estimado en el navegador (static/js/app.js)
+        contexto['tarifas_zonas'] = {
+            str(z.pk): {'hora': float(z.valor_hora), 'limpieza': float(z.valor_limpieza) if z.ofrece_limpieza else None}
+            for z in zonas
+        }
         return contexto
 
 
@@ -161,7 +194,7 @@ class EditarReserva(ReservaFormMixin, RolRequeridoMixin, UpdateView):
     pk_url_kwarg = 'id_reservas'
 
     def get_queryset(self):
-        queryset = _reservas_visibles(self.request.user)
+        queryset = _reservas_visibles(self.request.user).filter(fecha_entrega__isnull=True).exclude(estado='Finalizada')
         if self.request.user.rol == 'residente':
             # El residente solo puede cambiar reservas que no se han usado ni cerrado
             queryset = queryset.filter(fecha_inicio__gt=timezone.now(), estado__in=('Pendiente', 'Aprobada'))
@@ -189,8 +222,109 @@ def cambiar_estado_reserva(request, id_reservas):
             id_zona_fk=reserva.id_zona_fk, estado='Aprobada',
             fecha_inicio__lt=reserva.fecha_fin, fecha_fin__gt=reserva.fecha_inicio).exclude(pk=reserva.pk).exists():
         messages.error(request, _('Ya hay otra reserva aprobada para esa zona en ese horario.'))
+    elif reserva.entregada or reserva.estado == 'Finalizada':
+        messages.error(request, _('Esta reserva ya terminó y la zona fue recibida.'))
     else:
         reserva.estado = nuevo
-        reserva.save(update_fields=['estado'])
+        if reserva.valor_total is None:
+            reserva.calcular_cobro()  # reservas hechas antes de que existieran las tarifas
+        reserva.save()
         messages.success(request, _('Reserva de %(zona)s marcada como %(estado)s.') % {'zona': reserva.id_zona_fk, 'estado': _(nuevo).lower()})
+        aviso = sincronizar_factura(reserva)
+        if aviso:
+            messages.info(request, aviso)
     return redirigir_a_siguiente(request, 'lista_reservas')
+
+
+# ---------- Entrega de la zona y comprobante ----------
+
+def _por_recibir():
+    """Reservas aprobadas que ya empezaron y cuya zona aún no se ha recibido."""
+    return (Reservas.objects.select_related('id_zona_fk', 'id_unidad_fk')
+            .filter(estado='Aprobada', fecha_entrega__isnull=True, fecha_inicio__lte=timezone.now()))
+
+
+class ListaEntregas(RolRequeridoMixin, ListView):
+    """Portería y administración: zonas por recibir y las ya recibidas."""
+    roles_permitidos = ('admin', 'seguridad')
+    template_name = 'reservas/lista_entregas.html'
+    context_object_name = 'recibidas'
+    paginate_by = 15
+
+    def get_queryset(self):
+        return (Reservas.objects.select_related('id_zona_fk', 'id_unidad_fk', 'recibida_por')
+                .filter(fecha_entrega__isnull=False).order_by('-fecha_entrega'))
+
+    def get_context_data(self, **kwargs):
+        contexto = super().get_context_data(**kwargs)
+        ahora = timezone.now()
+        contexto.update({
+            'por_recibir': _por_recibir().order_by('fecha_fin'),
+            'en_uso_pronto': (Reservas.objects.select_related('id_zona_fk', 'id_unidad_fk')
+                              .filter(estado='Aprobada', fecha_inicio__gt=ahora,
+                                      fecha_inicio__date=timezone.localdate()).order_by('fecha_inicio')),
+            'ahora': ahora,
+        })
+        return contexto
+
+
+@rol_requerido('admin', 'seguridad')
+def recibir_zona(request, id_reservas):
+    reserva = get_object_or_404(Reservas.objects.select_related('id_zona_fk', 'id_unidad_fk'), pk=id_reservas)
+    if reserva.entregada:
+        messages.info(request, _('Esta zona ya fue recibida.'))
+        return redirect('lista_entregas')
+    if reserva.estado != 'Aprobada' or reserva.fecha_inicio > timezone.now():
+        messages.error(request, _('Solo se recibe una zona de una reserva aprobada que ya empezó.'))
+        return redirect('lista_entregas')
+
+    items = reserva.id_zona_fk.inventario.all() if reserva.id_zona_fk else []
+    if request.method == 'POST':
+        form = EntregaZonaForm(request.POST, reserva=reserva, items=items)
+        if form.is_valid():
+            datos = form.cleaned_data
+            with transaction.atomic():
+                total = Decimal('0')
+                for item in form.items:
+                    entregado = ItemEntregado.objects.create(
+                        reserva=reserva, item=item, nombre=item.nombre, cantidad_prestada=item.cantidad,
+                        faltantes=datos[f'faltan_{item.pk}'] or 0, danados=datos[f'danados_{item.pk}'] or 0,
+                        valor_reposicion=item.valor_reposicion,
+                    )
+                    total += entregado.cargo
+                reserva.zona_limpia = datos.get('zona_limpia', True)
+                if not reserva.incluye_limpieza and reserva.zona_limpia is False and reserva.id_zona_fk.ofrece_limpieza:
+                    total += reserva.id_zona_fk.valor_limpieza  # se cobra la limpieza que no hicieron
+                reserva.valor_multa = total
+                reserva.observaciones_entrega = datos.get('observaciones_entrega', '')
+                reserva.fecha_entrega = timezone.now()
+                reserva.recibida_por = request.user
+                reserva.estado = 'Finalizada'
+                reserva.save()
+                multa = crear_multa(reserva)
+            if multa:
+                from usuarios.templatetags.ui import pesos
+                messages.warning(request, _('Zona recibida con novedades: se generó una multa de %(valor)s.')
+                                 % {'valor': pesos(multa.valor)})
+            else:
+                messages.success(request, _('Zona recibida completa. ¡Todo en orden!'))
+            return redirect('lista_entregas')
+    else:
+        form = EntregaZonaForm(reserva=reserva, items=items)
+    return render(request, 'reservas/recibir_zona.html', {'reserva': reserva, 'form': form})
+
+
+@rol_requerido('admin', 'residente', 'seguridad')
+def comprobante_reserva(request, id_reservas):
+    """PDF con la información de la reserva: lo descarga el residente de la unidad o la administración."""
+    from .comprobante import generar_pdf
+
+    if request.user.rol == 'seguridad':
+        reservas = Reservas.objects.filter(fecha_entrega__isnull=False)
+    else:
+        reservas = _reservas_visibles(request.user)
+    reserva = get_object_or_404(reservas.select_related('id_zona_fk', 'id_unidad_fk', 'reservado_por', 'recibida_por'),
+                                pk=id_reservas)
+    respuesta = HttpResponse(generar_pdf(reserva), content_type='application/pdf')
+    respuesta['Content-Disposition'] = f'attachment; filename="reserva-{reserva.pk}.pdf"'
+    return respuesta

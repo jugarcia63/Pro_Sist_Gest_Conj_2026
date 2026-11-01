@@ -9,7 +9,7 @@ register = template.Library()
 COLORES_ESTADO = {
     'pagado': 'exito', 'aprobada': 'exito', 'cerrado': 'exito', 'activo': 'exito', 'salió': 'neutro',
     'pendiente': 'aviso', 'en proceso': 'aviso', 'dentro': 'info',
-    'en recepción': 'aviso', 'entregado': 'exito',
+    'en recepción': 'aviso', 'entregado': 'exito', 'finalizada': 'exito',
     'vencido': 'error', 'abierto': 'error', 'rechazada': 'error', 'cancelada': 'neutro', 'inactivo': 'neutro',
 }
 

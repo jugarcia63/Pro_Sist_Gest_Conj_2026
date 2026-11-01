@@ -1,0 +1,75 @@
+{% extends "app.html" %}
+{% load i18n ui %}
+{% block title %}{% translate "Recibir zona" %}{% endblock %}
+{% block miga %}{% icono "derecha" %}<a href="{% url 'lista_entregas' %}">{% translate "Entregas de zonas" %}</a>{% icono "derecha" %}<strong>{{ reserva.id_zona_fk }}</strong>{% endblock %}
+{% block eyebrow %}<span class="encabezado__eyebrow">{% icono "zona" %} {% translate "Entrega" %}</span>{% endblock %}
+{% block titulo_pagina %}{% blocktranslate with zona=reserva.id_zona_fk %}Recibir {{ zona }}{% endblocktranslate %}{% endblock %}
+{% block subtitulo %}<p>{% blocktranslate with unidad=reserva.id_unidad_fk inicio=reserva.fecha_inicio|date:"d M, H:i" fin=reserva.fecha_fin|date:"H:i" %}Reserva de {{ unidad }}, {{ inicio }} – {{ fin }}. Cuenta cada implemento antes de confirmar.{% endblocktranslate %}</p>{% endblock %}
+{% block acciones %}<a href="{% url 'lista_entregas' %}" class="btn btn-secundario">{% icono "volver" %} {% translate "Volver" %}</a>{% endblock %}
+{% block contenido %}
+<form method="post" novalidate>
+{% csrf_token %}
+<div class="grid-3-1">
+    <div class="columna">
+        {% if form.non_field_errors %}<div class="form-errores" role="alert">{% icono "alerta" %}<div>{% for e in form.non_field_errors %}<div>{{ e }}</div>{% endfor %}</div></div>{% endif %}
+        <section class="panel">
+            <div class="panel__cabecera"><h2>{% icono "check" %} {% translate "Implementos prestados" %}</h2></div>
+            {% if form.items %}
+                <div class="tabla-contenedor">
+                    <table class="inventario-tabla">
+                        <thead><tr><th>{% translate "Implemento" %}</th><th class="num">{% translate "Prestados" %}</th><th class="col-num">{% translate "Faltan" %}</th><th class="col-num">{% translate "Dañados" %}</th><th class="num">{% translate "Reposición c/u" %}</th></tr></thead>
+                        <tbody>
+                        {% for item, faltan, danados in form.filas %}
+                            <tr{% if faltan.errors or danados.errors %} class="fila-novedad"{% endif %}>
+                                <td><strong>{{ item.nombre }}</strong></td>
+                                <td class="num">{{ item.cantidad }}</td>
+                                <td class="col-num">{{ faltan }}{% for e in faltan.errors %}<div class="campo__error">{{ e }}</div>{% endfor %}</td>
+                                <td class="col-num">{{ danados }}{% for e in danados.errors %}<div class="campo__error">{{ e }}</div>{% endfor %}</td>
+                                <td class="num">{{ item.valor_reposicion|pesos }}</td>
+                            </tr>
+                        {% endfor %}
+                        </tbody>
+                    </table>
+                </div>
+            {% else %}
+                <div class="panel__cuerpo"><p class="texto-suave">{% translate "Esta zona no tiene implementos en su inventario." %}</p></div>
+            {% endif %}
+        </section>
+        <section class="panel">
+            <div class="panel__cuerpo panel__cuerpo--form" style="display:grid;gap:1.1rem">
+                {% if form.zona_limpia %}
+                    <div class="campo{% if form.zona_limpia.errors %} campo--error{% endif %}">
+                        <label>{{ form.zona_limpia.label }}<span class="requerido" aria-hidden="true">*</span></label>
+                        <div class="opciones">
+                            {% for opcion in form.zona_limpia %}<label class="opcion">{{ opcion.tag }} {{ opcion.choice_label }}</label>{% endfor %}
+                        </div>
+                        <div class="campo__ayuda">{% if reserva.id_zona_fk.ofrece_limpieza %}{% blocktranslate with v=reserva.id_zona_fk.valor_limpieza|pesos %}No tomaron el servicio de limpieza: si quedó sucia se cobran {{ v }}.{% endblocktranslate %}{% else %}{% translate "Queda anotado en el comprobante." %}{% endif %}</div>
+                        {% for e in form.zona_limpia.errors %}<div class="campo__error">{{ e }}</div>{% endfor %}
+                    </div>
+                {% else %}
+                    <p>{% icono "info" %} {% translate "Esta reserva incluye el servicio de limpieza: el conjunto se encarga del aseo." %}</p>
+                {% endif %}
+                <div class="campo">
+                    <label for="{{ form.observaciones_entrega.id_for_label }}">{{ form.observaciones_entrega.label }}</label>
+                    {{ form.observaciones_entrega }}
+                </div>
+                <div class="form-acciones">
+                    <a href="{% url 'lista_entregas' %}" class="btn btn-fantasma">{% translate "Cancelar" %}</a>
+                    <button type="submit" class="btn btn-primario">{% icono "check" %} {% translate "Confirmar entrega" %}</button>
+                </div>
+            </div>
+        </section>
+    </div>
+    <div class="columna">
+        <section class="panel">
+            <div class="panel__cabecera"><h2>{% icono "info" %} {% translate "Cómo revisar" %}</h2></div>
+            <div class="panel__cuerpo" style="display:grid;gap:.6rem">
+                <p>{% translate "Deja en 0 lo que está completo. Escribe cuántos faltan o llegaron dañados." %}</p>
+                <p>{% translate "Lo que falte o esté dañado se cobra al residente como multa, por su valor de reposición." %}</p>
+                <p>{% translate "La hora de entrega y tu usuario se guardan solos." %}</p>
+            </div>
+        </section>
+    </div>
+</div>
+</form>
+{% endblock %}

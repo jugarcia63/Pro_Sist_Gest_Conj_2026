@@ -21,6 +21,11 @@
                 <div class="zona__cuerpo">
                     <h3>{{ z.nombre }}{% if z.estado == 0 %}<span class="badge badge-neutro">{% translate "No disponible" %}</span>{% endif %}</h3>
                     <p>{{ z.descripcion|default:_("Sin descripción.") }}</p>
+                    <div class="chips-zona">
+                        {% if z.es_paga %}<span class="etiqueta">{% icono "billetera" %} {% blocktranslate with v=z.valor_hora|pesos %}{{ v }} por hora{% endblocktranslate %}</span>{% else %}<span class="etiqueta etiqueta--cielo">{% translate "Sin costo" %}</span>{% endif %}
+                        {% if z.ofrece_limpieza %}<span class="etiqueta etiqueta--cielo">{% blocktranslate with v=z.valor_limpieza|pesos %}Limpieza opcional {{ v }}{% endblocktranslate %}</span>{% endif %}
+                    </div>
+                    {% with items=z.inventario.all %}{% if items %}<div class="zona__reglas"><strong>{% translate "Se presta:" %}</strong> {% for i in items %}{{ i.cantidad }} {{ i.nombre|lower }}{% if not forloop.last %}, {% endif %}{% endfor %}.</div>{% endif %}{% endwith %}
                     {% if z.reglas %}<div class="zona__reglas">{{ z.reglas }}</div>{% endif %}
                 </div>
                 <div class="zona__pie">

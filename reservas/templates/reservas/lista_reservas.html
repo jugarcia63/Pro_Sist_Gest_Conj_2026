@@ -30,6 +30,7 @@
                 <option value="Aprobada" {% if estado == 'Aprobada' %}selected{% endif %}>{% translate "Aprobadas" %}</option>
                 <option value="Rechazada" {% if estado == 'Rechazada' %}selected{% endif %}>{% translate "Rechazadas" %}</option>
                 <option value="Cancelada" {% if estado == 'Cancelada' %}selected{% endif %}>{% translate "Canceladas" %}</option>
+                <option value="Finalizada" {% if estado == 'Finalizada' %}selected{% endif %}>{% translate "Finalizadas" %}</option>
             </select>
             <noscript><button class="btn btn-secundario" type="submit">{% translate "Filtrar" %}</button></noscript>
         </form>
@@ -44,11 +45,21 @@
                         <strong>{{ r.id_zona_fk|default:_("Zona sin nombre") }}</strong>
                         <small>{% icono "reloj" %} {{ r.fecha_inicio|date:"l" }}, {{ r.fecha_inicio|date:"MONTH_DAY_FORMAT" }} · {{ r.fecha_inicio|date:"H:i" }} – {{ r.fecha_fin|date:"H:i" }}{% if user.rol == 'admin' %} · {{ r.id_unidad_fk|default:_("Sin unidad") }}{% endif %}</small>
                         {% if r.observaciones %}<small class="recortar" title="{{ r.observaciones }}">“{{ r.observaciones }}”</small>{% endif %}
+                        <div class="chips-zona" style="margin-top:.35rem">
+                            {% if r.valor_total %}<span class="etiqueta">{% icono "billetera" %} {{ r.valor_total|pesos }}{% if r.horas_cobradas and r.valor_hora %} · {% blocktranslate count n=r.horas_cobradas %}{{ n }} hora{% plural %}{{ n }} horas{% endblocktranslate %}{% endif %}</span>{% elif r.valor_total is not None %}<span class="etiqueta etiqueta--cielo">{% translate "Sin costo" %}</span>{% endif %}
+                            {% if r.incluye_limpieza %}<span class="etiqueta etiqueta--cielo">{% translate "Con limpieza" %}</span>{% endif %}
+                            {% if r.entregada %}<span class="etiqueta {% if r.valor_multa %}etiqueta--alerta{% else %}etiqueta--cielo{% endif %}">{% if r.valor_multa %}{% blocktranslate with v=r.valor_multa|pesos %}Multa {{ v }}{% endblocktranslate %}{% else %}{% translate "Entregada completa" %}{% endif %}</span>{% endif %}
+                        </div>
                     </div>
                     <div class="lista__lado">
                         <span class="badge badge-{{ r.estado|color_estado }}">{{ r.estado|traducir:"Sin estado" }}</span>
                         <div class="acciones">
-                            {% if user.rol == 'admin' %}
+                            {% if user.rol == 'admin' and r.estado == 'Aprobada' and r.fecha_inicio <= ahora and not r.entregada %}
+                                <a href="{% url 'recibir_zona' r.pk %}" class="btn btn-exito btn-sm">{% icono "check" %} {% translate "Recibir zona" %}</a>
+                            {% endif %}
+                            <a href="{% url 'comprobante_reserva' r.pk %}" class="btn btn-secundario btn-sm" title="{% translate 'Descargar comprobante en PDF' %}">{% icono "factura" %} PDF</a>
+                            {% if r.entregada or r.estado == 'Finalizada' %}
+                            {% elif user.rol == 'admin' %}
                                 {% if r.estado != 'Aprobada' %}
                                     <form method="post" action="{% url 'cambiar_estado_reserva' r.pk %}">{% csrf_token %}<input type="hidden" name="next" value="{{ request.get_full_path }}"><button class="btn btn-exito btn-sm" name="estado" value="Aprobada">{% icono "check" %} {% translate "Aprobar" %}</button></form>
                                 {% endif %}

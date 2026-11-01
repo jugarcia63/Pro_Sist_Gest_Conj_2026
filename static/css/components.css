@@ -478,3 +478,21 @@ a.lista__item:hover { background: var(--color-superficie-2); color: inherit; }
   .toolbar select { flex: 1; }
   .ocultar-movil { display: none; }
 }
+
+/* ---------- Inventario de zonas, entrega y valor de reservas ---------- */
+.inventario-tabla td { padding: .5rem .6rem; }
+.inventario-tabla input[type=text], .inventario-tabla input[type=number] { width: 100%; }
+.inventario-tabla .col-num { width: 120px; }
+.inventario-tabla .col-borrar { width: 70px; text-align: center; }
+.inventario-tabla .campo__error { margin-top: .2rem; }
+.entrada-corta { width: 84px !important; text-align: center; }
+.fila-novedad td { background: var(--color-error-fondo); }
+.opciones { display: flex; gap: .6rem; flex-wrap: wrap; }
+.opcion { display: flex; align-items: center; gap: .5rem; padding: .6rem .9rem; border: 1px solid var(--color-borde-fuerte); border-radius: 10px; cursor: pointer; font-weight: 500; }
+.opcion input { accent-color: var(--color-primario); width: 16px; height: 16px; }
+.opcion:has(input:checked) { border-color: var(--color-primario); background: var(--color-primario-suave); }
+.valor-estimado { display: flex; justify-content: space-between; align-items: baseline; gap: 1rem; }
+.valor-estimado strong { font-family: var(--fuente-display); font-size: 1.6rem; color: var(--color-primario-oscuro); }
+.chips-zona { display: flex; gap: .4rem; flex-wrap: wrap; }
+.inventario-tabla input[type=checkbox] { width: 18px; height: 18px; padding: 0; accent-color: var(--color-error); }
+.etiqueta--alerta { background: var(--color-error-fondo); color: var(--color-error); }

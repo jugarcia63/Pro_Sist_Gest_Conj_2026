@@ -60,6 +60,43 @@
     window.setInterval(actualizar, 1000);
   }
 
+  // Formulario de reserva: muestra la casilla de limpieza solo si la zona la ofrece y calcula el valor estimado.
+  // Misma regla del servidor (reservas.models.horas_a_cobrar): cada hora iniciada cuenta completa.
+  var tarifasScript = document.getElementById('tarifas-zonas');
+  var selectZona = document.getElementById('id_id_zona_fk');
+  if (tarifasScript && selectZona) {
+    var tarifas = JSON.parse(tarifasScript.textContent);
+    var inicio = document.getElementById('id_fecha_inicio');
+    var fin = document.getElementById('id_fecha_fin');
+    var limpieza = document.getElementById('id_incluye_limpieza');
+    var campoLimpieza = limpieza ? limpieza.closest('.campo') : null;
+    var panel = document.getElementById('panel-estimado');
+    var pesosRes = function (n) { return '$' + Math.round(n).toString().replace(/\B(?=(\d{3})+(?!\d))/g, '.'); };
+    var recalcular = function () {
+      var t = tarifas[selectZona.value];
+      if (campoLimpieza) {
+        var ofrece = Boolean(t) && t.limpieza !== null;
+        campoLimpieza.hidden = !ofrece;
+        if (!ofrece) limpieza.checked = false;
+      }
+      if (!panel) return;
+      if (!t) { panel.hidden = true; return; }
+      var a = inicio && inicio.value ? new Date(inicio.value) : null;
+      var b = fin && fin.value ? new Date(fin.value) : null;
+      var horas = a && b && b > a ? Math.ceil((b - a) / 3600000) : 0;
+      var conLimpieza = Boolean(limpieza && limpieza.checked && t.limpieza !== null);
+      var total = horas * t.hora + (conLimpieza ? t.limpieza : 0);
+      panel.hidden = !(t.hora > 0 || conLimpieza);
+      panel.querySelector('[data-estimado-detalle]').textContent =
+        horas + ' h × ' + pesosRes(t.hora) + (conLimpieza ? ' + limpieza ' + pesosRes(t.limpieza) : '');
+      panel.querySelector('[data-estimado-total]').textContent = pesosRes(total);
+    };
+    [selectZona, inicio, fin, limpieza].forEach(function (el) {
+      if (el) { el.addEventListener('change', recalcular); el.addEventListener('input', recalcular); }
+    });
+    recalcular();
+  }
+
   // Pasarela de pago: agrupa el número de tarjeta y pone la barra en MM/AA
   var numero = document.getElementById('id_numero_tarjeta');
   var vista = document.querySelector('[data-tarjeta-numero]');
