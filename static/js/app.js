@@ -25,6 +25,23 @@
     });
   });
 
+  // Video de presentación en un modal (login)
+  document.querySelectorAll('[data-abrir-video]').forEach(function (boton) {
+    var modal = document.getElementById(boton.dataset.abrirVideo);
+    if (!modal || typeof modal.showModal !== 'function') return;
+    var video = modal.querySelector('video');
+    boton.addEventListener('click', function () {
+      modal.showModal();
+      if (video) video.play().catch(function () {});
+    });
+    modal.querySelectorAll('[data-cerrar-video]').forEach(function (cerrar) {
+      cerrar.addEventListener('click', function () { modal.close(); });
+    });
+    // Clic fuera del video cierra el modal
+    modal.addEventListener('click', function (evento) { if (evento.target === modal) modal.close(); });
+    modal.addEventListener('close', function () { if (video) video.pause(); });
+  });
+
   // Cerrar mensajes
   document.querySelectorAll('.alerta__cerrar').forEach(function (boton) {
     boton.addEventListener('click', function () { boton.closest('.alerta').remove(); });

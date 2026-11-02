@@ -49,7 +49,23 @@
             </form>
 
             <p class="auth__pie">{% icono "candado" %} {% translate "¿No tienes cuenta u olvidaste tu contraseña? Pídela a la administración del conjunto." %}</p>
+
+            {# Acceso rápido al video de presentación #}
+            <button type="button" class="video-promo" data-abrir-video="video-presentacion">
+                <span class="video-promo__mini" style="background-image:url('{% static 'video/presentacion.jpg' %}')">{% icono "play" %}</span>
+                <span class="video-promo__texto">
+                    <strong>{% translate "¿Primera vez aquí?" %}</strong>
+                    <small>{% translate "Mira el video de presentación · 47 s" %}</small>
+                </span>
+            </button>
         </section>
     </div>
+
+    <dialog class="video-modal" id="video-presentacion" aria-label="{% translate 'Video de presentación' %}">
+        <button type="button" class="video-modal__cerrar" data-cerrar-video aria-label="{% translate 'Cerrar' %}">{% icono "x" %}</button>
+        <video controls playsinline preload="none" poster="{% static 'video/presentacion.jpg' %}">
+            <source src="{% static 'video/presentacion.mp4' %}" type="video/mp4">
+        </video>
+    </dialog>
 </div>
 {% endblock %}

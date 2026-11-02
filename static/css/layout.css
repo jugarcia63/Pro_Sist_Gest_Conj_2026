@@ -270,6 +270,25 @@
 .auth__pie { font-size: .8rem; color: var(--color-texto-tenue); display: flex; align-items: center; gap: .4rem; }
 .auth__pie .ico { width: 14px; height: 14px; }
 
+/* Acceso al video de presentación en el login */
+.video-promo { display: flex; align-items: center; gap: .85rem; width: 100%; padding: .55rem .9rem .55rem .55rem; border: 1px solid var(--color-borde); border-radius: var(--radio); background: var(--color-superficie-2); font: inherit; color: var(--color-texto); text-align: left; cursor: pointer; transition: border-color .15s, box-shadow .15s; }
+.video-promo:hover { border-color: var(--color-primario-medio); box-shadow: var(--sombra-hover); }
+.video-promo:focus-visible { outline: none; box-shadow: var(--anillo-foco); }
+.video-promo__mini { position: relative; flex-shrink: 0; width: 84px; height: 48px; border-radius: var(--radio-sm); background: var(--sidebar-fondo) center / cover no-repeat; display: grid; place-items: center; }
+.video-promo__mini::before { content: ""; position: absolute; inset: 0; border-radius: inherit; background: rgba(27, 21, 53, .35); }
+.video-promo__mini .ico { position: relative; width: 22px; height: 22px; color: #fff; fill: #fff; stroke-width: 1.5; filter: drop-shadow(0 1px 3px rgba(0, 0, 0, .5)); }
+.video-promo:hover .video-promo__mini .ico { transform: scale(1.12); }
+.video-promo__texto { display: grid; gap: 1px; line-height: 1.25; }
+.video-promo__texto strong { font-size: .88rem; font-weight: 600; }
+.video-promo__texto small { font-size: .8rem; color: var(--color-texto-suave); }
+
+.video-modal { width: min(960px, calc(100vw - 2rem)); padding: 0; border: 0; border-radius: var(--radio-lg); background: #000; overflow: visible; }
+.video-modal::backdrop { background: rgba(11, 8, 32, .82); backdrop-filter: blur(4px); }
+.video-modal video { display: block; width: 100%; aspect-ratio: 16 / 9; border-radius: var(--radio-lg); }
+.video-modal__cerrar { position: absolute; top: -.9rem; right: -.9rem; z-index: 1; width: 2.3rem; height: 2.3rem; border: 0; border-radius: 50%; background: #fff; color: var(--color-texto); display: grid; place-items: center; cursor: pointer; box-shadow: var(--sombra); }
+.video-modal__cerrar .ico { width: 18px; height: 18px; }
+@media (max-width: 640px) { .video-modal__cerrar { top: -2.8rem; right: 0; } }
+
 /* Fachada de torre con ventanas encendidas (motivo del conjunto) */
 .fachada {
   display: grid;
