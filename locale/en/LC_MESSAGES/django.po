@@ -1506,6 +1506,18 @@ msgid "Capacidad (personas)"
 msgstr "Capacity (people)"
 
 #: reservas/forms.py
+msgid "Compra o reposición: entran unidades nuevas"
+msgstr "Purchase or replacement: new units come in"
+
+#: reservas/forms.py
+msgid "Dar de baja (no tiene arreglo)"
+msgstr "Write off (can't be repaired)"
+
+#: reservas/forms.py
+msgid "Daño encontrado (fuera de una reserva)"
+msgstr "Damage found (outside a booking)"
+
+#: reservas/forms.py
 msgid "Disponible"
 msgstr "Available"
 
@@ -1520,6 +1532,10 @@ msgstr "E.g. Hall with kitchen and 10 tables"
 #: reservas/forms.py
 msgid "Ej: cumpleaños, 20 invitados"
 msgstr "E.g. birthday, 20 guests"
+
+#: reservas/forms.py
+msgid "Ej: se cambió la pata; factura 1234"
+msgstr "E.g. leg replaced; invoice 1234"
 
 #: reservas/forms.py
 msgid "Ej: una silla con la pata floja; dejaron basura en la cocina"
@@ -1543,6 +1559,11 @@ msgid "Escribe el valor del servicio de limpieza."
 msgstr "Enter the price of the cleaning service."
 
 #: reservas/forms.py
+#, python-format
+msgid "Hay %(n)s en reparación: la cantidad no puede ser menor."
+msgstr "%(n)s are under repair: the quantity can't be lower."
+
+#: reservas/forms.py
 msgid "Horarios, aforo, uso de música, aseo…"
 msgstr "Hours, capacity, music, cleaning…"
 
@@ -1557,6 +1578,10 @@ msgstr "Capacity must be greater than zero."
 #: reservas/forms.py
 msgid "La fecha de inicio no puede estar en el pasado."
 msgstr "The start date cannot be in the past."
+
+#: reservas/forms.py
+msgid "Movimiento"
+msgstr "Movement"
 
 #: reservas/forms.py
 msgid "Mínimo 1."
@@ -1575,12 +1600,20 @@ msgid "Nombre"
 msgstr "Name"
 
 #: reservas/forms.py
+msgid "Nota"
+msgstr "Note"
+
+#: reservas/forms.py
 msgid "Ofrece servicio de limpieza"
 msgstr "Offers cleaning service"
 
 #: reservas/forms.py
 msgid "Pendiente"
 msgstr "Pending"
+
+#: reservas/forms.py
+msgid "Pérdida (fuera de una reserva)"
+msgstr "Loss (outside a booking)"
 
 #: reservas/forms.py
 msgid "Rechazada"
@@ -1591,12 +1624,31 @@ msgid "Reglas"
 msgstr "Rules"
 
 #: reservas/forms.py
+msgid "Reparado: vuelve a prestarse"
+msgstr "Repaired: can be lent again"
+
+#: reservas/forms.py
 msgid "Selecciona una zona"
 msgstr "Select an area"
 
 #: reservas/forms.py
 msgid "Si el residente no lo toma, debe entregar la zona limpia o se le cobra este valor."
 msgstr "If the resident doesn't take it, they must return the area clean or be charged this amount."
+
+#: reservas/forms.py
+#, python-format
+msgid "Solo hay %(n)s disponibles."
+msgstr "Only %(n)s available."
+
+#: reservas/forms.py
+#, python-format
+msgid "Solo hay %(n)s en reparación."
+msgstr "Only %(n)s under repair."
+
+#: reservas/forms.py
+#, python-format
+msgid "Solo se dan de baja unidades en reparación (hay %(n)s)."
+msgstr "Only units under repair can be written off (there are %(n)s)."
 
 #: reservas/forms.py
 msgid "Sí, quedó limpia"
@@ -1705,6 +1757,47 @@ msgstr "Your unit"
 #: reservas/templates/reservas/calendario_zona.html
 msgid "Zonas"
 msgstr "Areas"
+
+#: reservas/templates/reservas/detalle_item.html
+#, python-format
+msgid "%(total)s en total · %(n)s disponibles · %(r)s en reparación · reposición %(v)s c/u"
+msgstr "%(total)s in total · %(n)s available · %(r)s under repair · replacement %(v)s each"
+
+#: reservas/templates/reservas/detalle_item.html
+msgid "Al comprar unidades nuevas, regístralas como compra para que se puedan prestar."
+msgstr "When you buy new units, record them as a purchase so they can be lent."
+
+#: reservas/templates/reservas/detalle_item.html
+msgid "Cuando portería recibe una zona, lo que falta sale del inventario y lo dañado queda en reparación."
+msgstr "When the front desk receives an area, missing items leave the inventory and damaged ones go under repair."
+
+#: reservas/templates/reservas/detalle_item.html
+msgid "Cómo funciona"
+msgstr "How it works"
+
+#: reservas/templates/reservas/detalle_item.html
+msgid "Fecha"
+msgstr "Date"
+
+#: reservas/templates/reservas/detalle_item.html
+msgid "Guardar"
+msgstr "Save"
+
+#: reservas/templates/reservas/detalle_item.html
+msgid "Historial"
+msgstr "History"
+
+#: reservas/templates/reservas/detalle_item.html
+msgid "Lo que está en reparación no se presta. Márcalo como reparado cuando vuelva, o dalo de baja si no tiene arreglo."
+msgstr "Items under repair are not lent. Mark them repaired when they're back, or write them off if they can't be fixed."
+
+#: reservas/templates/reservas/detalle_item.html
+msgid "Registrar movimiento"
+msgstr "Record movement"
+
+#: reservas/templates/reservas/detalle_item.html
+msgid "Sin movimientos: todo lo prestado ha vuelto completo."
+msgstr "No movements: everything lent has come back complete."
 
 #: reservas/templates/reservas/form_reserva.html
 #, python-format
@@ -1878,6 +1971,116 @@ msgstr "Replacement (COP)"
 msgid "Salón social, zona BBQ, piscina, gimnasio, cancha múltiple, sala de juegos."
 msgstr "Party hall, BBQ area, pool, gym, sports court, game room."
 
+#: reservas/templates/reservas/inventario.html
+#, python-format
+msgid "%(n)s de %(total)s disponibles · %(v)s"
+msgstr "%(n)s of %(total)s available · %(v)s"
+
+#: reservas/templates/reservas/inventario.html
+#, python-format
+msgid "%(n)s disponibles para prestar"
+msgstr "%(n)s available to lend"
+
+#: reservas/templates/reservas/inventario.html
+msgid "Agrega implementos desde Zonas comunes → Editar."
+msgstr "Add items from Common areas → Edit."
+
+#: reservas/templates/reservas/inventario.html
+msgid "Agregar al inventario"
+msgstr "Add to inventory"
+
+#: reservas/templates/reservas/inventario.html
+msgid "Aún no hay movimientos. Aparecen cuando portería recibe una zona con novedades o cuando registras una reparación o compra."
+msgstr "No movements yet. They appear when the front desk receives an area with issues or when you record a repair or purchase."
+
+#: reservas/templates/reservas/inventario.html
+msgid "Dañados en entregas; no se prestan"
+msgstr "Damaged at returns; not lent"
+
+#: reservas/templates/reservas/inventario.html
+msgid "Disponibles"
+msgstr "Available"
+
+#: reservas/templates/reservas/inventario.html
+msgid "En reparación"
+msgstr "Under repair"
+
+#: reservas/templates/reservas/inventario.html
+msgid "Esta zona no presta implementos."
+msgstr "This area doesn't lend any items."
+
+#: reservas/templates/reservas/inventario.html
+msgid "Implementos"
+msgstr "Items"
+
+#: reservas/templates/reservas/inventario.html
+msgid "Inventario de implementos"
+msgstr "Item inventory"
+
+#: reservas/templates/reservas/inventario.html
+msgid "Lo que el conjunto presta con cada zona. Lo dañado queda en reparación y no se presta hasta que lo marques como reparado."
+msgstr "What the complex lends with each area. Damaged items stay under repair and aren't lent until you mark them repaired."
+
+#: reservas/templates/reservas/inventario.html
+msgid "Lo que se entrega con cada zona. Lo que está en reparación no se presta."
+msgstr "What is handed out with each area. Items under repair are not lent."
+
+#: reservas/templates/reservas/inventario.html
+msgid "Mostrar"
+msgstr "Show"
+
+#: reservas/templates/reservas/inventario.html
+msgid "Movimientos"
+msgstr "Movements"
+
+#: reservas/templates/reservas/inventario.html
+msgid "Nada en reparación"
+msgstr "Nothing under repair"
+
+#: reservas/templates/reservas/inventario.html
+msgid "No hay implementos"
+msgstr "No items"
+
+#: reservas/templates/reservas/inventario.html
+msgid "Perdidos (30 días)"
+msgstr "Lost (30 days)"
+
+#: reservas/templates/reservas/inventario.html
+msgid "Reposición c/u"
+msgstr "Replacement each"
+
+#: reservas/templates/reservas/inventario.html
+msgid "Se cobraron como multa al residente"
+msgstr "Charged to the resident as a fine"
+
+#: reservas/templates/reservas/inventario.html
+msgid "Según el valor de reposición"
+msgstr "Based on replacement value"
+
+#: reservas/templates/reservas/inventario.html
+msgid "Todas las zonas"
+msgstr "All areas"
+
+#: reservas/templates/reservas/inventario.html
+msgid "Todo"
+msgstr "All"
+
+#: reservas/templates/reservas/inventario.html
+msgid "Todos los implementos están disponibles para prestar."
+msgstr "All items are available to lend."
+
+#: reservas/templates/reservas/inventario.html
+msgid "Valor del inventario"
+msgstr "Inventory value"
+
+#: reservas/templates/reservas/inventario.html
+msgid "Zona"
+msgstr "Area"
+
+#: reservas/templates/reservas/inventario.html
+msgid "Últimos movimientos"
+msgstr "Latest movements"
+
 #: reservas/templates/reservas/lista_entregas.html
 msgid "Aún no se ha recibido ninguna zona."
 msgstr "No area has been received yet."
@@ -1899,8 +2102,8 @@ msgid "Entregas de zonas comunes"
 msgstr "Common area handovers"
 
 #: reservas/templates/reservas/lista_entregas.html
-msgid "Entrégales los implementos de la lista de la zona."
-msgstr "Hand them the items on the area's list."
+msgid "Entrégales los implementos disponibles de la zona."
+msgstr "Hand them the area's available items."
 
 #: reservas/templates/reservas/lista_entregas.html
 msgid "Las reservas aprobadas aparecen aquí desde que empiezan hasta que alguien recibe la zona."
@@ -1940,8 +2143,8 @@ msgid "Resultado"
 msgstr "Result"
 
 #: reservas/templates/reservas/lista_entregas.html
-msgid "Zona"
-msgstr "Area"
+msgid "Ver inventario"
+msgstr "View inventory"
 
 #: reservas/templates/reservas/lista_entregas.html
 msgid "con limpieza"
@@ -2060,6 +2263,10 @@ msgid "Tus solicitudes quedan pendientes hasta que la administración las aprueb
 msgstr "Your requests stay pending until management approves them."
 
 #: reservas/templates/reservas/lista_reservas.html
+msgid "Vencidas sin aprobar"
+msgstr "Expired without approval"
+
+#: reservas/templates/reservas/lista_reservas.html
 msgid "Ver zonas"
 msgstr "View areas"
 
@@ -2124,6 +2331,11 @@ msgid "¿Eliminar la zona %(zona)s? Si tiene reservas, solo se marcará como no 
 msgstr "Delete the area %(zona)s? If it has bookings, it will only be marked as unavailable."
 
 #: reservas/templates/reservas/recibir_zona.html
+#, python-format
+msgid "%(n)s en reparación"
+msgstr "%(n)s under repair"
+
+#: reservas/templates/reservas/recibir_zona.html
 msgid "Cómo revisar"
 msgstr "How to check"
 
@@ -2152,6 +2364,10 @@ msgid "Lo que falte o esté dañado se cobra al residente como multa, por su val
 msgstr "Anything missing or damaged is charged to the resident as a fine, at its replacement value."
 
 #: reservas/templates/reservas/recibir_zona.html
+msgid "Lo que falte sale del inventario y lo dañado queda en reparación hasta que la administración lo marque como reparado."
+msgstr "Missing items leave the inventory and damaged ones stay under repair until management marks them repaired."
+
+#: reservas/templates/reservas/recibir_zona.html
 #, python-format
 msgid "No tomaron el servicio de limpieza: si quedó sucia se cobran %(v)s."
 msgstr "They didn't take the cleaning service: if it was left dirty, %(v)s is charged."
@@ -2166,10 +2382,6 @@ msgid "Recibir %(zona)s"
 msgstr "Receive %(zona)s"
 
 #: reservas/templates/reservas/recibir_zona.html
-msgid "Reposición c/u"
-msgstr "Replacement each"
-
-#: reservas/templates/reservas/recibir_zona.html
 #, python-format
 msgid "Reserva de %(unidad)s, %(inicio)s – %(fin)s. Cuenta cada implemento antes de confirmar."
 msgstr "Reservation for %(unidad)s, %(inicio)s – %(fin)s. Count every item before confirming."
@@ -2180,12 +2392,21 @@ msgid "\"%(zona)s\" tiene reservas, así que se marcó como no disponible en vez
 msgstr "\"%(zona)s\" has bookings, so it was marked as unavailable instead of being deleted."
 
 #: reservas/views.py
+msgid "Esta reserva venció sin aprobarse: su horario ya pasó."
+msgstr "This booking expired without approval: its time slot has passed."
+
+#: reservas/views.py
 msgid "Esta reserva ya terminó y la zona fue recibida."
 msgstr "This reservation is over and the area was received."
 
 #: reservas/views.py
 msgid "Esta zona ya fue recibida."
 msgstr "This area was already received."
+
+#: reservas/views.py
+#, python-format
+msgid "Movimiento registrado: %(tipo)s, %(n)s × %(item)s."
+msgstr "Movement recorded: %(tipo)s, %(n)s × %(item)s."
 
 #: reservas/views.py
 msgid "No puedes poner la reserva en ese estado."
@@ -2211,6 +2432,10 @@ msgstr "Booking recorded."
 #: reservas/views.py
 msgid "Reserva registrada. Queda pendiente de aprobación."
 msgstr "Booking recorded. It is pending approval."
+
+#: reservas/views.py
+msgid "Solo la administración registra movimientos del inventario."
+msgstr "Only management can record inventory movements."
 
 #: reservas/views.py
 msgid "Solo se pueden cancelar reservas que todavía no han empezado."
@@ -2628,10 +2853,6 @@ msgstr "Main menu"
 msgid "Ubicación"
 msgstr "Location"
 
-#: templates/form_pagina.html
-msgid "Guardar"
-msgstr "Save"
-
 #: templates/partials/idioma.html
 msgid "Idioma"
 msgstr "Language"
@@ -2669,6 +2890,10 @@ msgstr "General"
 #: usuarios/context_processors.py
 msgid "Inicio"
 msgstr "Home"
+
+#: usuarios/context_processors.py
+msgid "Inventario"
+msgstr "Inventory"
 
 #: usuarios/context_processors.py
 msgid "Mi conjunto"
@@ -3039,10 +3264,6 @@ msgid "Estás al día"
 msgstr "You are up to date"
 
 #: usuarios/templates/usuarios/dashboard_residente.html
-msgid "Historial"
-msgstr "History"
-
-#: usuarios/templates/usuarios/dashboard_residente.html
 #, python-format
 msgid "Llegó %(fecha)s"
 msgstr "Arrived %(fecha)s"
@@ -3336,6 +3557,10 @@ msgid "Madrid, Cundinamarca"
 msgstr "Madrid, Cundinamarca"
 
 #: usuarios/templates/usuarios/login.html
+msgid "Mira el video de presentación · 47 s"
+msgstr "Watch the intro video · 47 s"
+
+#: usuarios/templates/usuarios/login.html
 msgid "Paga la administración en línea"
 msgstr "Pay your maintenance fee online"
 
@@ -3356,8 +3581,16 @@ msgid "Usuario o contraseña incorrectos."
 msgstr "Incorrect username or password."
 
 #: usuarios/templates/usuarios/login.html
+msgid "Video de presentación"
+msgstr "Intro video"
+
+#: usuarios/templates/usuarios/login.html
 msgid "¿No tienes cuenta u olvidaste tu contraseña? Pídela a la administración del conjunto."
 msgstr "No account or forgot your password? Ask the complex administration."
+
+#: usuarios/templates/usuarios/login.html
+msgid "¿Primera vez aquí?"
+msgstr "First time here?"
 
 #: usuarios/templates/usuarios/password_cambiada.html
 msgid "Contraseña actualizada"
@@ -3402,6 +3635,18 @@ msgstr "August"
 #: usuarios/textos_db.py
 msgid "Cerrado"
 msgstr "Closed"
+
+#: usuarios/textos_db.py
+msgid "Compra o reposición"
+msgstr "Purchase or replacement"
+
+#: usuarios/textos_db.py
+msgid "Dado de baja"
+msgstr "Written off"
+
+#: usuarios/textos_db.py
+msgid "Daño"
+msgstr "Damage"
 
 #: usuarios/textos_db.py
 msgid "Dentro"
@@ -3496,6 +3741,14 @@ msgid "Plomería"
 msgstr "Plumbing"
 
 #: usuarios/textos_db.py
+msgid "Pérdida"
+msgstr "Loss"
+
+#: usuarios/textos_db.py
+msgid "Reparado"
+msgstr "Repaired"
+
+#: usuarios/textos_db.py
 msgid "Reserva"
 msgstr "Booking"
 
@@ -3514,6 +3767,10 @@ msgstr "No category"
 #: usuarios/textos_db.py
 msgid "Sin estado"
 msgstr "No status"
+
+#: usuarios/textos_db.py
+msgid "Vencida"
+msgstr "Expired"
 
 #: usuarios/textos_db.py
 msgid "Vencido"

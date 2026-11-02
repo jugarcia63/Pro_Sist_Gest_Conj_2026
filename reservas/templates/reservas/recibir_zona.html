@@ -22,7 +22,7 @@
                         {% for item, faltan, danados in form.filas %}
                             <tr{% if faltan.errors or danados.errors %} class="fila-novedad"{% endif %}>
                                 <td><strong>{{ item.nombre }}</strong></td>
-                                <td class="num">{{ item.cantidad }}</td>
+                                <td class="num">{{ item.disponibles }}{% if item.fuera_servicio %}<small class="texto-suave" style="display:block">{% blocktranslate with n=item.fuera_servicio %}{{ n }} en reparación{% endblocktranslate %}</small>{% endif %}</td>
                                 <td class="col-num">{{ faltan }}{% for e in faltan.errors %}<div class="campo__error">{{ e }}</div>{% endfor %}</td>
                                 <td class="col-num">{{ danados }}{% for e in danados.errors %}<div class="campo__error">{{ e }}</div>{% endfor %}</td>
                                 <td class="num">{{ item.valor_reposicion|pesos }}</td>
@@ -66,6 +66,7 @@
             <div class="panel__cuerpo" style="display:grid;gap:.6rem">
                 <p>{% translate "Deja en 0 lo que está completo. Escribe cuántos faltan o llegaron dañados." %}</p>
                 <p>{% translate "Lo que falte o esté dañado se cobra al residente como multa, por su valor de reposición." %}</p>
+                <p>{% translate "Lo que falte sale del inventario y lo dañado queda en reparación hasta que la administración lo marque como reparado." %}</p>
                 <p>{% translate "La hora de entrega y tu usuario se guardan solos." %}</p>
             </div>
         </section>

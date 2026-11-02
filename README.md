@@ -32,6 +32,8 @@ Proyecto de Ingeniería de Software desarrollado en Django, para la administraci
 - Reservas de zonas comunes (con validación de horarios y solapamiento)
   - Cobro por hora en las zonas que lo ameritan (cada hora iniciada se cobra completa, sin horas gratis) y servicio de limpieza opcional; la factura se genera al aprobar la reserva
   - Inventario de implementos por zona; al terminar, portería recibe la zona, revisa faltantes, daños y aseo, y se genera la multa automáticamente
+  - Página de inventario (administración y portería): total, disponibles y en reparación por implemento, con historial. Lo perdido sale del inventario y lo dañado queda en reparación (no se presta) hasta que el administrador lo marca como reparado, lo da de baja o registra una compra
+  - Las reservas pendientes que nadie aprobó antes de su horario pasan solas a *Vencida*; las aprobadas que portería no recibió en 3 días se cierran solas
   - Comprobante de la reserva descargable en PDF
   - Calendario de disponibilidad por zona (próximos 7 días); un clic en una hora libre abre la reserva
 - Pagos con pasarela simulada
@@ -74,6 +76,9 @@ Al terminar la reserva, portería recibe la zona y cuenta los implementos. Lo qu
 | | Equipo de sonido con 2 parlantes | 1 | $900.000 |
 | | Micrófono inalámbrico | 1 | $150.000 |
 | | Cafetera grande | 1 | $250.000 |
+| | Video beam con telón | 1 | $1.800.000 |
+| | Extensión eléctrica de 10 m | 2 | $45.000 |
+| | Vajilla (puesto completo) | 60 | $18.000 |
 | Zona BBQ | Parrilla a gas | 1 | $1.500.000 |
 | | Pinzas para asar | 2 | $25.000 |
 | | Espátulas | 2 | $20.000 |
@@ -81,22 +86,36 @@ Al terminar la reserva, portería recibe la zona y cuenta los implementos. Lo qu
 | | Bandejas | 4 | $20.000 |
 | | Mesas | 4 | $180.000 |
 | | Sillas | 16 | $45.000 |
+| | Pipeta de gas 40 lb | 1 | $220.000 |
+| | Extintor | 1 | $120.000 |
 | Piscina | Sillas asoleadoras | 8 | $250.000 |
 | | Sombrillas | 4 | $180.000 |
 | | Flotadores | 6 | $30.000 |
+| | Tablas de natación | 6 | $35.000 |
+| | Aro salvavidas | 2 | $150.000 |
 | Gimnasio | Colchonetas | 8 | $60.000 |
 | | Mancuernas (par) | 10 | $80.000 |
 | | Balones de pilates | 4 | $70.000 |
+| | Bandas elásticas | 6 | $25.000 |
+| | Kettlebells | 4 | $120.000 |
+| | Lazos de saltar | 6 | $15.000 |
 | Cancha múltiple | Balón de microfútbol | 2 | $90.000 |
 | | Balón de baloncesto | 2 | $110.000 |
 | | Petos | 12 | $15.000 |
+| | Balón de voleibol | 1 | $80.000 |
+| | Red de voleibol | 1 | $150.000 |
+| | Conos de entrenamiento | 10 | $6.000 |
+| Parque infantil | Kit de arenero (balde y pala) | 6 | $15.000 |
+| | Balones infantiles | 3 | $25.000 |
 | Salón de juegos | Tacos de billar | 4 | $70.000 |
 | | Juego de bolas de billar | 1 | $250.000 |
 | | Raquetas de ping-pong | 4 | $40.000 |
 | | Pelotas de ping-pong | 6 | $3.000 |
 | | Juegos de mesa | 6 | $80.000 |
+| | Ajedrez | 2 | $60.000 |
+| | Dominó | 2 | $30.000 |
 
-*Editable en Zonas comunes → Editar → Inventario.* El parque infantil no presta implementos.
+*Editable en Zonas comunes → Editar → Inventario.* El estado de cada implemento (disponibles, en reparación e historial) se ve en *Inventario*.
 
 **Ejemplo:** en la BBQ falta 1 pinza, llegan 2 sillas dañadas y la zona quedó sucia = $25.000 + 2 × $45.000 + $30.000 = **$145.000**.
 
@@ -167,7 +186,14 @@ python manage.py migrate
 python manage.py createsuperuser
 ```
 
-### 8. Correr el servidor
+### 8. Datos de ejemplo
+```bash
+python manage.py poblar_datos            # torres, zonas, residentes, vigilantes, pagos, reservas...
+python manage.py refrescar_datos --si    # vuelve a crear pagos, reservas, visitas, etc. con fechas de hoy
+```
+`refrescar_datos` borra pagos, reservas, visitas, paquetes, reportes y avisos (no toca usuarios, residentes, unidades, zonas ni vehículos) y los crea de nuevo alrededor de la fecha actual: así la demo no muestra facturas de hace meses como vencidas ni reportes viejos abiertos. En Render se ejecuta en el deploy si la variable `REFRESCAR_DATOS` vale `1`; después conviene volver a ponerla en `0`.
+
+### 9. Correr el servidor
 ```bash
 python manage.py runserver
 ```

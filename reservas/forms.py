@@ -13,7 +13,7 @@ ESTADOS_RESERVA = [
     ('Cancelada', _('Cancelada')),
 ]
 # Estas reservas ya no ocupan el horario de la zona
-ESTADOS_LIBERAN_HORARIO = ('Rechazada', 'Cancelada')
+ESTADOS_LIBERAN_HORARIO = ('Rechazada', 'Cancelada', 'Vencida')
 
 
 class ZonaForm(forms.ModelForm):
@@ -74,7 +74,46 @@ class ItemInventarioForm(forms.ModelForm):
         cantidad = self.cleaned_data.get('cantidad')
         if cantidad is not None and cantidad < 1:
             raise forms.ValidationError(_('Mínimo 1.'))
+        if cantidad is not None and self.instance.pk and cantidad < self.instance.fuera_servicio:
+            raise forms.ValidationError(_('Hay %(n)s en reparación: la cantidad no puede ser menor.')
+                                        % {'n': self.instance.fuera_servicio})
         return cantidad
+
+
+class MovimientoInventarioForm(forms.Form):
+    """Lo que registra el administrador desde la página de inventario."""
+    TIPOS = [
+        ('reparado', _('Reparado: vuelve a prestarse')),
+        ('baja', _('Dar de baja (no tiene arreglo)')),
+        ('compra', _('Compra o reposición: entran unidades nuevas')),
+        ('dano', _('Daño encontrado (fuera de una reserva)')),
+        ('perdida', _('Pérdida (fuera de una reserva)')),
+    ]
+    tipo = forms.ChoiceField(choices=TIPOS, label=_('Movimiento'))
+    cantidad = forms.IntegerField(min_value=1, initial=1, label=_('Cantidad'),
+                                  widget=forms.NumberInput(attrs={'min': 1, 'class': 'entrada-corta'}))
+    nota = forms.CharField(required=False, max_length=200, label=_('Nota'),
+                           widget=forms.TextInput(attrs={'placeholder': _('Ej: se cambió la pata; factura 1234')}))
+
+    def __init__(self, *args, item, **kwargs):
+        super().__init__(*args, **kwargs)
+        self.item = item
+
+    def clean(self):
+        cleaned_data = super().clean()
+        tipo, cantidad = cleaned_data.get('tipo'), cleaned_data.get('cantidad')
+        if not tipo or not cantidad:
+            return cleaned_data
+        item = self.item
+        limites = {
+            'reparado': (item.fuera_servicio, _('Solo hay %(n)s en reparación.')),
+            'baja': (item.fuera_servicio, _('Solo se dan de baja unidades en reparación (hay %(n)s).')),
+            'dano': (item.disponibles, _('Solo hay %(n)s disponibles.')),
+            'perdida': (item.disponibles, _('Solo hay %(n)s disponibles.')),
+        }
+        if tipo in limites and cantidad > limites[tipo][0]:
+            self.add_error('cantidad', limites[tipo][1] % {'n': limites[tipo][0]})
+        return cleaned_data
 
 
 InventarioFormSet = inlineformset_factory(ZonasComunes, ItemInventario, form=ItemInventarioForm,
@@ -180,12 +219,13 @@ class EntregaZonaForm(forms.Form):
     def __init__(self, *args, reserva, items, **kwargs):
         super().__init__(*args, **kwargs)
         self.reserva = reserva
-        self.items = list(items)
+        # Solo se prestó lo que estaba disponible (lo que está en reparación no sale)
+        self.items = [item for item in items if item.disponibles > 0]
         for item in self.items:
             for tipo, etiqueta in (('faltan', _('Faltan')), ('danados', _('Dañados'))):
                 self.fields[f'{tipo}_{item.pk}'] = forms.IntegerField(
-                    label=f'{etiqueta}: {item.nombre}', min_value=0, max_value=item.cantidad, initial=0,
-                    widget=forms.NumberInput(attrs={'min': 0, 'max': item.cantidad, 'class': 'entrada-corta'}),
+                    label=f'{etiqueta}: {item.nombre}', min_value=0, max_value=item.disponibles, initial=0,
+                    widget=forms.NumberInput(attrs={'min': 0, 'max': item.disponibles, 'class': 'entrada-corta'}),
                 )
         if reserva.incluye_limpieza:
             # El conjunto se encarga de limpiar: no se revisa el aseo
@@ -199,8 +239,8 @@ class EntregaZonaForm(forms.Form):
         for item in self.items:
             faltan = cleaned_data.get(f'faltan_{item.pk}') or 0
             danados = cleaned_data.get(f'danados_{item.pk}') or 0
-            if faltan + danados > item.cantidad:
+            if faltan + danados > item.disponibles:
                 self.add_error(f'danados_{item.pk}', _('Entre faltantes y dañados no pueden pasar de %(n)s.')
-                               % {'n': item.cantidad})
+                               % {'n': item.disponibles})
         return cleaned_data
 

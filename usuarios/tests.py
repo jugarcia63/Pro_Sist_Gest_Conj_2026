@@ -494,3 +494,30 @@ class PoblarDatosTests(TestCase):
         totales = (Residentes.objects.count(), Pago.objects.count(), Reservas.objects.count())
         call_command('poblar_datos', verbosity=0)
         self.assertEqual(totales, (Residentes.objects.count(), Pago.objects.count(), Reservas.objects.count()))
+
+
+    def test_refrescar_datos_pone_todo_al_dia(self):
+        from datetime import timedelta
+        from django.core.management.base import CommandError
+        from django.utils import timezone
+        from reservas.models import ItemInventario
+        from reportes.models import ReporteDano
+        call_command('poblar_datos', verbosity=0)
+        # Datos "viejos": facturas de hace meses sin pagar
+        Pago.objects.update(fecha_vencimiento=timezone.localdate() - timedelta(days=200), estado='Pendiente')
+        with self.assertRaises(CommandError):
+            call_command('refrescar_datos', verbosity=0)  # sin --si no borra nada
+        call_command('refrescar_datos', '--si', verbosity=0)
+
+        hoy = timezone.localdate()
+        vencidos = Pago.objects.filter(estado='Pendiente', fecha_vencimiento__lt=hoy)
+        # Solo quedan vencidas las de los dos residentes atrasados a propósito, ninguna de hace más de 3 meses
+        self.assertTrue(set(vencidos.values_list('id_residente_fk__num_documento', flat=True))
+                        <= {'1020304004', '1020304008'})
+        self.assertFalse(vencidos.filter(fecha_vencimiento__lt=hoy - timedelta(days=95)).exists())
+        self.assertFalse(Pago.objects.filter(fecha_pago__gt=hoy).exists())
+        self.assertFalse(Reservas.objects.filter(estado='Pendiente', fecha_inicio__lt=timezone.now()).exists())
+        self.assertFalse(ReporteDano.objects.filter(fecha_reporte__lt=timezone.now() - timedelta(days=15))
+                         .exclude(estado='Cerrado').exists())
+        self.assertTrue(ItemInventario.objects.filter(fuera_servicio__gt=0).exists())  # hay cosas en reparación
+        self.assertEqual(Usuario.objects.filter(rol='seguridad').count(), 3)  # no borra usuarios

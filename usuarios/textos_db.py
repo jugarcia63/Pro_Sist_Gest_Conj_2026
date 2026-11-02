@@ -14,6 +14,10 @@ VALORES_GUARDADOS = [
     N_('En recepción'), N_('Entregado'),
     # Reserva cuya zona ya fue recibida
     N_('Finalizada'),
+    # Reserva pendiente que nadie aprobó antes de su horario
+    N_('Vencida'),
+    # Movimientos del inventario
+    N_('Pérdida'), N_('Daño'), N_('Reparado'), N_('Dado de baja'), N_('Compra o reposición'),
     # Tipos de vehículo
     N_('Carro'), N_('Moto'),
     # Categorías de reportes

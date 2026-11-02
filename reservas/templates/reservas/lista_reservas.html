@@ -31,6 +31,7 @@
                 <option value="Rechazada" {% if estado == 'Rechazada' %}selected{% endif %}>{% translate "Rechazadas" %}</option>
                 <option value="Cancelada" {% if estado == 'Cancelada' %}selected{% endif %}>{% translate "Canceladas" %}</option>
                 <option value="Finalizada" {% if estado == 'Finalizada' %}selected{% endif %}>{% translate "Finalizadas" %}</option>
+                <option value="Vencida" {% if estado == 'Vencida' %}selected{% endif %}>{% translate "Vencidas sin aprobar" %}</option>
             </select>
             <noscript><button class="btn btn-secundario" type="submit">{% translate "Filtrar" %}</button></noscript>
         </form>
@@ -58,7 +59,7 @@
                                 <a href="{% url 'recibir_zona' r.pk %}" class="btn btn-exito btn-sm">{% icono "check" %} {% translate "Recibir zona" %}</a>
                             {% endif %}
                             <a href="{% url 'comprobante_reserva' r.pk %}" class="btn btn-secundario btn-sm" title="{% translate 'Descargar comprobante en PDF' %}">{% icono "factura" %} PDF</a>
-                            {% if r.entregada or r.estado == 'Finalizada' %}
+                            {% if r.entregada or r.estado == 'Finalizada' or r.estado == 'Vencida' %}
                             {% elif user.rol == 'admin' %}
                                 {% if r.estado != 'Aprobada' %}
                                     <form method="post" action="{% url 'cambiar_estado_reserva' r.pk %}">{% csrf_token %}<input type="hidden" name="next" value="{{ request.get_full_path }}"><button class="btn btn-exito btn-sm" name="estado" value="Aprobada">{% icono "check" %} {% translate "Aprobar" %}</button></form>

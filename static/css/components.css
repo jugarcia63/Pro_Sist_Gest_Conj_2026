@@ -530,3 +530,8 @@ a.lista__item:hover { background: var(--color-superficie-2); color: inherit; }
 .tabla-recaudo tfoot td { border-top: 2px solid var(--color-borde-fuerte); background: var(--color-superficie-2); }
 .tabla-recaudo .fila-actual td { background: var(--color-primario-suave); }
 .barra { display: block; height: 8px; border-radius: 99px; background: var(--color-primario); min-width: 0; }
+
+/* ---------- Página de inventario ---------- */
+.existencias { display: flex; gap: .35rem; flex-wrap: wrap; justify-content: flex-end; }
+.movimiento-tipo { white-space: nowrap; }
+.fila-reparacion td { background: var(--color-aviso-fondo); }

@@ -34,3 +34,6 @@ services:
         sync: false
       - key: CORREO_REMITENTE
         sync: false
+      # Pon 1 para regenerar los datos de ejemplo con fechas de hoy en el próximo deploy (ver build.sh)
+      - key: REFRESCAR_DATOS
+        value: "0"

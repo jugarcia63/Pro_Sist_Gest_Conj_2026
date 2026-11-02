@@ -178,10 +178,10 @@ def generar_pdf(reserva):
             h.append(Paragraph(f'<font color="#047857"><b>{_("Zona entregada completa y en buen estado.")}</b></font>', TEXTO))
     else:
         h.append(Paragraph(_('Implementos que presta el conjunto'), SECCION))
-        items = list(zona.inventario.all()) if zona else []
+        items = [i for i in zona.inventario.all() if i.disponibles] if zona else []
         if items:
             filas = [[_('Implemento'), _('Cantidad'), _('Valor de reposición')]]
-            filas += [[e(i.nombre), i.cantidad, pesos(i.valor_reposicion)] for i in items]
+            filas += [[e(i.nombre), i.disponibles, pesos(i.valor_reposicion)] for i in items]
             h.append(_tabla(filas, [9 * cm, 3 * cm, 5 * cm], alinear_derecha=(2,)))
             h.append(Spacer(1, 4))
             h.append(Paragraph(_('Al terminar, portería revisa que se devuelva todo. Lo que falte o llegue dañado '

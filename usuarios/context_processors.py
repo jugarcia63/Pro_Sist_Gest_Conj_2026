@@ -41,6 +41,7 @@ def _menu_admin():
             _item(_('Reservas'), 'lista_reservas', 'calendario', ('crear_reserva', 'editar_reserva'),
                   Reservas.objects.filter(estado='Pendiente').count()),
             _item(_('Entregas de zonas'), 'lista_entregas', 'check', ('recibir_zona',), _zonas_por_recibir()),
+            _item(_('Inventario'), 'inventario', 'inventario', ('detalle_item',), _en_reparacion()),
             _item(_('Pagos'), 'lista_pagos_admin', 'tarjeta', ('crear_pago',),
                   Pago.objects.filter(estado='Pendiente', fecha_vencimiento__lt=hoy).count()),
             _item(_('Recaudo'), 'reporte_recaudo', 'grafica'),
@@ -77,6 +78,12 @@ def _zonas_por_recibir():
                                    fecha_inicio__lte=timezone.now()).count()
 
 
+def _en_reparacion():
+    """Implementos con unidades dañadas esperando arreglo (contador del menú del administrador)."""
+    from reservas.models import ItemInventario
+    return ItemInventario.objects.filter(fuera_servicio__gt=0).count()
+
+
 def _menu_seguridad():
     from paquetes.models import Paquete
     from parqueadero.models import ParqueoVisitante
@@ -94,6 +101,7 @@ def _menu_seguridad():
             _item(_('Paquetes'), 'lista_paquetes', 'paquete', ('crear_paquete', 'editar_paquete', 'entregar_paquete'),
                   Paquete.objects.filter(estado='En recepción').count()),
             _item(_('Entregas de zonas'), 'lista_entregas', 'check', ('recibir_zona',), _zonas_por_recibir()),
+            _item(_('Inventario'), 'inventario', 'inventario', ('detalle_item',)),
             _item(_('Vehículos'), 'lista_vehiculos', 'carro'),
         ]),
     ]

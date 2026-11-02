@@ -1,0 +1,58 @@
+{% extends "app.html" %}
+{% load i18n ui %}
+{% block title %}{{ item.nombre }}{% endblock %}
+{% block miga %}{% icono "derecha" %}<a href="{% url 'inventario' %}">{% translate "Inventario" %}</a>{% icono "derecha" %}<strong>{{ item.nombre }}</strong>{% endblock %}
+{% block eyebrow %}<span class="encabezado__eyebrow">{% icono "inventario" %} {{ item.zona }}</span>{% endblock %}
+{% block titulo_pagina %}{{ item.nombre }}{% endblock %}
+{% block subtitulo %}<p>{% blocktranslate with total=item.cantidad n=item.disponibles r=item.fuera_servicio v=item.valor_reposicion|pesos %}{{ total }} en total · {{ n }} disponibles · {{ r }} en reparación · reposición {{ v }} c/u{% endblocktranslate %}</p>{% endblock %}
+{% block acciones %}<a href="{% url 'inventario' %}" class="btn btn-secundario">{% icono "volver" %} {% translate "Volver" %}</a>{% endblock %}
+{% block contenido %}
+<div class="grid-3-1">
+    <div class="columna">
+        <section class="panel">
+            <div class="panel__cabecera"><h2>{% icono "reloj" %} {% translate "Historial" %}</h2></div>
+            {% if movimientos %}
+                <div class="tabla-contenedor">
+                    <table>
+                        <thead><tr><th>{% translate "Fecha" %}</th><th>{% translate "Movimiento" %}</th><th class="num">{% translate "Cantidad" %}</th><th>{% translate "Detalle" %}</th></tr></thead>
+                        <tbody>
+                        {% for m in movimientos %}
+                            <tr>
+                                <td class="num">{{ m.fecha|date:"d M Y, H:i" }}</td>
+                                <td class="movimiento-tipo">{% include "reservas/_tipo_movimiento.html" %}</td>
+                                <td class="num">{{ m.cantidad }}</td>
+                                <td><small>{{ m.nota|default:"—" }}{% if m.usuario %} · @{{ m.usuario.username }}{% endif %}</small></td>
+                            </tr>
+                        {% endfor %}
+                        </tbody>
+                    </table>
+                </div>
+            {% else %}
+                <div class="panel__cuerpo"><p class="texto-suave">{% translate "Sin movimientos: todo lo prestado ha vuelto completo." %}</p></div>
+            {% endif %}
+        </section>
+    </div>
+    <div class="columna">
+        {% if form %}
+        <section class="panel">
+            <div class="panel__cabecera"><h2>{% icono "mas" %} {% translate "Registrar movimiento" %}</h2></div>
+            <form method="post" class="panel__cuerpo panel__cuerpo--form" novalidate>
+                {% csrf_token %}
+                {% include "partials/form_campos.html" with anchos="tipo nota" %}
+                <div class="form-acciones">
+                    <button type="submit" class="btn btn-primario">{% icono "check" %} {% translate "Guardar" %}</button>
+                </div>
+            </form>
+        </section>
+        {% endif %}
+        <section class="panel">
+            <div class="panel__cabecera"><h2>{% icono "info" %} {% translate "Cómo funciona" %}</h2></div>
+            <div class="panel__cuerpo" style="display:grid;gap:.6rem">
+                <p>{% translate "Cuando portería recibe una zona, lo que falta sale del inventario y lo dañado queda en reparación." %}</p>
+                <p>{% translate "Lo que está en reparación no se presta. Márcalo como reparado cuando vuelva, o dalo de baja si no tiene arreglo." %}</p>
+                <p>{% translate "Al comprar unidades nuevas, regístralas como compra para que se puedan prestar." %}</p>
+            </div>
+        </section>
+    </div>
+</div>
+{% endblock %}

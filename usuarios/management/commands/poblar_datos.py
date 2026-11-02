@@ -6,42 +6,27 @@ vehículos, visitas, vehículos de visitantes, paquetes, reservas, facturas y re
 
 Es seguro ejecutarlo varias veces: si los datos de ejemplo ya existen, no los duplica.
 """
-from datetime import datetime, time, timedelta
+from datetime import timedelta
 from decimal import Decimal
 
 from django.core.management.base import BaseCommand
 from django.db import transaction
 from django.utils import timezone
 
-from pagos.models import Pago
-from paquetes.models import Paquete
-from parqueadero.models import ParqueoVisitante, TarifaParqueadero, calcular_cobro
-from reportes.models import ReporteDano
-from reservas.cobros import sincronizar_factura
 from reservas.datos_iniciales import configurar_zonas
-from reservas.models import ItemEntregado, ItemInventario, Reservas, ZonasComunes
+from reservas.models import ItemInventario, ZonasComunes
 from residentes.models import Residentes, Unidades
+from usuarios import datos_recientes
 from usuarios.models import Usuario
 from vehiculos.models import Vehiculos
-from visitantes.models import Visitantes
 
 CLAVE_RESIDENTES = 'Conjunto2026'
 CLAVE_SEGURIDAD = 'Porteria2026'
 CLAVE_JUAN = '123456789'
 
-# Residente (ya existente en la base publicada) al que se le cargan paquetes de prueba en cada deploy.
+# Residente (ya existente en la base publicada) al que se le cargan paquetes y reservas de prueba.
 # Solo se crean si ese usuario existe y aún no los tiene; nunca se duplican.
-USUARIO_PAQUETES_PRUEBA = 'jvila69'
-PAQUETES_PRUEBA = [
-    # (guía, transportadora, descripción, horas atrás que llegó, entregado a o None si sigue en portería)
-    ('PRB700045981', 'Servientrega', 'Caja mediana', 2, None),
-    ('PRBMLC775102', 'Mercado Libre', 'Sobre', 9, None),
-    ('PRBCOO240377', 'Coordinadora', 'Caja grande', 26, None),
-    ('PRBAMZ553190', 'Amazon', 'Caja pequeña', 72, 'Juan Esteban Vila'),
-    ('PRBINT889014', 'Interrapidísimo', 'Bolsa', 120, 'Familiar en portería'),
-]
-
-MARCA_RESERVA_PRUEBA = 'Reserva de prueba'
+USUARIO_PAQUETES_PRUEBA = datos_recientes.USUARIO_PRUEBA
 
 TORRES = ['A', 'B', 'C']
 PISOS = range(1, 6)        # 5 pisos por torre
@@ -104,28 +89,15 @@ def _unidad_area(apto):
     return Decimal('72.40') if apto.endswith('1') else Decimal('58.75')
 
 
-def _cuota(unidad):
-    return Decimal('340000') if unidad.area and unidad.area > 60 else Decimal('285000')
-
-
-def _registrar_entrega_completa(reserva, cuando):
-    """Marca una reserva pasada como recibida, con todos los implementos completos y la zona limpia."""
-    vigilante = Usuario.objects.filter(rol='seguridad').order_by('pk').first()
-    for item in reserva.id_zona_fk.inventario.all():
-        ItemEntregado.objects.create(reserva=reserva, item=item, nombre=item.nombre, cantidad_prestada=item.cantidad,
-                                     valor_reposicion=item.valor_reposicion)
-    reserva.fecha_entrega, reserva.recibida_por = cuando, vigilante
-    reserva.zona_limpia, reserva.valor_multa, reserva.estado = True, Decimal('0'), 'Finalizada'
-    reserva.save()
-
-
 class Command(BaseCommand):
     help = 'Carga datos de ejemplo relacionados (torres, zonas, residentes, vigilantes, pagos, etc.).'
 
     def handle(self, *args, **options):
         juan = self._asegurar_juan_garcia()
-        self._paquetes_de_prueba(USUARIO_PAQUETES_PRUEBA)
-        self._reservas_de_prueba(USUARIO_PAQUETES_PRUEBA)
+        if datos_recientes.paquetes_de_prueba(USUARIO_PAQUETES_PRUEBA):
+            self.stdout.write(self.style.SUCCESS(f'Paquetes de prueba cargados para "{USUARIO_PAQUETES_PRUEBA}".'))
+        if datos_recientes.reservas_de_prueba(USUARIO_PAQUETES_PRUEBA):
+            self.stdout.write(self.style.SUCCESS(f'Reservas de prueba cargadas para "{USUARIO_PAQUETES_PRUEBA}".'))
 
         if Usuario.objects.filter(username='laura.gomez').exists():
             self.stdout.write('Los datos de ejemplo ya estaban cargados; no se duplicó nada.')
@@ -137,12 +109,8 @@ class Command(BaseCommand):
             residentes = self._crear_residentes(unidades)
             guardias = self._crear_guardias()
             self._crear_vehiculos(residentes)
-            self._crear_visitantes(residentes, guardias)
-            self._crear_parqueos(unidades, guardias)
-            self._crear_paquetes(unidades, guardias)
-            reservas = self._crear_reservas(zonas, residentes)
-            self._crear_pagos(residentes, reservas)
-            self._crear_reportes(residentes)
+            # Visitas, paquetes, reservas, pagos, reportes... con fechas de hoy
+            datos_recientes.generar()
 
         self.stdout.write(self.style.SUCCESS(
             f'Datos de ejemplo cargados: {len(unidades)} unidades, {len(zonas)} zonas comunes, '
@@ -165,30 +133,6 @@ class Command(BaseCommand):
         juan.debe_cambiar_password = False
         juan.save()
         return juan
-
-    def _paquetes_de_prueba(self, username):
-        residente = Residentes.objects.select_related('id_unidad_fk').filter(usuario__username__iexact=username).first()
-        if residente is None or residente.id_unidad_fk is None:
-            self.stdout.write(f'Paquetes de prueba: el residente "{username}" no existe o no tiene unidad; se omiten.')
-            return
-        if Paquete.objects.filter(numero_guia__in=[g for g, *_ in PAQUETES_PRUEBA]).exists():
-            return
-        ahora = timezone.now()
-        vigilantes = list(Usuario.objects.filter(rol='seguridad', is_active=True).order_by('pk')[:2]) or [None]
-        destinatario = f"{residente.nombres or ''} {residente.apellidos or ''}".strip() or username
-        for i, (guia, empresa, descripcion, horas, entregado_a) in enumerate(PAQUETES_PRUEBA):
-            recepcion = ahora - timedelta(hours=horas)
-            paquete = Paquete(numero_guia=guia, empresa=empresa, destinatario=destinatario,
-                              id_unidad_fk=residente.id_unidad_fk, descripcion=descripcion,
-                              fecha_recepcion=recepcion, recibido_por=vigilantes[i % len(vigilantes)])
-            if entregado_a:
-                paquete.estado = 'Entregado'
-                paquete.fecha_entrega = recepcion + timedelta(hours=3)
-                paquete.entregado_a = entregado_a
-                paquete.entregado_por = vigilantes[(i + 1) % len(vigilantes)]
-            paquete.save()
-        self.stdout.write(self.style.SUCCESS(
-            f'Paquetes de prueba cargados para "{username}" ({residente.id_unidad_fk}).'))
 
     def _crear_unidades(self):
         unidades = {}
@@ -251,208 +195,3 @@ class Command(BaseCommand):
             if not Vehiculos.objects.filter(placa=placa).exists():
                 Vehiculos.objects.create(placa=placa, tipo_vehiculo=tipo, marca=marca, modelo=modelo, color=color,
                                          id_residente_fk=residentes[documento], estado='Activo')
-
-    def _crear_visitantes(self, residentes, guardias):
-        ahora = timezone.now()
-        r = residentes
-        # (nombre, apellidos, cédula, residente al que visita, horas atrás que entró). Solo se registra la entrada.
-        visitas = [
-            ('Carlos', 'Díaz Molina', '79451230', r['1020304001'], 2),
-            ('Andrea', 'Suárez Pinto', '1032456789', r['1020304005'], 0.3),
-            ('Martha', 'Lucía Pérez', '51876345', r['1020304007'], 4),
-            ('Jorge', 'Ríos Castaño', '80123456', r['1020304002'], 6),
-            ('Sofía', 'Navarro León', '1019876543', r['1020304003'], 26),
-            ('Hernán', 'Acosta Ruiz', '79654321', r['1020304009'], 30),
-            ('Gloria', 'Patiño Vera', '41234567', r['1020304010'], 50),
-            ('Felipe', 'Cárdenas Mora', '900123456', r['1020304006'], 51),
-        ]
-        for i, (nombre, apellidos, documento, residente, horas) in enumerate(visitas):
-            Visitantes.objects.create(
-                nombre=nombre, apellidos=apellidos, tipo_documento='CC', num_documento=documento,
-                id_residente_fk=residente, id_unidad_fk=residente.id_unidad_fk,
-                fecha_ingreso=ahora - timedelta(hours=horas), autorizado_por=guardias[i % len(guardias)],
-            )
-
-    def _crear_parqueos(self, unidades, guardias):
-        ahora = timezone.now()
-        tarifa = TarifaParqueadero.vigente()
-        carlos = Visitantes.objects.filter(num_documento='79451230').first()
-        # (placa, tipo, torre, apto, conductor, visitante, horas atrás que entró, minutos que se quedó o None si sigue)
-        datos = [
-            ('DFG234', 'Carro', 'A', '101', 'Carlos Díaz Molina', carlos, 2, None),
-            ('KLM78E', 'Moto', 'B', '402', 'Martha Lucía Pérez', None, 3.5, None),
-            ('TUV561', 'Carro', 'A', '202', 'Jorge Ríos Castaño', None, 6, 90),
-            ('NBV902', 'Carro', 'A', '301', 'Sofía Navarro León', None, 26, 200),
-            ('WER33H', 'Moto', 'C', '202', 'Gloria Patiño Vera', None, 50, 240),
-        ]
-        for i, (placa, tipo, torre, apto, conductor, visitante, horas, minutos) in enumerate(datos):
-            ingreso = ahora - timedelta(hours=horas)
-            parqueo = ParqueoVisitante(
-                placa=placa, tipo_vehiculo=tipo, id_unidad_fk=unidades[(torre, apto)], conductor=conductor,
-                visitante=visitante, fecha_ingreso=ingreso, valor_hora=tarifa.valor_hora,
-                horas_gratis=tarifa.horas_gratis, registrado_por=guardias[i % len(guardias)],
-            )
-            if minutos:
-                parqueo.fecha_salida = ingreso + timedelta(minutes=minutos)
-                _, parqueo.horas_cobradas, parqueo.valor_cobrado = calcular_cobro(
-                    ingreso, parqueo.fecha_salida, tarifa.valor_hora, tarifa.horas_gratis)
-                parqueo.estado = 'Salió'
-                parqueo.salida_por = guardias[(i + 1) % len(guardias)]
-            parqueo.save()
-
-    def _crear_paquetes(self, unidades, guardias):
-        ahora = timezone.now()
-        # (guía, transportadora, destinatario, torre, apto, descripción, horas atrás que llegó, entregado a o None)
-        datos = [
-            ('700045123987', 'Servientrega', 'Laura Gómez Restrepo', 'A', '101', 'Caja mediana', 3, None),
-            ('MLC2026118843', 'Mercado Libre', 'Laura Gómez', 'A', '101', 'Sobre', 20, None),
-            ('240198776', 'Coordinadora', 'Valentina Rojas', 'B', '102', 'Caja grande', 5, None),
-            ('TCC88120045', 'TCC', 'Mateo Herrera Quintero', 'B', '201', '', 1, None),
-            ('INT5523001', 'Interrapidísimo', 'Andrés Pardo', 'A', '202', 'Bolsa', 30, 'Andrés Pardo Salazar'),
-            ('AMZ114477', 'Amazon', 'Natalia Vargas', 'C', '101', 'Caja pequeña', 52, 'Carolina Vargas'),
-        ]
-        for i, (guia, empresa, destinatario, torre, apto, descripcion, horas, entregado_a) in enumerate(datos):
-            recepcion = ahora - timedelta(hours=horas)
-            paquete = Paquete(
-                numero_guia=guia, empresa=empresa, destinatario=destinatario, id_unidad_fk=unidades[(torre, apto)],
-                descripcion=descripcion, fecha_recepcion=recepcion, recibido_por=guardias[i % len(guardias)],
-            )
-            if entregado_a:
-                paquete.estado = 'Entregado'
-                paquete.fecha_entrega = recepcion + timedelta(hours=4)
-                paquete.entregado_a = entregado_a
-                paquete.entregado_por = guardias[(i + 1) % len(guardias)]
-            paquete.save()
-
-    def _crear_reservas(self, zonas, residentes):
-        hoy = timezone.localdate()
-        tz = timezone.get_current_timezone()
-
-        def momento(dias, hora):
-            return timezone.make_aware(datetime.combine(hoy + timedelta(days=dias), time(hora)), tz)
-
-        r = residentes
-        # (zona, residente, días desde hoy, hora inicio, horas, estado, observaciones)
-        datos = [
-            ('Salón social', r['1020304001'], 3, 15, 6, 'Aprobada', 'Cumpleaños de mi hija, 35 invitados'),
-            ('Zona BBQ', r['1020304002'], 5, 12, 4, 'Pendiente', 'Asado familiar'),
-            ('Piscina', r['1020304005'], 2, 10, 3, 'Aprobada', ''),
-            ('Cancha múltiple', r['1020304006'], 1, 18, 2, 'Pendiente', 'Partido de microfútbol con vecinos'),
-            ('Salón social', r['1020304007'], 10, 18, 5, 'Pendiente', 'Reunión de trabajo'),
-            ('Salón de juegos', r['1020304009'], 4, 16, 3, 'Aprobada', ''),
-            ('Zona BBQ', r['1020304010'], 7, 13, 4, 'Rechazada', 'Fecha ocupada por mantenimiento'),
-            ('Gimnasio', r['1020304003'], 6, 7, 1, 'Cancelada', ''),
-            ('Salón social', r['1020304003'], -12, 17, 5, 'Aprobada', 'Primera comunión'),
-            ('Zona BBQ', r['1020304001'], -20, 12, 4, 'Aprobada', 'Asado de fin de mes'),
-        ]
-        reservas = []
-        for i, (zona, residente, dias, hora, horas, estado, observaciones) in enumerate(datos):
-            inicio = momento(dias, hora)
-            reserva = Reservas(
-                id_zona_fk=zonas[zona], id_unidad_fk=residente.id_unidad_fk, reservado_por=residente.usuario,
-                fecha_reserva=inicio - timedelta(days=7), fecha_inicio=inicio,
-                fecha_fin=inicio + timedelta(hours=horas), estado=estado, observaciones=observaciones,
-                incluye_limpieza=i % 2 == 0,
-            )
-            reserva.calcular_cobro()
-            reserva.save()
-            if dias < 0 and estado == 'Aprobada':
-                _registrar_entrega_completa(reserva, inicio + timedelta(hours=horas, minutes=20))
-            else:
-                sincronizar_factura(reserva)
-            reservas.append(reserva)
-        return reservas
-
-    def _reservas_de_prueba(self, username):
-        """Dos reservas para el residente de pruebas: una de ayer lista para recibir (con inventario por
-        revisar) y una próxima ya aprobada con su factura. Se crean una sola vez."""
-        residente = Residentes.objects.select_related('id_unidad_fk', 'usuario').filter(usuario__username__iexact=username).first()
-        if residente is None or residente.id_unidad_fk is None:
-            return
-        if Reservas.objects.filter(observaciones__startswith=MARCA_RESERVA_PRUEBA).exists():
-            return
-        bbq = ZonasComunes.objects.filter(nombre='Zona BBQ').first()
-        salon = ZonasComunes.objects.filter(nombre='Salón social').first()
-        if not bbq or not salon:
-            return
-        tz = timezone.get_current_timezone()
-        hoy = timezone.localdate()
-
-        def momento(dias, hora):
-            return timezone.make_aware(datetime.combine(hoy + timedelta(days=dias), time(hora)), tz)
-
-        for zona, dias, hora, horas, limpieza, nota in (
-            (bbq, -1, 13, 4, False, 'asado familiar'),
-            (salon, 6, 16, 5, True, 'cumpleaños, 30 invitados'),
-        ):
-            reserva = Reservas(
-                id_zona_fk=zona, id_unidad_fk=residente.id_unidad_fk, reservado_por=residente.usuario,
-                fecha_reserva=timezone.now() - timedelta(days=3), fecha_inicio=momento(dias, hora),
-                fecha_fin=momento(dias, hora + horas), estado='Aprobada', incluye_limpieza=limpieza,
-                observaciones=f'{MARCA_RESERVA_PRUEBA}: {nota}',
-            )
-            reserva.calcular_cobro()
-            reserva.save()
-            sincronizar_factura(reserva)
-        self.stdout.write(self.style.SUCCESS(f'Reservas de prueba cargadas para "{username}".'))
-
-    def _crear_pagos(self, residentes, reservas):
-        hoy = timezone.localdate()
-        tz = timezone.get_current_timezone()
-        este_mes = hoy.replace(day=1)
-        mes_pasado = (este_mes - timedelta(days=1)).replace(day=1)
-
-        def mes(fecha):
-            return timezone.make_aware(datetime.combine(fecha, time(0)), tz)
-
-        for i, residente in enumerate(residentes.values()):
-            cuota = _cuota(residente.id_unidad_fk)
-            # Mes pasado: casi todos pagaron (uno quedó debiendo)
-            pagado = i != 3
-            Pago.objects.create(
-                id_residente_fk=residente, tipo_pago='Administración', mes_ano=mes(mes_pasado), valor=cuota,
-                fecha_vencimiento=mes_pasado.replace(day=10),
-                estado='Pagado' if pagado else 'Pendiente',
-                fecha_pago=mes_pasado.replace(day=min(5 + i % 5, 28)) if pagado else None,
-                metodo_pago=f'Tarjeta •••• {4242 + i * 7 % 1000:04d}' if pagado else None,
-            )
-            # Este mes: algunos ya pagaron, otros están pendientes
-            pagado = i % 3 == 0
-            Pago.objects.create(
-                id_residente_fk=residente, tipo_pago='Administración', mes_ano=mes(este_mes), valor=cuota,
-                fecha_vencimiento=este_mes.replace(day=10) if este_mes.replace(day=10) >= hoy else hoy + timedelta(days=10),
-                estado='Pagado' if pagado else 'Pendiente',
-                fecha_pago=hoy - timedelta(days=1) if pagado else None,
-                metodo_pago='Tarjeta •••• 1111' if pagado else None,
-            )
-
-        # Parqueadero para quienes tienen carro registrado
-        for documento in {v[0] for v in VEHICULOS if v[2] == 'Carro'}:
-            Pago.objects.create(id_residente_fk=residentes[documento], tipo_pago='Parqueadero', mes_ano=mes(este_mes),
-                                valor=Decimal('85000'), fecha_vencimiento=hoy + timedelta(days=12))
-
-        # Las facturas de las reservas las genera sincronizar_factura; aquí, una multa por ruido
-        Pago.objects.create(id_residente_fk=residentes['1020304008'], tipo_pago='Multa', mes_ano=mes(este_mes),
-                            valor=Decimal('150000'), fecha_vencimiento=hoy + timedelta(days=15))
-
-    def _crear_reportes(self, residentes):
-        ahora = timezone.now()
-        r = residentes
-        datos = [
-            (r['1020304001'], 'Plomería', 'Gotera en el techo del baño principal desde ayer en la noche.', 'Abierto', 1),
-            (r['1020304006'], 'Ascensor', 'El ascensor de la torre B hace un ruido fuerte al frenar en el piso 3.', 'Abierto', 2),
-            (r['1020304002'], 'Eléctrico', 'La luz del pasillo del piso 2 está intermitente.', 'En proceso', 4),
-            (r['1020304009'], 'Seguridad', 'El citófono del apartamento no timbra cuando llaman de portería.', 'En proceso', 6),
-            (r['1020304005'], 'Zonas comunes', 'Una de las sillas plegables del salón social está rota.', 'Cerrado', 15),
-            (r['1020304003'], 'Estructural', 'Apareció humedad en la pared de la habitación que da al patio.', 'Abierto', 3),
-            (r['1020304010'], 'Plomería', 'La llave del lavaplatos gotea constantemente.', 'Cerrado', 25),
-            (r['1020304007'], 'Otro', 'La puerta del shut de basuras de la torre B no cierra bien.', 'En proceso', 8),
-        ]
-        for residente, categoria, descripcion, estado, dias in datos:
-            reporte = ReporteDano.objects.create(
-                id_residente_fk=residente, categoria=categoria, descripcion=descripcion,
-                torre=residente.id_unidad_fk.torre, piso=residente.id_unidad_fk.piso, estado=estado,
-                fecha_resolucion=ahora - timedelta(days=dias - 3) if estado == 'Cerrado' else None,
-            )
-            # fecha_reporte es auto_now_add: se ajusta después para que los reportes tengan antigüedad real
-            ReporteDano.objects.filter(pk=reporte.pk).update(fecha_reporte=ahora - timedelta(days=dias, hours=dias))

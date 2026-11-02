@@ -38,7 +38,7 @@
         {% for r in en_uso_pronto %}
             <div class="lista__item">
                 <span class="avatar avatar--menta">{% icono "zona" %}</span>
-                <div class="lista__cuerpo"><strong>{{ r.id_zona_fk }} · {{ r.id_unidad_fk|default:"—" }}</strong><small>{{ r.fecha_inicio|date:"H:i" }} – {{ r.fecha_fin|date:"H:i" }} · {% translate "Entrégales los implementos de la lista de la zona." %}</small></div>
+                <div class="lista__cuerpo"><strong>{{ r.id_zona_fk }} · {{ r.id_unidad_fk|default:"—" }}</strong><small>{{ r.fecha_inicio|date:"H:i" }} – {{ r.fecha_fin|date:"H:i" }} · {% translate "Entrégales los implementos disponibles de la zona." %} <a href="{% url 'inventario' %}?zona={{ r.id_zona_fk_id }}">{% translate "Ver inventario" %}</a></small></div>
             </div>
         {% endfor %}
     </div>

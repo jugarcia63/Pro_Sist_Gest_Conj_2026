@@ -1,3 +1,4 @@
+from django.core.cache import cache
 from django.shortcuts import redirect
 
 RUTAS_PERMITIDAS_SIN_CAMBIO = ('cambiar_password', 'password_change_done', 'logout', 'login', 'set_language')
@@ -26,3 +27,20 @@ class ForzarCambioPasswordMiddleware:
         ):
             return redirect('cambiar_password')
         return None
+
+
+class TareasAutomaticasMiddleware:
+    """Pone al día los estados que dependen de la hora (p. ej. reservas pendientes que ya vencieron).
+    Render gratis no tiene tareas programadas, así que se hace aquí, como mucho cada 5 minutos,
+    antes de que la vista cargue los datos."""
+
+    INTERVALO = 300  # segundos
+
+    def __init__(self, get_response):
+        self.get_response = get_response
+
+    def __call__(self, request):
+        if cache.add('tareas_automaticas', True, self.INTERVALO):
+            from reservas.automatico import cerrar_reservas_vencidas
+            cerrar_reservas_vencidas()
+        return self.get_response(request)

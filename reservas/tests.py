@@ -6,7 +6,8 @@ from django.utils import timezone
 
 from pagos.models import Pago
 from usuarios.tests import BaseConjunto
-from .models import ItemInventario, Reservas, ZonasComunes, horas_a_cobrar
+from .automatico import DIAS_PARA_CERRAR, cerrar_reservas_vencidas
+from .models import ItemInventario, MovimientoInventario, Reservas, ZonasComunes, horas_a_cobrar
 
 
 def momento(dias, hora, minuto=0):
@@ -27,7 +28,8 @@ class HorasACobrarTests(BaseConjunto):
         self.assertEqual(horas_a_cobrar(inicio, inicio), 0)
 
 
-class ReservasConCobroTests(BaseConjunto):
+class ConZonaBBQ(BaseConjunto):
+    """Zona BBQ paga con inventario, y atajos para reservar, aprobar y recibir la zona."""
 
     def setUp(self):
         self.bbq = ZonasComunes.objects.create(nombre='Zona BBQ', capacidad=20, estado=1, valor_hora=Decimal('15000'),
@@ -51,6 +53,27 @@ class ReservasConCobroTests(BaseConjunto):
         self.client.post(reverse('cambiar_estado_reserva', args=[reserva.pk]), {'estado': 'Aprobada'})
         reserva.refresh_from_db()
         return reserva
+
+    def recibir(self, reserva, faltan_sillas=0, danadas=0, limpia='si'):
+        self.entrar(self.vigilante)
+        datos = {f'faltan_{self.parrilla.pk}': 0, f'danados_{self.parrilla.pk}': 0,
+                 f'faltan_{self.sillas.pk}': faltan_sillas, f'danados_{self.sillas.pk}': danadas,
+                 'observaciones_entrega': ''}
+        if limpia is not None:
+            datos['zona_limpia'] = limpia
+        return self.client.post(reverse('recibir_zona', args=[reserva.pk]), datos)
+
+    def reserva_que_ya_empezo(self, limpieza=False):
+        reserva = Reservas.objects.create(id_zona_fk=self.bbq, id_unidad_fk=self.unidad, reservado_por=self.usuario_res,
+                                          fecha_inicio=timezone.now() - timedelta(hours=5),
+                                          fecha_fin=timezone.now() - timedelta(hours=1), estado='Aprobada',
+                                          incluye_limpieza=limpieza)
+        reserva.calcular_cobro()
+        reserva.save()
+        return reserva
+
+
+class ReservasConCobroTests(ConZonaBBQ):
 
     def test_la_reserva_copia_la_tarifa_y_suma_la_limpieza(self):
         reserva = self.reservar(limpieza=True)
@@ -85,23 +108,6 @@ class ReservasConCobroTests(BaseConjunto):
         self.assertEqual((reserva.valor_total, reserva.incluye_limpieza), (Decimal('0'), False))
         self.assertFalse(Pago.objects.filter(id_reserva_fk=reserva).exists())
 
-    def recibir(self, reserva, faltan_sillas=0, danadas=0, limpia='si'):
-        self.entrar(self.vigilante)
-        datos = {f'faltan_{self.parrilla.pk}': 0, f'danados_{self.parrilla.pk}': 0,
-                 f'faltan_{self.sillas.pk}': faltan_sillas, f'danados_{self.sillas.pk}': danadas,
-                 'observaciones_entrega': ''}
-        if limpia is not None:
-            datos['zona_limpia'] = limpia
-        return self.client.post(reverse('recibir_zona', args=[reserva.pk]), datos)
-
-    def reserva_que_ya_empezo(self, limpieza=False):
-        reserva = Reservas.objects.create(id_zona_fk=self.bbq, id_unidad_fk=self.unidad, reservado_por=self.usuario_res,
-                                          fecha_inicio=timezone.now() - timedelta(hours=5),
-                                          fecha_fin=timezone.now() - timedelta(hours=1), estado='Aprobada',
-                                          incluye_limpieza=limpieza)
-        reserva.calcular_cobro()
-        reserva.save()
-        return reserva
 
     def test_entrega_completa_sin_multa(self):
         reserva = self.reserva_que_ya_empezo()
@@ -183,3 +189,100 @@ class ReservasConCobroTests(BaseConjunto):
         self.entrar(self.vigilante)
         self.assertEqual(self.client.get(reverse('lista_entregas')).status_code, 200)
         self.assertEqual(self.client.get(reverse('editar_zona', args=[self.bbq.pk])).status_code, 403)
+
+
+class InventarioTests(ConZonaBBQ):
+    """Lo perdido sale del inventario, lo dañado queda en reparación y no se presta hasta repararlo."""
+
+    def test_la_entrega_con_novedades_mueve_el_inventario(self):
+        self.recibir(self.reserva_que_ya_empezo(), faltan_sillas=1, danadas=2, limpia='si')
+        self.sillas.refresh_from_db()
+        self.assertEqual((self.sillas.cantidad, self.sillas.fuera_servicio, self.sillas.disponibles), (15, 2, 13))
+        tipos = sorted(self.sillas.movimientos.values_list('tipo', 'cantidad'))
+        self.assertEqual(tipos, [('dano', 2), ('perdida', 1)])
+        self.assertEqual(self.sillas.movimientos.first().usuario, self.vigilante)
+
+        # En la siguiente entrega solo se prestan las 13 disponibles
+        siguiente = self.reserva_que_ya_empezo()
+        self.assertEqual(self.recibir(siguiente, faltan_sillas=14).status_code, 200)  # no pueden faltar 14
+        self.recibir(siguiente)
+        self.assertEqual(siguiente.items_entregados.get(nombre='Sillas').cantidad_prestada, 13)
+
+    def test_admin_registra_reparacion_baja_y_compra(self):
+        MovimientoInventario.registrar(self.sillas, 'dano', 3)
+        url = reverse('detalle_item', args=[self.sillas.pk])
+        self.entrar(self.admin)
+        self.client.post(url, {'tipo': 'reparado', 'cantidad': 2, 'nota': 'Patas nuevas'})
+        self.client.post(url, {'tipo': 'baja', 'cantidad': 1})
+        self.client.post(url, {'tipo': 'compra', 'cantidad': 4})
+        self.sillas.refresh_from_db()
+        self.assertEqual((self.sillas.cantidad, self.sillas.fuera_servicio), (19, 0))  # 16 - 1 de baja + 4
+
+        # No se repara lo que no está en reparación
+        respuesta = self.client.post(url, {'tipo': 'reparado', 'cantidad': 1})
+        self.assertEqual(respuesta.status_code, 200)
+        self.assertContains(respuesta, 'Solo hay 0 en reparación')
+        self.assertEqual(self.sillas.movimientos.count(), 4)
+
+    def test_cantidad_de_la_zona_no_baja_de_lo_que_esta_en_reparacion(self):
+        from .forms import ItemInventarioForm
+        MovimientoInventario.registrar(self.sillas, 'dano', 5)
+        form = ItemInventarioForm({'nombre': 'Sillas', 'cantidad': 3, 'valor_reposicion': '45000'}, instance=self.sillas)
+        self.assertFalse(form.is_valid())
+
+    def test_pagina_de_inventario_por_rol(self):
+        MovimientoInventario.registrar(self.sillas, 'dano', 1)
+        self.entrar(self.admin)
+        respuesta = self.client.get(reverse('inventario'))
+        self.assertContains(respuesta, 'Parrilla a gas')
+        self.assertEqual(respuesta.context['resumen']['en_reparacion'], 1)
+        solo = self.client.get(reverse('inventario') + '?novedades=1')
+        self.assertNotContains(solo, 'Parrilla a gas')
+        self.assertContains(solo, 'Sillas')
+
+        self.entrar(self.vigilante)
+        self.assertEqual(self.client.get(reverse('inventario')).status_code, 200)
+        respuesta = self.client.get(reverse('detalle_item', args=[self.sillas.pk]))
+        self.assertIsNone(respuesta.context['form'])  # portería consulta, no registra
+        self.client.post(reverse('detalle_item', args=[self.sillas.pk]), {'tipo': 'reparado', 'cantidad': 1})
+        self.sillas.refresh_from_db()
+        self.assertEqual(self.sillas.fuera_servicio, 1)
+
+        self.entrar(self.usuario_res)
+        self.assertEqual(self.client.get(reverse('inventario')).status_code, 403)
+
+    def test_la_lista_de_zonas_muestra_solo_lo_disponible(self):
+        MovimientoInventario.registrar(self.parrilla, 'dano', 1)
+        self.entrar(self.usuario_res)
+        respuesta = self.client.get(reverse('lista_zonas'))
+        self.assertContains(respuesta, '16 sillas')
+        self.assertNotContains(respuesta, 'parrilla a gas')
+
+
+class CierreAutomaticoTests(ConZonaBBQ):
+
+    def crear(self, estado, inicio, fin):
+        return Reservas.objects.create(id_zona_fk=self.bbq, id_unidad_fk=self.unidad, estado=estado,
+                                       fecha_inicio=inicio, fecha_fin=fin)
+
+    def test_pendiente_que_ya_paso_queda_vencida(self):
+        ahora = timezone.now()
+        vieja = self.crear('Pendiente', ahora - timedelta(days=2), ahora - timedelta(days=2) + timedelta(hours=3))
+        futura = self.crear('Pendiente', ahora + timedelta(days=1), ahora + timedelta(days=1, hours=2))
+        sin_recibir = self.crear('Aprobada', ahora - timedelta(days=DIAS_PARA_CERRAR + 2),
+                                 ahora - timedelta(days=DIAS_PARA_CERRAR + 1))
+        por_recibir = self.crear('Aprobada', ahora - timedelta(hours=5), ahora - timedelta(hours=1))
+        self.assertEqual(cerrar_reservas_vencidas(), (1, 1))
+        estados = {r.pk: r.estado for r in Reservas.objects.all()}
+        self.assertEqual(estados[vieja.pk], 'Vencida')
+        self.assertEqual(estados[futura.pk], 'Pendiente')
+        self.assertEqual(estados[sin_recibir.pk], 'Finalizada')
+        self.assertEqual(estados[por_recibir.pk], 'Aprobada')  # portería todavía puede recibirla
+
+    def test_no_se_aprueba_una_reserva_vencida(self):
+        ahora = timezone.now()
+        vencida = self.crear('Vencida', ahora - timedelta(days=1), ahora - timedelta(hours=20))
+        self.entrar(self.admin)
+        self.client.post(reverse('cambiar_estado_reserva', args=[vencida.pk]), {'estado': 'Aprobada'})
+        vencida.refresh_from_db()
+        self.assertEqual(vencida.estado, 'Vencida')

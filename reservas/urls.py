@@ -10,6 +10,9 @@ urlpatterns = [
     path('entregas/', views.ListaEntregas.as_view(), name='lista_entregas'),
     path('entregas/recibir/<int:id_reservas>/', views.recibir_zona, name='recibir_zona'),
 
+    path('inventario/', views.inventario, name='inventario'),
+    path('inventario/<int:id_item>/', views.detalle_item, name='detalle_item'),
+
     path('zonas/', views.ListaZonas.as_view(), name='lista_zonas'),
     path('zonas/<int:id_zona>/calendario/', views.calendario_zona, name='calendario_zona'),
     path('zonas/nueva/', views.CrearZona.as_view(), name='crear_zona'),

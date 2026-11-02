@@ -12,8 +12,8 @@ from django.views.generic import CreateView, ListView, UpdateView
 
 from usuarios.permisos import RolRequeridoMixin, redirigir_a_siguiente, residente_de, rol_requerido
 from .cobros import avisar_cambio_de_reserva, crear_multa, sincronizar_factura
-from .forms import EntregaZonaForm, InventarioFormSet, ReservaForm, ZonaForm
-from .models import ItemEntregado, Reservas, ZonasComunes
+from .forms import EntregaZonaForm, InventarioFormSet, MovimientoInventarioForm, ReservaForm, ZonaForm
+from .models import ItemEntregado, ItemInventario, MovimientoInventario, Reservas, ZonasComunes
 
 
 def _reservas_visibles(usuario):
@@ -233,6 +233,8 @@ def cambiar_estado_reserva(request, id_reservas):
         messages.error(request, _('Ya hay otra reserva aprobada para esa zona en ese horario.'))
     elif reserva.entregada or reserva.estado == 'Finalizada':
         messages.error(request, _('Esta reserva ya terminó y la zona fue recibida.'))
+    elif reserva.estado == 'Vencida':
+        messages.error(request, _('Esta reserva venció sin aprobarse: su horario ya pasó.'))
     else:
         reserva.estado = nuevo
         if reserva.valor_total is None:
@@ -274,7 +276,7 @@ def calendario_zona(request, id_zona):
 
     ocupadas = (Reservas.objects.select_related('id_unidad_fk')
                 .filter(id_zona_fk=zona, fecha_inicio__lt=fin_semana, fecha_fin__gt=inicio_semana)
-                .exclude(estado__in=('Rechazada', 'Cancelada')).order_by('fecha_inicio'))
+                .exclude(estado__in=('Rechazada', 'Cancelada', 'Vencida')).order_by('fecha_inicio'))
     residente = residente_de(request.user) if request.user.rol == 'residente' else None
     mi_unidad = residente.id_unidad_fk_id if residente else None
 
@@ -361,13 +363,19 @@ def recibir_zona(request, id_reservas):
             datos = form.cleaned_data
             with transaction.atomic():
                 total = Decimal('0')
+                nota = f'Entrega de la reserva #{reserva.pk} ({reserva.id_unidad_fk})'  # se guarda en la base, en español
                 for item in form.items:
                     entregado = ItemEntregado.objects.create(
-                        reserva=reserva, item=item, nombre=item.nombre, cantidad_prestada=item.cantidad,
+                        reserva=reserva, item=item, nombre=item.nombre, cantidad_prestada=item.disponibles,
                         faltantes=datos[f'faltan_{item.pk}'] or 0, danados=datos[f'danados_{item.pk}'] or 0,
                         valor_reposicion=item.valor_reposicion,
                     )
                     total += entregado.cargo
+                    # Lo perdido sale del inventario; lo dañado queda en reparación hasta que se arregle
+                    MovimientoInventario.registrar(item, MovimientoInventario.PERDIDA, entregado.faltantes,
+                                                   request.user, reserva, nota)
+                    MovimientoInventario.registrar(item, MovimientoInventario.DANO, entregado.danados,
+                                                   request.user, reserva, nota)
                 reserva.zona_limpia = datos.get('zona_limpia', True)
                 if not reserva.incluye_limpieza and reserva.zona_limpia is False and reserva.id_zona_fk.ofrece_limpieza:
                     total += reserva.id_zona_fk.valor_limpieza  # se cobra la limpieza que no hicieron
@@ -404,3 +412,68 @@ def comprobante_reserva(request, id_reservas):
     respuesta = HttpResponse(generar_pdf(reserva), content_type='application/pdf')
     respuesta['Content-Disposition'] = f'attachment; filename="reserva-{reserva.pk}.pdf"'
     return respuesta
+
+
+# ---------- Inventario de implementos ----------
+
+def _resumen_inventario(items):
+    return {
+        'unidades': sum(i.cantidad for i in items),
+        'disponibles': sum(i.disponibles for i in items),
+        'en_reparacion': sum(i.fuera_servicio for i in items),
+        'valor': sum((i.valor_total for i in items), Decimal('0')),
+    }
+
+
+@rol_requerido('admin', 'seguridad')
+def inventario(request):
+    """Todos los implementos que se prestan con las zonas: cuántos hay, cuántos se pueden prestar y cuáles
+    están en reparación. Portería lo consulta para entregar; el administrador además registra movimientos."""
+    zonas = list(ZonasComunes.objects.prefetch_related('inventario').order_by('nombre'))
+    zona_id = request.GET.get('zona', '')
+    solo_novedades = request.GET.get('novedades') == '1'
+
+    grupos, todos = [], []
+    for zona in zonas:
+        items = list(zona.inventario.all())
+        todos += items
+        if zona_id and str(zona.pk) != zona_id:
+            continue
+        visibles = [i for i in items if i.fuera_servicio] if solo_novedades else items
+        if visibles or not solo_novedades:
+            grupos.append({'zona': zona, 'items': visibles, 'resumen': _resumen_inventario(items)})
+
+    hace_30 = timezone.now() - timedelta(days=30)
+    movimientos = MovimientoInventario.objects.select_related('item__zona', 'usuario', 'reserva__id_unidad_fk')
+    perdidos_30 = sum(movimientos.filter(tipo=MovimientoInventario.PERDIDA, fecha__gte=hace_30)
+                      .values_list('cantidad', flat=True))
+    return render(request, 'reservas/inventario.html', {
+        'grupos': grupos, 'zonas': zonas, 'zona_id': zona_id, 'solo_novedades': solo_novedades,
+        'resumen': _resumen_inventario(todos), 'perdidos_30': perdidos_30,
+        'movimientos': movimientos[:12],
+    })
+
+
+@rol_requerido('admin', 'seguridad')
+def detalle_item(request, id_item):
+    """Historial de un implemento. El administrador registra aquí reparaciones, bajas y compras."""
+    item = get_object_or_404(ItemInventario.objects.select_related('zona'), pk=id_item)
+    form = None
+    if request.user.rol == 'admin':
+        form = MovimientoInventarioForm(request.POST or None, item=item)
+        if request.method == 'POST' and form.is_valid():
+            datos = form.cleaned_data
+            with transaction.atomic():
+                item = ItemInventario.objects.select_for_update().get(pk=item.pk)
+                movimiento = MovimientoInventario.registrar(item, datos['tipo'], datos['cantidad'], request.user,
+                                                            nota=datos['nota'])
+            messages.success(request, _('Movimiento registrado: %(tipo)s, %(n)s × %(item)s.') % {
+                'tipo': _(movimiento.get_tipo_display()).lower(), 'n': movimiento.cantidad, 'item': item.nombre})
+            return redirect('detalle_item', id_item=item.pk)
+    elif request.method == 'POST':
+        messages.error(request, _('Solo la administración registra movimientos del inventario.'))
+        return redirect('detalle_item', id_item=item.pk)
+    return render(request, 'reservas/detalle_item.html', {
+        'item': item, 'form': form,
+        'movimientos': item.movimientos.select_related('usuario', 'reserva__id_unidad_fk')[:50],
+    })

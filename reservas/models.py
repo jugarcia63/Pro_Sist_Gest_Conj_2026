@@ -3,6 +3,7 @@ from decimal import Decimal
 
 from django.conf import settings
 from django.db import models
+from django.utils import timezone
 
 from residentes.models import Unidades
 
@@ -41,11 +42,15 @@ class ZonasComunes(models.Model):
 
 
 class ItemInventario(models.Model):
-    """Implemento que el conjunto presta con la zona (parrilla, sillas, balones...)."""
+    """Implemento que el conjunto presta con la zona (parrilla, sillas, balones...).
+
+    cantidad = unidades que tiene el conjunto. fuera_servicio = de esas, las dañadas que esperan
+    reparación. Solo se prestan las disponibles (cantidad - fuera_servicio)."""
     id_item = models.AutoField(db_column='Id_Item', primary_key=True)
     zona = models.ForeignKey(ZonasComunes, models.CASCADE, db_column='Id_Zona_FK', related_name='inventario')
     nombre = models.CharField(db_column='Nombre', max_length=100)
     cantidad = models.PositiveIntegerField(db_column='Cantidad', default=1)
+    fuera_servicio = models.PositiveIntegerField(db_column='Fuera_Servicio', default=0)
     valor_reposicion = models.DecimalField(db_column='Valor_Reposicion', max_digits=10, decimal_places=2,
                                            default=Decimal('0'))
 
@@ -55,6 +60,65 @@ class ItemInventario(models.Model):
 
     def __str__(self):
         return f'{self.cantidad} × {self.nombre}'
+
+    @property
+    def disponibles(self):
+        return max(self.cantidad - self.fuera_servicio, 0)
+
+    @property
+    def valor_total(self):
+        return self.cantidad * self.valor_reposicion
+
+
+class MovimientoInventario(models.Model):
+    """Historial del inventario: qué entró, qué se perdió o dañó y qué se reparó o dio de baja."""
+    PERDIDA, DANO, REPARADO, BAJA, COMPRA = 'perdida', 'dano', 'reparado', 'baja', 'compra'
+    TIPOS = [
+        (PERDIDA, 'Pérdida'),
+        (DANO, 'Daño'),
+        (REPARADO, 'Reparado'),
+        (BAJA, 'Dado de baja'),
+        (COMPRA, 'Compra o reposición'),
+    ]
+
+    id_movimiento = models.AutoField(db_column='Id_Movimiento', primary_key=True)
+    item = models.ForeignKey(ItemInventario, models.CASCADE, db_column='Id_Item_FK', related_name='movimientos')
+    tipo = models.CharField(db_column='Tipo', max_length=20, choices=TIPOS)
+    cantidad = models.PositiveIntegerField(db_column='Cantidad')
+    fecha = models.DateTimeField(db_column='Fecha', default=timezone.now)
+    usuario = models.ForeignKey(settings.AUTH_USER_MODEL, models.SET_NULL, db_column='Id_Usuario_FK',
+                                blank=True, null=True, related_name='movimientos_inventario')
+    reserva = models.ForeignKey('Reservas', models.SET_NULL, db_column='Id_Reserva_FK', blank=True, null=True,
+                                related_name='movimientos_inventario')
+    nota = models.CharField(db_column='Nota', max_length=200, blank=True, default='')
+
+    class Meta:
+        db_table = 'movimientos_inventario'
+        ordering = ['-fecha', '-id_movimiento']
+
+    def __str__(self):
+        return f'{self.get_tipo_display()}: {self.cantidad} × {self.item.nombre}'
+
+    @classmethod
+    def registrar(cls, item, tipo, cantidad, usuario=None, reserva=None, nota='', fecha=None):
+        """Guarda el movimiento y ajusta las existencias del implemento."""
+        if cantidad <= 0:
+            return None
+        if tipo == cls.PERDIDA:
+            item.cantidad = max(item.cantidad - cantidad, 0)
+            item.fuera_servicio = min(item.fuera_servicio, item.cantidad)
+        elif tipo == cls.DANO:
+            item.fuera_servicio = min(item.fuera_servicio + cantidad, item.cantidad)
+        elif tipo == cls.REPARADO:
+            item.fuera_servicio = max(item.fuera_servicio - cantidad, 0)
+        elif tipo == cls.BAJA:
+            item.cantidad = max(item.cantidad - cantidad, 0)
+            item.fuera_servicio = max(item.fuera_servicio - cantidad, 0)
+        elif tipo == cls.COMPRA:
+            item.cantidad += cantidad
+        item.save(update_fields=['cantidad', 'fuera_servicio'])
+        return cls.objects.create(item=item, tipo=tipo, cantidad=cantidad, usuario=usuario, reserva=reserva,
+                                  nota=nota[:200], fecha=fecha or timezone.now())
 
 
 class Reservas(models.Model):

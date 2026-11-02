@@ -1,0 +1,126 @@
+{% extends "app.html" %}
+{% load i18n ui %}
+{% block title %}{% translate "Inventario" %}{% endblock %}
+{% block miga %}{% icono "derecha" %}<strong>{% translate "Inventario" %}</strong>{% endblock %}
+{% block eyebrow %}<span class="encabezado__eyebrow">{% icono "zona" %} {% translate "Zonas comunes" %}</span>{% endblock %}
+{% block titulo_pagina %}{% translate "Inventario de implementos" %}{% endblock %}
+{% block subtitulo %}<p>{% if user.rol == 'admin' %}{% translate "Lo que el conjunto presta con cada zona. Lo dañado queda en reparación y no se presta hasta que lo marques como reparado." %}{% else %}{% translate "Lo que se entrega con cada zona. Lo que está en reparación no se presta." %}{% endif %}</p>{% endblock %}
+{% block acciones %}
+    <a href="{% url 'lista_entregas' %}" class="btn btn-secundario">{% icono "check" %} {% translate "Entregas de zonas" %}</a>
+    {% if user.rol == 'admin' %}<a href="{% url 'lista_zonas' %}" class="btn btn-secundario">{% icono "zona" %} {% translate "Zonas comunes" %}</a>{% endif %}
+{% endblock %}
+{% block contenido %}
+<div class="grid-stats">
+    <div class="stat stat--cielo">
+        <span class="stat__icono">{% icono "inventario" %}</span>
+        <span class="stat__etiqueta">{% translate "Implementos" %}</span>
+        <span class="stat__valor">{{ resumen.unidades }}</span>
+        <span class="stat__nota">{% blocktranslate with n=resumen.disponibles %}{{ n }} disponibles para prestar{% endblocktranslate %}</span>
+    </div>
+    <a href="?novedades=1" class="stat stat--ambar{% if resumen.en_reparacion %} stat--alerta{% endif %}">
+        <span class="stat__icono">{% icono "alerta" %}</span>
+        <span class="stat__etiqueta">{% translate "En reparación" %}</span>
+        <span class="stat__valor">{{ resumen.en_reparacion }}</span>
+        <span class="stat__nota">{% translate "Dañados en entregas; no se prestan" %}</span>
+    </a>
+    <div class="stat stat--coral">
+        <span class="stat__icono">{% icono "x" %}</span>
+        <span class="stat__etiqueta">{% translate "Perdidos (30 días)" %}</span>
+        <span class="stat__valor">{{ perdidos_30 }}</span>
+        <span class="stat__nota">{% translate "Se cobraron como multa al residente" %}</span>
+    </div>
+    <div class="stat stat--menta">
+        <span class="stat__icono">{% icono "billetera" %}</span>
+        <span class="stat__etiqueta">{% translate "Valor del inventario" %}</span>
+        <span class="stat__valor">{{ resumen.valor|pesos }}</span>
+        <span class="stat__nota">{% translate "Según el valor de reposición" %}</span>
+    </div>
+</div>
+
+<section class="panel">
+    <div class="toolbar">
+        <nav class="segmentos" aria-label="{% translate 'Mostrar' %}">
+            <a href="?{% if zona_id %}zona={{ zona_id }}{% endif %}" class="{% if not solo_novedades %}activo{% endif %}">{% translate "Todo" %}</a>
+            <a href="?novedades=1{% if zona_id %}&zona={{ zona_id }}{% endif %}" class="{% if solo_novedades %}activo{% endif %}">{% translate "En reparación" %}</a>
+        </nav>
+        <form method="get">
+            {% if solo_novedades %}<input type="hidden" name="novedades" value="1">{% endif %}
+            <label for="filtro-zona" class="sr-only">{% translate "Zona" %}</label>
+            <select name="zona" id="filtro-zona" data-enviar-al-cambiar>
+                <option value="">{% translate "Todas las zonas" %}</option>
+                {% for z in zonas %}<option value="{{ z.pk }}" {% if zona_id == z.pk|stringformat:"s" %}selected{% endif %}>{{ z.nombre }}</option>{% endfor %}
+            </select>
+            <noscript><button class="btn btn-secundario" type="submit">{% translate "Filtrar" %}</button></noscript>
+        </form>
+    </div>
+</section>
+
+{% for g in grupos %}
+<section class="panel">
+    <div class="panel__cabecera">
+        <h2>{% icono "zona" %} {{ g.zona.nombre }}{% if g.zona.estado == 0 %} <span class="badge badge-neutro">{% translate "No disponible" %}</span>{% endif %}</h2>
+        <span class="texto-suave">{% blocktranslate with n=g.resumen.disponibles total=g.resumen.unidades v=g.resumen.valor|pesos %}{{ n }} de {{ total }} disponibles · {{ v }}{% endblocktranslate %}</span>
+    </div>
+    {% if g.items %}
+        <div class="tabla-contenedor">
+            <table class="inventario-tabla">
+                <thead><tr>
+                    <th>{% translate "Implemento" %}</th>
+                    <th class="num">{% translate "Total" %}</th>
+                    <th class="num">{% translate "Disponibles" %}</th>
+                    <th class="num">{% translate "En reparación" %}</th>
+                    <th class="num ocultar-movil">{% translate "Reposición c/u" %}</th>
+                    <th class="derecha"><span class="sr-only">{% translate "Acciones" %}</span></th>
+                </tr></thead>
+                <tbody>
+                {% for i in g.items %}
+                    <tr{% if i.fuera_servicio %} class="fila-reparacion"{% endif %}>
+                        <td><strong>{{ i.nombre }}</strong></td>
+                        <td class="num">{{ i.cantidad }}</td>
+                        <td class="num">{{ i.disponibles }}</td>
+                        <td class="num">{% if i.fuera_servicio %}<span class="badge badge-aviso">{{ i.fuera_servicio }}</span>{% else %}—{% endif %}</td>
+                        <td class="num ocultar-movil">{{ i.valor_reposicion|pesos }}</td>
+                        <td class="derecha"><a href="{% url 'detalle_item' i.pk %}" class="btn btn-fantasma btn-sm">{% if user.rol == 'admin' %}{% icono "editar" %} {% translate "Movimientos" %}{% else %}{% icono "reloj" %} {% translate "Historial" %}{% endif %}</a></td>
+                    </tr>
+                {% endfor %}
+                </tbody>
+            </table>
+        </div>
+    {% else %}
+        <div class="panel__cuerpo"><p class="texto-suave">{% translate "Esta zona no presta implementos." %}{% if user.rol == 'admin' %} <a href="{% url 'editar_zona' g.zona.pk %}">{% translate "Agregar al inventario" %}</a>{% endif %}</p></div>
+    {% endif %}
+</section>
+{% empty %}
+<section class="panel">
+    <div class="vacio">
+        <div class="vacio__icono">{% icono "check" %}</div>
+        <h3>{% if solo_novedades %}{% translate "Nada en reparación" %}{% else %}{% translate "No hay implementos" %}{% endif %}</h3>
+        <p>{% if solo_novedades %}{% translate "Todos los implementos están disponibles para prestar." %}{% else %}{% translate "Agrega implementos desde Zonas comunes → Editar." %}{% endif %}</p>
+    </div>
+</section>
+{% endfor %}
+
+<section class="panel">
+    <div class="panel__cabecera"><h2>{% icono "reloj" %} {% translate "Últimos movimientos" %}</h2></div>
+    {% if movimientos %}
+        <div class="tabla-contenedor">
+            <table>
+                <thead><tr><th>{% translate "Fecha" %}</th><th>{% translate "Implemento" %}</th><th>{% translate "Movimiento" %}</th><th class="num">{% translate "Cantidad" %}</th><th class="ocultar-movil">{% translate "Detalle" %}</th></tr></thead>
+                <tbody>
+                {% for m in movimientos %}
+                    <tr>
+                        <td class="num">{{ m.fecha|date:"d M, H:i" }}</td>
+                        <td><a href="{% url 'detalle_item' m.item.pk %}">{{ m.item.nombre }}</a><small class="texto-suave" style="display:block">{{ m.item.zona }}</small></td>
+                        <td class="movimiento-tipo">{% include "reservas/_tipo_movimiento.html" %}</td>
+                        <td class="num">{{ m.cantidad }}</td>
+                        <td class="ocultar-movil"><small>{{ m.nota|default:"—" }}{% if m.usuario %} · @{{ m.usuario.username }}{% endif %}</small></td>
+                    </tr>
+                {% endfor %}
+                </tbody>
+            </table>
+        </div>
+    {% else %}
+        <div class="panel__cuerpo"><p class="texto-suave">{% translate "Aún no hay movimientos. Aparecen cuando portería recibe una zona con novedades o cuando registras una reparación o compra." %}</p></div>
+    {% endif %}
+</section>
+{% endblock %}
